@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+set -eu pipefail
+
+while true; do
+	find . -type f \( -name '*.ts' -o -name '*.tsx' \) | \
+	entr -sr 'make --no-print-directory build && make --no-print-directory serve'
+done
