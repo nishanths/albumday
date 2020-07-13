@@ -17,9 +17,6 @@ watch: clean
 clean:
 	rm -rf dist/
 
-.PHONY: all
-all: clean build serve
-
 .PHONY: fmt
 fmt:
 	# tsfmt

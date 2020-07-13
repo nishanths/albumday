@@ -10,9 +10,6 @@ build:
 watch: clean
 	@./watch
 
-.PHONY: all
-all: clean build
-
 .PHONY: clean
 clean:
 	rm -rf dist/
