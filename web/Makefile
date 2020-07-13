@@ -7,7 +7,7 @@ build:
 	npx esbuild --bundle web.main.tsx --outdir=dist --minify --sourcemap
 
 .PHONY: watch
-watch:
+watch: clean
 	@./watch
 
 .PHONY: all

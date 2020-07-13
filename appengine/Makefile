@@ -10,7 +10,7 @@ serve:
 	node ./dist/app.js
 
 .PHONY: watch
-watch:
+watch: clean
 	@./watch
 
 .PHONY: clean
