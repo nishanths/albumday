@@ -1,1 +1,7 @@
+@import "./vars";
+@import "./mixins";
 @import "./components";
+
+body {
+	font-family: $font-family;
+}
