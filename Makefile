@@ -4,6 +4,7 @@ PROJECT_ID := albumday
 all:
 	(cd appengine && make clean build)
 	(cd web && make clean build)
+	ln -sfn $(PWD)/web/dist/* $(PWD)/appengine/static/js
 
 .PHONY: deploy
 deploy:
