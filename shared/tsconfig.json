@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "noEmit": true,
+    "emitDeclarationOnly": true,
+    "outDir": "./dist/",
     "target": "esnext",
     "module": "commonjs",
     "lib": ["esnext", "dom"],
@@ -11,11 +12,9 @@
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "jsx": "react",
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "web.main.tsx",
-    "shared"
+    "*.ts"
   ]
 }

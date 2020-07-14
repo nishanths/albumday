@@ -1,4 +1,5 @@
 import express from "express"
+import { quote } from "shared/string"
 
 const app = express()
 app.set("view engine", "hbs")
@@ -10,7 +11,10 @@ const mainRouter = express.Router({
 })
 
 mainRouter.get("/", (req, res) => {
-	res.render("index", { title: "Albumday" })
+	res.render("index", {
+		title: "Albumday",
+		bootstrapJSON: quote(JSON.stringify({ loggedIn: false }))
+	})
 })
 
 mainRouter.use((req, res) => {

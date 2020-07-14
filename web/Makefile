@@ -1,10 +1,14 @@
-.PHONY: default
-default: build
+ESBUILD := npx esbuild --bundle web.main.tsx --outdir=dist --minify --sourcemap
 
 .PHONY: build
 build:
-	npx tsc # esbuild doesn't typecheck TypeScript, so run tsc without emitting
-	npx esbuild --bundle web.main.tsx --outdir=dist --minify --sourcemap
+	npx tsc # typecheck
+	$(ESBUILD) --define:process.env.NODE_ENV='"development"'
+
+.PHONY: build-prod
+build-prod:
+	npx tsc # typecheck
+	$(ESBUILD) --define:process.env.NODE_ENV='"production"'
 
 .PHONY: watch
 watch: clean

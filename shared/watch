@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+set -eu pipefail
+
+while true; do
+	find . -type f \( -name '*.ts' \) | entr make --no-print-directory build
+done

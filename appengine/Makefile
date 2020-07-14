@@ -3,7 +3,8 @@ default: build
 
 .PHONY: build
 build:
-	npx tsc
+	npx tsc  # only typecheck
+	npx esbuild --bundle app.ts --outdir=dist --minify --sourcemap --platform=node
 
 .PHONY: serve
 serve:

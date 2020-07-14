@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "./dist/",
-    "incremental": true,
+    "noEmit": true,
     "target": "ESNext",
     "module": "commonjs",
     "moduleResolution": "node",
