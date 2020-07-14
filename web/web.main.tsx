@@ -7,7 +7,7 @@ declare var bootstrap: Bootstrap
 
 const root = <Router>
 	<Route exact path="/">
-		{bootstrap.loggedIn ? <>log in</> : <>already logged in</>}
+		{!bootstrap.loggedIn ? <>log in</> : <>already logged in</>}
 	</Route>
 </Router>
 
