@@ -3,6 +3,7 @@ import * as ReactDOM from "react-dom"
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom"
 import { Bootstrap, Service } from "shared/types"
 import { ServicePicker, SpotifyLogin } from "./components/service-picker"
+import { TransitionGroup, CSSTransition } from "react-transition-group"
 
 declare var bootstrap: Bootstrap
 
@@ -26,10 +27,18 @@ class Login extends React.Component<{}, { service: Service | undefined }> {
 
 	render() {
 		return <div className="Login">
-			{this.state.service === undefined ?
-				<ServicePicker onPick={(service) => this.setState({ service })} /> :
-				<SpotifyLogin />
-			}
+			<TransitionGroup>
+				{this.state.service === undefined &&
+					<CSSTransition key={"service picker"} timeout={500} classNames="service">
+						<ServicePicker onPick={(service) => this.setState({ service })} />
+					</CSSTransition>
+				}
+				{this.state.service !== undefined &&
+					<CSSTransition key={"spotify login"} timeout={500} classNames="login">
+						<SpotifyLogin />
+					</CSSTransition>
+				}
+			</TransitionGroup>
 		</div>
 	}
 }
