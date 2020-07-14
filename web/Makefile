@@ -1,14 +1,17 @@
-ESBUILD := npx esbuild --bundle web.main.tsx --outdir=dist --minify --sourcemap
+ESBUILD := npx esbuild --bundle web.main.tsx --outdir=dist/js --minify --sourcemap
+SCSS := npx sass scss/main.scss dist/css/main.css
 
 .PHONY: build
 build:
 	npx tsc # typecheck
 	$(ESBUILD) --define:process.env.NODE_ENV='"development"'
+	$(SCSS)
 
 .PHONY: build-prod
 build-prod:
 	npx tsc # typecheck
 	$(ESBUILD) --define:process.env.NODE_ENV='"production"'
+	$(SCSS)
 
 .PHONY: watch
 watch: clean
