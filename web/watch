@@ -3,5 +3,6 @@
 set -eu pipefail
 
 while true; do
-	find . -type f \( -name '*.ts' -o -name '*.tsx' -o -name '*.scss' \) | entr make --no-print-directory build
+	find . -type f \( -name '*.ts' -o -name '*.tsx' -o -name '*.scss' \) ! -regex '.*/node_modules/.*' | \
+	entr make --no-print-directory build
 done

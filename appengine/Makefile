@@ -22,6 +22,7 @@ clean:
 fmt:
 	# tsfmt
 	find . -type f \( -name '*.ts' -o -name '*.tsx' \) \
-		! -name '*.d.ts' | \
+		! -name '*.d.ts' \
+		! -regex '.*/node_modules/.*' | \
 		xargs npx tsfmt --useTsfmt=../tsfmt.json --replace --
 

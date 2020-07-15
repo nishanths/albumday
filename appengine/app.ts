@@ -3,7 +3,7 @@ import { quote } from "shared/string"
 
 const app = express()
 app.set("view engine", "hbs")
-app.use(express.static("static", { index: false }))
+app.use(express.static("static", { index: false, cacheControl: false }))
 
 const mainRouter = express.Router({
 	caseSensitive: true,

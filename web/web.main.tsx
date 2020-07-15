@@ -16,6 +16,19 @@ declare var bootstrap: Bootstrap
 // step 3 of 3
 // enter email to receive notifications
 
+class Homepage extends React.Component {
+	constructor(props: {}) {
+		super(props)
+	}
+
+	render() {
+		return <div className="Homepage">
+			<div className="hero">
+				<p>Receive notifications on the birthdays of your favorite albums.</p>
+			</div>
+		</div>
+	}
+}
 
 class Login extends React.Component<{}, { service: Service | undefined }> {
 	constructor(props: {}) {
@@ -45,7 +58,7 @@ class Login extends React.Component<{}, { service: Service | undefined }> {
 
 const root = <Router>
 	<Route exact path="/">
-		{!bootstrap.loggedIn ? <Login/> : <>already logged in</>}
+		{!bootstrap.loggedIn ? <Homepage /> : <>already logged in</>}
 	</Route>
 </Router>
 
