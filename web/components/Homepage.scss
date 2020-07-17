@@ -3,11 +3,9 @@
 .Homepage {
 	.hero {
 		display: flex;
-		background: $red-crayola;
 		justify-content: center;
 
 		p {
-			color: #eee;
 			font-size: 2em;
 			max-width: 500px;
 			text-align: center;

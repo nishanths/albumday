@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "emitDeclarationOnly": true,
     "outDir": "./dist/",
     "target": "esnext",
     "module": "commonjs",

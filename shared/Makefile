@@ -1,13 +1,10 @@
-SRCFILES := *.ts
-
 .PHONY: build
 build:
-	npx tsc # emit declarations and type check
-	npx esbuild --bundle $(SRCFILES) --outdir=dist --minify --sourcemap
+	npx tsc
 
 .PHONY: watch
 watch:
-	@./watch
+	$(SHELL) ./watch
 
 .PHONY: fmt
 fmt:

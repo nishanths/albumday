@@ -33,7 +33,6 @@ const main = async () => {
 	const PORT = process.env.PORT || 8080;
 	app.listen(PORT, () => {
 		console.log(`app listening on port ${PORT}, env ${env()}`);
-		console.log("REMOVE ME", config.redisHost)
 		console.log('press ctrl+c to quit');
 	});
 }
