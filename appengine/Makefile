@@ -1,3 +1,7 @@
+.PHONY: watch
+watch: clean
+	@./watch
+
 .PHONY: build
 build:
 	npx tsc
@@ -10,10 +14,6 @@ build:
 .PHONY: serve
 serve:
 	node ./dist/app.js
-
-.PHONY: watch
-watch: clean
-	@./watch
 
 .PHONY: clean
 clean:

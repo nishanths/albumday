@@ -36,7 +36,7 @@ deploy-prepare:
 	cp appengine/package.json appengine/package.json.original
 	cp appengine/package-lock.json appengine/package-lock.json.original
 	# rewrite import value in package.json
-	sed -i '' 's/file:..\/shared/file:.\/tmp-deploy-package-shared/g' appengine/package.json
+	sed -i '' 's/file:\.\.\/shared/file:.\/tmp-deploy-package-shared/g' appengine/package.json
 	# update package-lock.json correspondingly
 	(cd appengine && npm i --package-lock-only)
 

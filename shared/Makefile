@@ -1,3 +1,7 @@
+.PHONY: default
+default:
+	echo "default target does nothing"
+
 .PHONY: build
 build:
 	npx tsc

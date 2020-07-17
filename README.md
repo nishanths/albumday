@@ -14,21 +14,21 @@ Start a redis server at `localhost:6379`.
 ./path/to/redis-server
 ```
 
-Build server and web code. In separate terminals run the following.
+Build & watch code. In separate terminals run the following.
 
 ```
 cd shared
-make watch
+make
 ```
 
 ```
 cd appengine
-make watch
+make
 ```
 
 ```
 cd web
-make watch
+make
 ```
 
 Visit `localhost:8080`.
