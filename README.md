@@ -22,7 +22,7 @@ make watch
 ```
 
 ```
-cd server
+cd appengine
 make watch
 ```
 
