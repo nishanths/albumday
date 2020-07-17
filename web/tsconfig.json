@@ -12,7 +12,7 @@
     "declaration": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "jsx": "react",
+    "jsx": "react"
   },
   "include": [
     "./web.main.tsx",

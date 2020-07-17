@@ -4,9 +4,6 @@ PROJECT_ID := albumday
 all:
 	(cd server && make clean build)
 	(cd web && make clean build-prod)
-	(cd server/static && rm -rf dist && mkdir dist)
-	(cd server/static/dist && ln -sfn ../../../web/dist/js js)
-	(cd server/static/dist && ln -sfn ../../../web/dist/css css)
 
 .PHONY: deploy
 deploy:
@@ -20,6 +17,7 @@ fmt:
 	(cd web && make fmt)
 
 .PHONY: deps
+deps:
 	(cd shared && make deps)
 	(cd server && make deps)
 	(cd web && make deps)

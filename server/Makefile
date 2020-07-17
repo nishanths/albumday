@@ -2,6 +2,10 @@
 build:
 	npx tsc  # only typecheck
 	npx esbuild --bundle app.ts --outdir=dist --minify --sourcemap --platform=node
+	@# link web/ files
+	@(cd static && rm -rf dist && mkdir dist)
+	@(cd static/dist && ln -sfn ../../../web/dist/js js)
+	@(cd static/dist && ln -sfn ../../../web/dist/css css)
 
 .PHONY: serve
 serve:
