@@ -1,6 +1,3 @@
-.PHONY: default
-default: build
-
 .PHONY: build
 build:
 	npx tsc  # only typecheck
@@ -26,3 +23,6 @@ fmt:
 		! -regex '.*/node_modules/.*' | \
 		xargs npx tsfmt --useTsfmt=../tsfmt.json --replace --
 
+.PHONY: deps
+deps:
+	npm i

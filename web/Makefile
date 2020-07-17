@@ -28,3 +28,7 @@ fmt:
 		! -name '*.d.ts' \
 		! -regex '.*/node_modules/.*' | \
 		xargs npx tsfmt --useTsfmt=../tsfmt.json --replace --
+
+.PHONY: deps
+deps:
+	npm i
