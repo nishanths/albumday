@@ -1,5 +1,7 @@
 import express from "express"
 import { quote } from "shared/string"
+import { env } from "./env"
+import { config } from "./config"
 
 const app = express()
 app.set("view engine", "hbs")
@@ -25,6 +27,6 @@ app.use("/", mainRouter)
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-	console.log(`app listening on port ${PORT}, env ${process.env.NODE_ENV}`);
+	console.log(`app listening on port ${PORT}, env ${env()}, config ${config}`);
 	console.log('press ctrl+c to quit');
 });

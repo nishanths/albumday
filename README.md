@@ -1,6 +1,6 @@
 ## Development
 
-To develop locally you will need node, npm, [entr](http://eradman.com/entrproject/), and redis.
+To develop locally you will need node, npm, [entr](http://eradman.com/entrproject/), and redis version 6 or higher with TLS support.
 
 Install dependencies.
 
