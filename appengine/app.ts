@@ -1,32 +1,41 @@
 import express from "express"
-import { quote } from "shared/string"
+import { quote } from "shared"
 import { env } from "./env"
-import { config } from "./config"
+import { loadConfig } from "./config"
+import { Datastore } from "@google-cloud/datastore"
 
-const app = express()
-app.set("view engine", "hbs")
-app.use(express.static("static", { index: false, cacheControl: false }))
+const main = async () => {
+	const app = express()
+	app.set("view engine", "hbs")
+	app.use(express.static("static", { index: false, cacheControl: false }))
 
-const mainRouter = express.Router({
-	caseSensitive: true,
-	strict: true,
-})
+	const ds = new Datastore()
+	const config = await loadConfig(ds)
 
-mainRouter.get("/", (req, res) => {
-	res.render("index", {
-		title: "Albumday",
-		bootstrapJSON: quote(JSON.stringify({ loggedIn: false }))
+	const mainRouter = express.Router({
+		caseSensitive: true,
+		strict: true,
 	})
-})
 
-mainRouter.use((req, res) => {
-	res.status(404).send("not found")
-})
+	mainRouter.get("/", (req, res) => {
+		res.render("index", {
+			title: "Albumday",
+			bootstrapJSON: quote(JSON.stringify({ loggedIn: false }))
+		})
+	})
 
-app.use("/", mainRouter)
+	mainRouter.use((req, res) => {
+		res.status(404).send("not found")
+	})
 
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-	console.log(`app listening on port ${PORT}, env ${env()}, config ${config}`);
-	console.log('press ctrl+c to quit');
-});
+	app.use("/", mainRouter)
+
+	const PORT = process.env.PORT || 8080;
+	app.listen(PORT, () => {
+		console.log(`app listening on port ${PORT}, env ${env()}`);
+		console.log("REMOVE ME", config.redisHost)
+		console.log('press ctrl+c to quit');
+	});
+}
+
+main()

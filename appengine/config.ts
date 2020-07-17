@@ -1,6 +1,7 @@
 import * as tls from "tls"
 import { env } from "./env"
-import { assertExhaustive, OmitStrict } from "shared/typeutil"
+import { assertExhaustive, OmitStrict } from "shared"
+import { Datastore } from "@google-cloud/datastore"
 
 export type Config = {
 	redisHost: string
@@ -30,20 +31,29 @@ const partialProdConfig: OmitStrict<Config, "redisHost"> = {
 	},
 }
 
-const loadConfig = (): Config => {
+type Metadata = {
+	redisHost: string
+}
+
+export const loadConfig = async (ds: Datastore): Promise<Config> => {
 	const e = env()
 
 	switch (e) {
 		case "prod":
+			const key = ds.key(["Metadata", "singleton"])
+			const data = await ds.get(key)
+			const m = data[0] as Metadata
+
 			return {
 				...partialProdConfig,
-				redisHost: "", // TODO datastore
+				redisHost: m.redisHost,
 			}
+
 		case "dev":
 			return devConfig
+
 		default:
 			assertExhaustive(e)
 	}
 }
 
-export const config = loadConfig()

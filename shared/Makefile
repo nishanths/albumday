@@ -1,7 +1,9 @@
+SRCFILES := *.ts
+
 .PHONY: build
 build:
 	npx tsc # emit declarations and type check
-	npx esbuild *.ts --outdir=dist --minify --sourcemap
+	npx esbuild --bundle $(SRCFILES) --outdir=dist --minify --sourcemap
 
 .PHONY: watch
 watch:
@@ -18,3 +20,7 @@ fmt:
 .PHONY: deps
 deps:
 	npm i
+
+.PHONY: clean
+clean:
+	rm -rf dist

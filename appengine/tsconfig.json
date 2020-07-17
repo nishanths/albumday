@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "noEmit": true,
+    "outDir": "dist",
     "target": "ESNext",
     "module": "commonjs",
     "moduleResolution": "node",
@@ -16,6 +16,10 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "*.ts",
+    "*.ts"
+  ],
+  "exclude": [
+    "static",
+    "dist"
   ]
 }

@@ -1,7 +1,7 @@
 .PHONY: build
 build:
-	npx tsc  # only typecheck
-	npx esbuild --bundle app.ts --outdir=dist --minify --sourcemap --platform=node
+	npx tsc
+
 	@# link web/ files
 	@(cd static && rm -rf dist && mkdir dist)
 	@(cd static/dist && ln -sfn ../../../web/dist/js js)
