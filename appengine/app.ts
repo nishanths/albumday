@@ -2,7 +2,8 @@ import express from "express"
 import { quote } from "shared"
 import { env } from "./env"
 import { loadConfig } from "./config"
-import { initializeRedis, redis } from "./redis"
+import { initializeRedis } from "./redis"
+import { initializeEmail } from "./email"
 import { ds } from "./datastore"
 
 const main = async () => {
@@ -11,7 +12,9 @@ const main = async () => {
 	app.use(express.static("static", { index: false, cacheControl: false }))
 
 	const config = await loadConfig(ds)
+
 	initializeRedis(config)
+	initializeEmail(env(), config.sendgridAPIKey)
 
 	const mainRouter = express.Router({
 		caseSensitive: true,
