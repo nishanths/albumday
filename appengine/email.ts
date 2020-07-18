@@ -29,10 +29,10 @@ interface EmailClient {
 
 class LoggingEmailClient implements EmailClient {
 	send(data: sg.MailDataRequired): Promise<[client.ClientResponse, {}]> {
-		console.log("email: to=%s", JSON.stringify(data.to))
-		console.log("email: subject=%s", data.subject)
-		console.log("email: content text=%s", data.text)
-		console.log("email: content html=%s", data.html)
+		console.log("email: to: %s", JSON.stringify(data.to))
+		console.log("email: subject: %s", data.subject)
+		console.log("email: content text: %s", data.text)
+		console.log("email: content html: %s", data.html)
 		return Promise.resolve([{} as client.ClientResponse, {}])
 	}
 }

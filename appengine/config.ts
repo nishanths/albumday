@@ -9,6 +9,8 @@ export type Config = {
 	redisPort: number
 	redisTls?: RedisTLS
 	sendgridAPIKey?: string
+	spotifyClientID: string
+	spotifyClientSecret: string
 }
 
 export type RedisTLS = {
@@ -18,14 +20,11 @@ export type RedisTLS = {
 	dhparam: Buffer
 }
 
-const devConfig: Config = {
-	redisHost: "localhost",
-	redisPort: 6379,
-}
-
 type Metadata = {
 	redisHost: string
 	sendgridAPIKey: string
+	spotifyClientID: string
+	spotifyClientSecret: string
 }
 
 export const loadConfig = async (ds: Datastore): Promise<Config> => {
@@ -47,10 +46,18 @@ export const loadConfig = async (ds: Datastore): Promise<Config> => {
 					dhparam: fs.readFileSync("redis/tls/redis.dh"),
 				},
 				sendgridAPIKey: m.sendgridAPIKey,
+				spotifyClientID: m.spotifyClientID,
+				spotifyClientSecret: m.spotifyClientSecret,
 			}
 
 		case "dev":
-			return devConfig
+			const devsecrets = await import("./devsecrets")
+			return {
+				redisHost: "localhost",
+				redisPort: 6379,
+				spotifyClientID: devsecrets.default.spotifyClientID,
+				spotifyClientSecret: devsecrets.default.spotifyClientSecret,
+			}
 
 		default:
 			assertExhaustive(e)
