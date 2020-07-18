@@ -30,20 +30,17 @@ redis:
 
 .PHONY: deploy-prepare
 deploy-prepare:
-	# copy package to appengine directory
-	cp -r shared appengine/tmp-deploy-package-shared
-	# preserve copy of original package.json,package-lock.json
-	cp appengine/package.json appengine/package.json.original
-	cp appengine/package-lock.json appengine/package-lock.json.original
+	# copy package to appengine directory (symlink suffices)
+	(cd appengine && ln -s ../shared tmp-shared)
 	# rewrite import value in package.json
-	sed -i '' 's/file:\.\.\/shared/file:.\/tmp-deploy-package-shared/g' appengine/package.json
+	sed -i '' 's/file:\.\.\/shared/file:.\/tmp-shared/g' appengine/package.json
 	# update package-lock.json correspondingly
 	(cd appengine && npm i --package-lock-only)
 
 .PHONY: deploy-cleanup
 deploy-cleanup:
 	# undo package.json,package-lock.json change
-	mv appengine/package.json.original appengine/package.json
-	mv appengine/package-lock.json.original appengine/package-lock.json
+	sed -i '' 's/file:\.\/tmp-shared/file:..\/shared/g' appengine/package.json
+	(cd appengine && npm i --package-lock-only)
 	# remove copied package
-	rm -rf appengine/tmp-deploy-package-shared
+	rm -f appengine/tmp-shared

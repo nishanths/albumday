@@ -1,14 +1,10 @@
-.PHONY: default
-default:
-	echo "default target does nothing"
+.PHONY: watch
+watch: clean
+	@./watch
 
 .PHONY: build
 build:
 	npx tsc
-
-.PHONY: watch
-watch:
-	$(SHELL) ./watch
 
 .PHONY: fmt
 fmt:

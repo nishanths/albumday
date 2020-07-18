@@ -8,6 +8,7 @@ export type Config = {
 	redisHost: string
 	redisPort: number
 	redisTls?: RedisTLS
+	sendgridAPIKey?: string
 }
 
 export type RedisTLS = {
@@ -24,6 +25,7 @@ const devConfig: Config = {
 
 type Metadata = {
 	redisHost: string
+	sendgridAPIKey: string
 }
 
 export const loadConfig = async (ds: Datastore): Promise<Config> => {
@@ -44,6 +46,7 @@ export const loadConfig = async (ds: Datastore): Promise<Config> => {
 					ca: fs.readFileSync("redis/tls/ca.crt"),
 					dhparam: fs.readFileSync("redis/tls/redis.dh"),
 				},
+				sendgridAPIKey: m.sendgridAPIKey,
 			}
 
 		case "dev":
