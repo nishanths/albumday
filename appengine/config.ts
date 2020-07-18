@@ -1,4 +1,5 @@
 import * as tls from "tls"
+import * as fs from "fs"
 import { env } from "./env"
 import { assertExhaustive, OmitStrict } from "shared"
 import { Datastore } from "@google-cloud/datastore"
@@ -10,25 +11,15 @@ export type Config = {
 }
 
 export type RedisTLS = {
-	cert: string
-	key: string
-	ca: string
-	dhparam: string
+	cert: Buffer
+	key: Buffer
+	ca: Buffer
+	dhparam: Buffer
 }
 
 const devConfig: Config = {
 	redisHost: "localhost",
 	redisPort: 6379,
-}
-
-const partialProdConfig: OmitStrict<Config, "redisHost"> = {
-	redisPort: 6379,
-	redisTls: {
-		cert: "redis/tls/redis.crt",
-		key: "redis/tls/redis.key",
-		ca: "redis/tls/ca.crt",
-		dhparam: "redis/tls/redis.dh",
-	},
 }
 
 type Metadata = {
@@ -45,8 +36,14 @@ export const loadConfig = async (ds: Datastore): Promise<Config> => {
 			const m = data[0] as Metadata
 
 			return {
-				...partialProdConfig,
 				redisHost: m.redisHost,
+				redisPort: 6379,
+				redisTls: {
+					cert: fs.readFileSync("redis/tls/redis.crt"),
+					key: fs.readFileSync("redis/tls/redis.key"),
+					ca: fs.readFileSync("redis/tls/ca.crt"),
+					dhparam: fs.readFileSync("redis/tls/redis.dh"),
+				},
 			}
 
 		case "dev":
