@@ -2,15 +2,16 @@ import express from "express"
 import { quote } from "shared"
 import { env } from "./env"
 import { loadConfig } from "./config"
-import { Datastore } from "@google-cloud/datastore"
+import { initializeRedis, redis } from "./redis"
+import { ds } from "./datastore"
 
 const main = async () => {
 	const app = express()
 	app.set("view engine", "hbs")
 	app.use(express.static("static", { index: false, cacheControl: false }))
 
-	const ds = new Datastore()
 	const config = await loadConfig(ds)
+	initializeRedis(config)
 
 	const mainRouter = express.Router({
 		caseSensitive: true,
