@@ -48,3 +48,9 @@ deploy-cleanup:
 	(cd appengine && npm i --package-lock-only)
 	# remove copied package
 	rm -f appengine/tmp-shared
+
+.PHONY: clean
+clean:
+	(cd shared && make clean)
+	(cd appengine && make clean)
+	(cd web && make clean)

@@ -1,4 +1,4 @@
-## Development
+## Develop
 
 To develop locally you will need node, npm, [entr](http://eradman.com/entrproject/), and redis.
 
@@ -32,3 +32,10 @@ make
 ```
 
 Visit `localhost:8080`.
+
+## Deploy
+
+```
+make all
+make deploy
+```
