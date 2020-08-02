@@ -15,7 +15,8 @@
     "jsx": "react"
   },
   "include": [
-    "./web.main.tsx",
-    "./components/**/*"
+    "*.ts",
+    "*.tsx",
+    "components/**/*"
   ]
 }

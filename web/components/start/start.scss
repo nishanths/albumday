@@ -41,7 +41,7 @@ body.Start {
 
 			input[type=text], input[type=email], input[type=password] {
 				border: 1px solid hsla(0, 0, 0, 0.2);
-				caret-color: hsla(0, 0, 0, 0.3);
+				caret-color: hsla(0, 0, 0, 0.6);
 				border-radius: 0;
 				background-image: none;
 				background-color: transparent;
@@ -51,7 +51,10 @@ body.Start {
 				color: #444;
 
 				&:focus {
-					outline: 2px solid $green;
+					outline: 3px solid $green;
+				}
+				&:disabled {
+					opacity: 0.5;
 				}
 
 				width: 100%;
@@ -59,22 +62,6 @@ body.Start {
 				font-size: 21px;
 				display: inline-block;
 			}
-
-			// .submit-email {
-			// 	background-color: transparent;
-			// 	background-image: url(/img/right-arrow.svg);
-			// 	box-shadow: none;
-			// 	outline: none;
-			// 	border: none;
-			// 	width: 10%;
-			// 	margin-left: 10px;
-			// 	background-size: 25px 25px;
-			// 	background-repeat: no-repeat;
-			// 	background-color: transparent;
-			// 	background-position: center;
-
-			// 	cursor: pointer;
-			// }
 		}
 
 		.instruction {
@@ -100,3 +87,19 @@ body.Start {
 		}
 	}
 }
+
+// .submit-email {
+// 	background-color: transparent;
+// 	background-image: url(/img/right-arrow.svg);
+// 	box-shadow: none;
+// 	outline: none;
+// 	border: none;
+// 	width: 10%;
+// 	margin-left: 10px;
+// 	background-size: 25px 25px;
+// 	background-repeat: no-repeat;
+// 	background-color: transparent;
+// 	background-position: center;
+//
+// 	cursor: pointer;
+// }

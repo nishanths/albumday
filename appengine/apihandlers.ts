@@ -6,6 +6,7 @@ import { RedisClient } from "redis"
 import { validate as validateEmail } from "email-validator"
 
 const passphraseKey = (email: string) => `:passphrase:${email}`
+const passphraseExpirySeconds = 5 * 24 * 60 * 60
 
 export const passphraseHandler = (redis: RedisClient, emailc: EmailClient): RequestHandler => async (req, res) => {
 	const email = req.query["email"]
@@ -22,7 +23,7 @@ export const passphraseHandler = (redis: RedisClient, emailc: EmailClient): Requ
 
 	const passphrase = await generatePassphrase()
 
-	redis.set(passphraseKey(email), passphrase, "EX", 8 * 60 * 60, async (err, reply) => {
+	redis.set(passphraseKey(email), passphrase, "EX", passphraseExpirySeconds, async (err, reply) => {
 		if (err) {
 			console.error(`set passphrase: ${err.name}: ${err.message}`)
 			res.status(500).end()

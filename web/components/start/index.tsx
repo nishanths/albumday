@@ -4,9 +4,10 @@ import { ToastConsumer, ToastConsumerContext } from "react-toast-notifications"
 import { validate as validateEmail } from "email-validator"
 import { Link, withRouter } from "react-router-dom"
 import { RouteComponentProps } from "react-router";
-import { HistoryType } from "../../history"
+import { NProgressType } from "../../types"
 
 type State = {
+	submitting: boolean // submitting in progress for email or for passphrase
 	submittedEmail: string // successfully submitted email
 	error: JSX.Element | undefined
 	email: string
@@ -16,7 +17,9 @@ type State = {
 const defaultError = <p className="error">Something went wrong. Try again.</p>
 const invalidEmailError = <p className="error">Please enter a valid email.</p>
 
-type StartProps = RouteComponentProps & {}
+type StartProps = RouteComponentProps & {
+	nProgress: NProgressType
+}
 
 class StartComponent extends React.Component<StartProps, State> {
 	private emailRef: HTMLInputElement | null = null
@@ -26,6 +29,7 @@ class StartComponent extends React.Component<StartProps, State> {
 	constructor(props: StartProps) {
 		super(props)
 		this.state = {
+			submitting: false,
 			submittedEmail: "",
 			error: undefined,
 			email: "",
@@ -34,6 +38,9 @@ class StartComponent extends React.Component<StartProps, State> {
 	}
 
 	private async onEmailSubmit() {
+		if (this.state.submitting) {
+			return
+		}
 		const email = this.emailRef!.value.trim()
 		if (email === "") {
 			return
@@ -50,31 +57,41 @@ class StartComponent extends React.Component<StartProps, State> {
 		this.setState({ error: undefined })
 
 		try {
+			this.submittingStart()
 			const r = await fetch("/api/v1/passphrase?email=" + encodeURIComponent(email), {
 				method: "POST",
 				signal: this.abort.signal,
 			})
 			switch (r.status) {
 				case 200:
-					this.setState({ submittedEmail: email })
+					this.submittingDone() // submitting/disabled input needs to be updated before focusing on passphraseRef
+					this.setState({ submittedEmail: email }, () => {
+						this.passphraseRef!.focus()
+					})
 					break
 				case 400:
+					this.submittingDone()
 					this.setState({ error: invalidEmailError })
 					break
 				default:
+					this.submittingDone()
 					this.setState({ error: defaultError })
 					break
 			}
 		} catch {
+			this.submittingDone()
 			this.setState({ error: defaultError })
 		}
 	}
 
 	private async onPassphraseSubmit() {
 		const invalidPassphraseError = <>
-			<p className="error">That passphrase has expired or is incorrect. <a href="" onClick={e => { e.preventDefault(); this.onStartOver() }}>Start over?</a></p>
+			<p className="error">That passphrase has expired or is incorrect.&nbsp;&nbsp;<a href="" onClick={e => { e.preventDefault(); this.onStartOver() }}>Start over?</a></p>
 		</>
 
+		if (this.state.submitting) {
+			return
+		}
 		const passphrase = this.passphraseRef!.value.trim()
 		if (passphrase === "") {
 			return
@@ -85,24 +102,39 @@ class StartComponent extends React.Component<StartProps, State> {
 		p.set("passphrase", passphrase)
 
 		try {
+			this.submittingStart()
 			const r = await fetch("/api/v1/login?" + p.toString(), {
 				method: "POST",
 				signal: this.abort.signal,
 			})
 			switch (r.status) {
 				case 200:
+					this.submittingDone()
 					this.props.history.push("/feed")
 					break
 				case 403:
+					this.submittingDone()
 					this.setState({ error: invalidPassphraseError })
 					break
 				default:
+					this.submittingDone()
 					this.setState({ error: defaultError })
 					break
 			}
 		} catch {
+			this.submittingDone()
 			this.setState({ error: defaultError })
 		}
+	}
+
+	private submittingStart() {
+		this.setState({ submitting: true })
+		this.props.nProgress.start()
+	}
+
+	private submittingDone() {
+		this.setState({ submitting: false })
+		this.props.nProgress.done()
 	}
 
 	componentDidMount() {
@@ -128,7 +160,7 @@ class StartComponent extends React.Component<StartProps, State> {
 	}
 
 	render() {
-		const { submittedEmail, error, email, passphrase } = this.state
+		const { submittedEmail, error, email, passphrase, submitting } = this.state
 
 		return <div className="Start">
 			<Helmet>
@@ -150,6 +182,7 @@ class StartComponent extends React.Component<StartProps, State> {
 							<input
 								value={email} onChange={e => { this.setState({ email: e.target.value, error: undefined }) }}
 								type="text" id="email"
+								disabled={submitting}
 								autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false"
 								ref={r => { this.emailRef = r }}
 							/>
@@ -165,6 +198,7 @@ class StartComponent extends React.Component<StartProps, State> {
 							<input
 								value={passphrase} onChange={e => { this.setState({ passphrase: e.target.value, error: undefined }) }}
 								type="password" id="password"
+								disabled={submitting}
 								autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false"
 								ref={r => { this.passphraseRef = r }}
 							/>
@@ -181,9 +215,5 @@ class StartComponent extends React.Component<StartProps, State> {
 		</div>
 	}
 }
-
-// <button type="submit" name="email" className="submit-email"></button>
-// <p>When you're done entering the passphrase, hit Enter or click <a href="" className="submit-link" onClick={e => { e.preventDefault(); this.onPassphraseSubmit() }}>submit</a>.</p>
-//  When you're done, hit Enter or click <a href="" className="submit-link" onClick={e => { e.preventDefault(); this.onEmailSubmit() }}>submit</a>
 
 export const Start = withRouter(StartComponent)
