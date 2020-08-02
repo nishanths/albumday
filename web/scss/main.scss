@@ -1,8 +1,18 @@
 @import "./vars";
 @import "./mixins";
 @import "./components";
+@import "./overrides";
 
 body {
 	font-family: $font-family;
 	margin: 0;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+a {
+	text-decoration: underline;
+	color: $light-blue;
 }

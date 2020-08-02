@@ -1,8 +1,8 @@
 #!/usr/bin/env zsh
 
-set -eu pipefail
+set -uo pipefail
 
 while true; do
 	find . -type f \( -name '*.ts' -o -name '*.tsx' -o -name '*.scss' \) ! -regex '.*/node_modules/.*' ! -regex '.*/dist/.*' | \
-	entr make --no-print-directory build
+	entr -d make --no-print-directory build
 done

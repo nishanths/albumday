@@ -7,15 +7,15 @@ watch: clean
 
 .PHONY: build
 build:
-	npx tsc # typecheck
-	$(ESBUILD) --define:process.env.NODE_ENV='"development"'
 	$(SCSS)
+	$(ESBUILD) --define:process.env.NODE_ENV='"development"'
+	npx tsc # typecheck
 
 .PHONY: build-prod
 build-prod:
-	npx tsc # typecheck
-	$(ESBUILD) --define:process.env.NODE_ENV='"production"'
 	$(SCSS)
+	$(ESBUILD) --define:process.env.NODE_ENV='"production"'
+	npx tsc # typecheck
 
 .PHONY: clean
 clean:

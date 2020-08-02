@@ -20,6 +20,3 @@ node_modules/
 watch
 tsconfig.json
 Makefile
-
-# devsecrets source and dist/ files
-devsecrets.*

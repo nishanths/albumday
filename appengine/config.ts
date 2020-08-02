@@ -1,7 +1,7 @@
 import * as tls from "tls"
 import * as fs from "fs"
-import { env } from "./env"
-import { assertExhaustive, OmitStrict } from "shared"
+import { Env } from "./env"
+import { assertExhaustive } from "shared"
 import { Datastore } from "@google-cloud/datastore"
 
 export type Config = {
@@ -11,6 +11,7 @@ export type Config = {
 	sendgridAPIKey?: string
 	spotifyClientID: string
 	spotifyClientSecret: string
+	cookieSecret: string
 }
 
 export type RedisTLS = {
@@ -25,11 +26,10 @@ type Metadata = {
 	sendgridAPIKey: string
 	spotifyClientID: string
 	spotifyClientSecret: string
+	cookieSecret: string
 }
 
-export const loadConfig = async (ds: Datastore): Promise<Config> => {
-	const e = env()
-
+export const loadConfig = async (e: Env, ds: Datastore): Promise<Config> => {
 	switch (e) {
 		case "prod":
 			const key = ds.key(["Metadata", "singleton"])
@@ -48,15 +48,19 @@ export const loadConfig = async (ds: Datastore): Promise<Config> => {
 				sendgridAPIKey: m.sendgridAPIKey,
 				spotifyClientID: m.spotifyClientID,
 				spotifyClientSecret: m.spotifyClientSecret,
+				cookieSecret: m.cookieSecret,
 			}
 
 		case "dev":
-			const devsecrets = await import("./devsecrets")
+			const spotifyClientID = process.env["SPOTIFY_CLIENT_ID"]!
+			const spotifyClientSecret = process.env["SPOTIFY_CLIENT_SECRET"]!
+
 			return {
 				redisHost: "localhost",
 				redisPort: 6379,
-				spotifyClientID: devsecrets.default.spotifyClientID,
-				spotifyClientSecret: devsecrets.default.spotifyClientSecret,
+				spotifyClientID,
+				spotifyClientSecret,
+				cookieSecret: "foo",
 			}
 
 		default:

@@ -28,6 +28,10 @@ deps:
 redis:
 	${HOME}/src/redis-6.0.5/src/redis-server
 
+.PHONY: redisc
+redisc:
+	${HOME}/src/redis-6.0.5/src/redis-cli
+
 .PHONY: deploy-prepare
 deploy-prepare:
 	# copy package to appengine directory (symlink suffices)

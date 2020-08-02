@@ -1,10 +1,8 @@
 import redispkg from "redis"
 import { Config } from "./config"
 
-export let redis: redispkg.RedisClient // must call initializeRedis() before accessing
-
-export function initializeRedis(config: Pick<Config, "redisHost" | "redisPort" | "redisTls">) {
-	redis = redispkg.createClient({
+export function newRedis(config: Pick<Config, "redisHost" | "redisPort" | "redisTls">): redispkg.RedisClient {
+	const redis = redispkg.createClient({
 		host: config.redisHost,
 		port: config.redisPort,
 		tls: config.redisTls,
@@ -37,4 +35,6 @@ export function initializeRedis(config: Pick<Config, "redisHost" | "redisPort" |
 	redis.on("warning", e => {
 		console.log("redis warning:", e)
 	})
+
+	return redis
 }

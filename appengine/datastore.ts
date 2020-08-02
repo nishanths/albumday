@@ -1,3 +1,3 @@
 import { Datastore } from "@google-cloud/datastore"
 
-export const ds = new Datastore()
+export const newDatastore = (): Datastore => new Datastore()

@@ -4,26 +4,22 @@ import helpers from "@sendgrid/helpers/classes"
 import client from "@sendgrid/client/src/response"
 import { assertExhaustive } from "shared"
 
-export let emailc: EmailClient
-
-export function initializeEmail(env: Env, apiKey?: string) {
+export function newEmail(env: Env, apiKey?: string): EmailClient {
 	switch (env) {
 		case "prod":
 			if (apiKey === undefined) {
 				throw "api key required for prod env"
 			}
 			sg.setApiKey(apiKey)
-			emailc = sg
-			break
+			return sg
 		case "dev":
-			emailc = new LoggingEmailClient()
-			break
+			return new LoggingEmailClient()
 		default:
 			assertExhaustive(env)
 	}
 }
 
-interface EmailClient {
+export interface EmailClient {
 	send(data: sg.MailDataRequired, isMultiple?: boolean): Promise<[client.ClientResponse, {}]>;
 }
 
@@ -33,6 +29,8 @@ class LoggingEmailClient implements EmailClient {
 		console.log("email: subject: %s", data.subject)
 		console.log("email: content text: %s", data.text)
 		console.log("email: content html: %s", data.html)
-		return Promise.resolve([{} as client.ClientResponse, {}])
+		return Promise.resolve([{ statusCode: 200 } as client.ClientResponse, {}])
 	}
 }
+
+export const defaultFromEmail = { name: "birthdays.littleroot.org", email: "hardworkingbot@gmail.com" }
