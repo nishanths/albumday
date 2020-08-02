@@ -2,8 +2,9 @@ import { RequestHandler } from "express"
 import { defaultFromEmail, EmailClient } from "./email"
 import XKCDPassword from "xkcd-password"
 import { okStatus } from "shared"
-import { RedisClient } from "redis"
+import { RedisClient } from "./redis"
 import { validate as validateEmail } from "email-validator"
+import { cookieNameIdentity, IdentityCookie, cookieValidityIdentityMs } from "./cookie"
 
 const passphraseKey = (email: string) => `:passphrase:${email}`
 const passphraseExpirySeconds = 5 * 24 * 60 * 60
@@ -42,7 +43,6 @@ export const passphraseHandler = (redis: RedisClient, emailc: EmailClient): Requ
 			res.status(500).end()
 			return
 		}
-
 		res.status(200).end()
 	})
 }
@@ -72,7 +72,10 @@ export const loginHandler = (redis: RedisClient): RequestHandler => async (req, 
 			res.status(403).send("bad passphrase").end()
 			return
 		}
-		// TODO set cookie
+
+		const cookie: IdentityCookie = { email: email }
+		res.cookie(cookieNameIdentity, JSON.stringify(cookie), { maxAge: cookieValidityIdentityMs, httpOnly: true, signed: true })
+
 		res.status(200).end()
 	})
 }
@@ -91,6 +94,5 @@ Someone has requested a passphrase for ${email} to log in to albumday
 
   ${passphrase}
 
-Enter this passphrase to log in. You do not need to remember this passphrase for
-the future. You will receive a new passphrase each time you log in.
+Enter this passphrase to log in.
 `

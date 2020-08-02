@@ -6,7 +6,7 @@ import { newRedis } from "./redis"
 import { newEmail } from "./email"
 import cookieParser from "cookie-parser"
 import { connectSpotifyHandler, authSpotifyHandler } from "./connect"
-import { startHandler } from "./apphandlers"
+import { indexHandler, startHandler, feedHandler } from "./apphandlers"
 import { passphraseHandler, loginHandler } from "./apihandlers"
 import { newDatastore } from "./datastore"
 
@@ -25,15 +25,14 @@ const main = async () => {
 	const mainRouter = express.Router({ caseSensitive: true, strict: true })
 	const apiRouter = express.Router({ caseSensitive: true, strict: true })
 
-	mainRouter.get("/", (req, res) => {
-		res.render("index", {
-			title: "Albumday",
-			bootstrapJSON: quote(JSON.stringify({ loggedIn: false }))
-		})
-	})
+	mainRouter.get("/", indexHandler)
 	mainRouter.get("/start/?", startHandler)
+	mainRouter.get("/feed/?", feedHandler(redis))
+	mainRouter.get("/configure/?", feedHandler(redis)) // TODO
+
 	mainRouter.get("/connect/spotify", connectSpotifyHandler(config.spotifyClientID))
 	mainRouter.get("/auth/spotify", authSpotifyHandler(config.spotifyClientID, config.spotifyClientSecret))
+	// /connect/scrobble
 
 	// 404 handler
 	mainRouter.use((req, res) => { res.status(404).send("not found") })

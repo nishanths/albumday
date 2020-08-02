@@ -1,17 +1,23 @@
 import { Service } from "shared"
 import { Request } from "express"
 
-export const cookieNameIdentitiy = "albumday:identity"
+export const cookieNameIdentity = "albumday:identity"
 
-type IdentityCookie = {
-	accountID: string
+export const cookieValidityIdentityMs = 30 * 60 * 60 * 1000 // 30 days
+
+export type IdentityCookie = {
+	email: string
 }
 
-export function currentAccountID(req: Request): string | null {
-	const idJSON = req.signedCookies[cookieNameIdentitiy] as string | undefined
+export function currentEmail(req: Request): string | null {
+	const idJSON = req.signedCookies[cookieNameIdentity] as string | undefined
 	if (idJSON === undefined) {
 		return null
 	}
-	const { accountID } = JSON.parse(idJSON) as IdentityCookie
-	return accountID
+	try {
+		const { email } = JSON.parse(idJSON) as IdentityCookie
+		return email
+	} catch {
+		return null
+	}
 }

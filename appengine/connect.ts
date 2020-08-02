@@ -2,14 +2,14 @@ import * as crypto from "crypto"
 import { Service } from "shared"
 import { URLSearchParams } from "url"
 import { RequestHandler, Request } from "express"
-import { currentAccountID } from "./cookie"
+import { currentEmail } from "./cookie"
 import axios from "axios"
 
 const cookieNameState = "albumday:state"
 
 type StateCookie = {
 	state: string
-	accountID: string
+	email: string
 	service: Service
 }
 
@@ -18,15 +18,15 @@ function stateParam(): string {
 }
 
 export const connectSpotifyHandler = (spotifyClientID: string): RequestHandler => (req, res) => {
-	const accountID = currentAccountID(req)
-	if (accountID === null) {
+	const email = currentEmail(req)
+	if (email === null) {
 		res.status(400).send("no account ID").end()
 		return
 	}
 
 	const state: StateCookie = {
 		state: stateParam(),
-		accountID,
+		email,
 		service: "spotify",
 	}
 	const stateJSON = JSON.stringify(state)
@@ -52,7 +52,7 @@ export const authSpotifyHandler = (spotifyClientID: string, spotifyClientSecret:
 	const c = req.query as SpotifyCallback
 
 	if (c.error !== undefined && c.error !== null && c.error !== "") {
-		res.redirect("/configure")
+		res.redirect("/feed")
 		return
 	}
 
@@ -78,10 +78,10 @@ export const authSpotifyHandler = (spotifyClientID: string, spotifyClientSecret:
 	p.set("client_secret", spotifyClientSecret)
 	const tokenRsp = await axios.post<SpotifyTokenResponse>("https://accounts.spotify.com/api/token", p.toString(), { responseType: "json" })
 
-	// update redis for accountID
+	// TODO: update redis for email
 	console.log(tokenRsp.data.refresh_token)
 
-	res.redirect("/configure")
+	res.redirect("/feed")
 }
 
 type SpotifyTokenResponse = {

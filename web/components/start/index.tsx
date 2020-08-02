@@ -110,7 +110,7 @@ class StartComponent extends React.Component<StartProps, State> {
 			switch (r.status) {
 				case 200:
 					this.submittingDone()
-					this.props.history.push("/feed")
+					window.location.assign("/feed")
 					break
 				case 403:
 					this.submittingDone()

@@ -1,7 +1,7 @@
 import redispkg from "redis"
 import { Config } from "./config"
 
-export function newRedis(config: Pick<Config, "redisHost" | "redisPort" | "redisTls">): redispkg.RedisClient {
+export function newRedis(config: Pick<Config, "redisHost" | "redisPort" | "redisTls">): RedisClient {
 	const redis = redispkg.createClient({
 		host: config.redisHost,
 		port: config.redisPort,
@@ -38,3 +38,5 @@ export function newRedis(config: Pick<Config, "redisHost" | "redisPort" | "redis
 
 	return redis
 }
+
+export type RedisClient = redispkg.RedisClient

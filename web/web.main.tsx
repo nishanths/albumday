@@ -19,16 +19,16 @@ NProgress.configure({ showSpinner: true, minimum: 0.1, trickleSpeed: 150, speed:
 const tree = <BrowserRouter>
 	<ToastProvider>
 		<Route exact path="/">
-			{bootstrap.loggedIn ? <Redirect to="/feed" /> : <Root />}
+			<Root />
 		</Route>
 		<Route exact path="/start">
-			{bootstrap.loggedIn ? <Redirect to="/feed" /> : <Start nProgress={NProgress} />}
+			<Start nProgress={NProgress} />
 		</Route>
 		<Route exact path="/feed">
-			{bootstrap.loggedIn ? <Feed /> : <Redirect to="/" />}
+			<Feed />
 		</Route>
 		<Route exact path="/configure">
-			{bootstrap.loggedIn ? <Configure /> : <Redirect to="/" />}
+			<Configure />
 		</Route>
 	</ToastProvider>
 </BrowserRouter>
