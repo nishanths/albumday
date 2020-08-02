@@ -82,15 +82,15 @@ const generatePassphrase = async () => {
 	return words.join("-")
 }
 
-const passphraseEmailSubject = "Passphrase for birthdays.littleroot.org"
+const passphraseEmailSubject = "Passphrase for albumday"
 
 const passphraseEmailText = ({ email, passphrase }: { email: string, passphrase: string }) => `Hi,
 
-Someone has requested a passphrase for ${email} to log in to
-https://birthdays.littleroot.org. The passphrase is:
+Someone has requested a passphrase for ${email} to log in to albumday
+(https://album.casa). The passphrase is:
 
   ${passphrase}
 
 Enter this passphrase to log in. You do not need to remember this passphrase for
-the future. You will receive a new passphrase the next time you log in.
+the future. You will receive a new passphrase each time you log in.
 `
