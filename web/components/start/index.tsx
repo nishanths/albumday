@@ -143,6 +143,7 @@ class StartComponent extends React.Component<StartProps, State> {
 
 	componentWillUnmount() {
 		this.abort.abort()
+		this.submittingDone()
 	}
 
 	private onStartOver() {
