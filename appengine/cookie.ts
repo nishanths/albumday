@@ -3,7 +3,7 @@ import { Request } from "express"
 
 export const cookieNameIdentity = "albumday:identity"
 
-export const cookieValidityIdentityMs = 30 * 60 * 60 * 1000 // 30 days
+export const cookieValidityIdentityMs = 30 * 24 * 60 * 60 * 1000 // 30 days
 
 export type IdentityCookie = {
 	email: string
