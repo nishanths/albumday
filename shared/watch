@@ -5,4 +5,5 @@ set -uo pipefail
 while true; do
 	find . -type f \( -name '*.ts' -o -name '*.tsx' \) ! -regex '.*/node_modules/.*' ! -regex '.*/dist/.*' | \
 	entr -d make --no-print-directory build
+	sleep 1
 done
