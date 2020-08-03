@@ -57,7 +57,7 @@ export const loginHandler = (redis: RedisClient): RequestHandler => async (req, 
 		return
 	}
 
-	redis.GET(passphraseKey(email), (err, reply) => {
+	redis.GET(passphraseKey(email), async (err, reply) => {
 		if (err) {
 			logRedisError(err, "get passphrase: " + passphraseKey(email))
 			res.status(500).end()
@@ -81,7 +81,8 @@ export const loginHandler = (redis: RedisClient): RequestHandler => async (req, 
 		})
 
 		// ensure account is initialized
-		redis.SETNX(accountKey(email), JSON.stringify(zeroAccount()), (err) => {
+		const account = await zeroAccount()
+		redis.SETNX(accountKey(email), JSON.stringify(account), (err) => {
 			if (err) {
 				logRedisError(err, "initialize account")
 				res.status(500).end()

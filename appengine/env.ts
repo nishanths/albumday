@@ -6,3 +6,9 @@ export function env(): Env {
 	}
 	return "dev"
 }
+
+export const devPort = 8080
+
+export function devBaseURL(): string {
+	return `http://localhost:${8080}`
+}

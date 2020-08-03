@@ -15,6 +15,7 @@ export type Config = {
 	spotifyClientID: string
 	spotifyClientSecret: string
 	cookieSecret: string
+	tasksSecret: string
 }
 
 export type RedisTLS = {
@@ -30,6 +31,7 @@ type Metadata = {
 	spotifyClientID: string
 	spotifyClientSecret: string
 	cookieSecret: string
+	tasksSecret: string
 }
 
 export const loadConfig = async (e: Env, ds: Datastore): Promise<Config> => {
@@ -59,18 +61,17 @@ export const loadConfig = async (e: Env, ds: Datastore): Promise<Config> => {
 				spotifyClientID: m.spotifyClientID,
 				spotifyClientSecret: m.spotifyClientSecret,
 				cookieSecret: m.cookieSecret,
+				tasksSecret: m.tasksSecret,
 			}
 
 		case "dev":
-			const spotifyClientID = process.env["SPOTIFY_CLIENT_ID"] || ""
-			const spotifyClientSecret = process.env["SPOTIFY_CLIENT_SECRET"] || ""
-
 			return {
 				redisHost: "localhost",
 				redisPort: 6379,
-				spotifyClientID,
-				spotifyClientSecret,
+				spotifyClientID: process.env["SPOTIFY_CLIENT_ID"] || "",
+				spotifyClientSecret: process.env["SPOTIFY_CLIENT_SECRET"] || "",
 				cookieSecret: "foo",
+				tasksSecret: "bar",
 			}
 
 		default:

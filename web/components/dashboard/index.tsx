@@ -47,10 +47,10 @@ class DashboardComponent extends React.Component<DashboardProps> {
 			</Helmet>
 
 			<div className="nav">
-				<div className={classNames("nav-item", {"active": this.pane() === "feed"})} title="switch to feed">
+				<div className={classNames("nav-item", { "active": this.pane() === "feed" })} title="switch to feed">
 					<Link to="/feed">Feed</Link>
 				</div>
-				<div className={classNames("nav-item", {"active": this.pane() === "settings"})} title="switch to settings">
+				<div className={classNames("nav-item", { "active": this.pane() === "settings" })} title="switch to settings">
 					<Link to="/settings">Settings</Link>
 				</div>
 			</div>

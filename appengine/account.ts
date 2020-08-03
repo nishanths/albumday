@@ -1,16 +1,24 @@
-import { Service } from "shared"
+import { Service, trimPrefix } from "shared"
+import * as crypto from "crypto"
+import { promisify } from "util"
 
 export type Account = {
-	apiKey: string | undefined
+	apiKey: string
 	connection: Connection | undefined
-	settings: Settings | undefined
+	settings: Settings
 }
 
 export const accountKey = (email: string) => `:account:${email}`
 
+export const accountKeysPrefix = ":account:"
+
+export const emailFromAccountKey = (key: string): string => {
+	return trimPrefix(key, accountKeysPrefix)
+}
+
 export const zeroAccount = (): Account => {
 	return {
-		apiKey: "",
+		apiKey: crypto.randomBytes(12).toString("hex"),
 		connection: undefined,
 		settings: {
 			emailsEnabled: true,
