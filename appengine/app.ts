@@ -31,8 +31,8 @@ const main = async () => {
 	const mainRouter = express.Router({ caseSensitive: true, strict: true })
 	const apiRouter = express.Router({ caseSensitive: true, strict: true })
 
-	mainRouter.use(redirectHTTPS, logRequestAuthentication)
-	apiRouter.use(redirectHTTPS, logRequestAuthentication)
+	mainRouter.use(logRequestAuthentication)
+	apiRouter.use(logRequestAuthentication)
 
 	// routes
 	mainRouter.get("/", indexHandler)
@@ -62,14 +62,6 @@ const main = async () => {
 		console.log(`app listening on port ${PORT}, env ${env()}`);
 		console.log('press ctrl+c to quit');
 	});
-}
-
-const redirectHTTPS: RequestHandler = (req, res, next) => {
-	if (env() === "dev" || req.secure) {
-		next()
-		return
-	}
-	res.redirect("https://" + req.hostname + req.url)
 }
 
 const logRequestAuthentication: RequestHandler = (req, res, next) => {
