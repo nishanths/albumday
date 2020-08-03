@@ -16,18 +16,17 @@ import { requireTasksSecret, newTasksClient } from "./cloud-tasks"
 
 const main = async () => {
 	const ds = newDatastore()
+	const tasks = newTasksClient()
 	const config = await loadConfig(env(), ds)
+	// NOTE: separate redis clients are required if using transaction commands
+	const redis = newRedis(config)
+	const emailc = newEmail(env(), config.sendgridAPIKey)
 
 	const app = express()
 	app.set("view engine", "hbs")
 	app.use(express.static("static", { index: false }))
 	app.use(cookieParser(config.cookieSecret))
 	const jsonParser = bodyParser.json()
-
-	// NOTE: separate redis clients are required if using transaction commands
-	const redis = newRedis(config)
-	const emailc = newEmail(env(), config.sendgridAPIKey)
-	const tasks = newTasksClient()
 
 	const mainRouter = express.Router({ caseSensitive: true, strict: true })
 	const apiRouter = express.Router({ caseSensitive: true, strict: true })

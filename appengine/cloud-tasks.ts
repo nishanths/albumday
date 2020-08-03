@@ -12,12 +12,12 @@ export function newTasksClient() {
 
 const tasksSecretHeader = "x-tasks-secret"
 
-export const postJSONTask = async (env: Env, client: TasksClient, path: string, payload: any, secret: string): Promise<void> => {
+export const postJSONTask = async (env: Env, client: TasksClient | null, path: string, payload: any, secret: string): Promise<void> => {
 	switch (env) {
 		case "dev":
 			return postJSONTaskDev(path, payload, secret)
 		case "prod":
-			return postJSONTaskProd(client, path, payload, secret)
+			return postJSONTaskProd(client!, path, payload, secret)
 		default:
 			assertExhaustive(env)
 	}

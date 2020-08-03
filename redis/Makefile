@@ -5,7 +5,11 @@ FQDN ?= 127.0.0.1
 OUTDIR ?= ../appengine/redis/tls
 
 .PHONY: default
-default: prepare REDIS.crt REDIS.dh clean
+default:
+	@echo "default target does nothing"
+
+.PHONY: tls
+tls: prepare REDIS.crt REDIS.dh clean
 
 .PHONY: prepare
 prepare:

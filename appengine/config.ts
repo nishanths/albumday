@@ -34,11 +34,11 @@ type Metadata = {
 	tasksSecret: string
 }
 
-export const loadConfig = async (e: Env, ds: Datastore): Promise<Config> => {
+export const loadConfig = async (e: Env, ds: Datastore | null): Promise<Config> => {
 	switch (e) {
 		case "prod":
-			const key = ds.key(["Metadata", "singleton"])
-			const data = await ds.get(key)
+			const key = ds!.key(["Metadata", "singleton"])
+			const data = await ds!.get(key)
 			const m = data[0] as Metadata
 
 			const redisFiles = await Promise.all([
