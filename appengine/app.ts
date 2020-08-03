@@ -67,7 +67,7 @@ const main = async () => {
 const logRequestAuthentication: RequestHandler = (req, res, next) => {
 	// TODO also support API key
 	const email = currentEmail(req)
-	const s = email === null ? "(unauthenticated user)" : email
+	const s = email === null ? "unauthenticated user" : email
 	console.log(`request from ${s}`)
 	next()
 }
