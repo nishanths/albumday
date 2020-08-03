@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "noEmit": true,
-    "incremental": true,
     "target": "esnext",
     "module": "commonjs",
     "lib": ["esnext", "dom"],

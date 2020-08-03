@@ -1,13 +1,11 @@
 import { RequestHandler } from "express"
 import { defaultFromEmail, EmailClient } from "./email"
-import XKCDPassword from "xkcd-password"
 import { okStatus } from "shared"
-import { RedisClient } from "./redis"
+import { RedisClient, logRedisError } from "./redis"
 import { validate as validateEmail } from "email-validator"
-import { cookieNameIdentity, IdentityCookie, cookieValidityIdentityMs } from "./cookie"
-
-const passphraseKey = (email: string) => `:passphrase:${email}`
-const passphraseExpirySeconds = 5 * 24 * 60 * 60
+import { cookieNameIdentity, IdentityCookie, cookieValidityIdentityMs, currentEmail } from "./cookie"
+import { Account, accountKey, zeroAccount } from "./account"
+import { passphraseExpirySeconds, passphraseKey, generatePassphrase } from "./passphrase"
 
 export const passphraseHandler = (redis: RedisClient, emailc: EmailClient): RequestHandler => async (req, res) => {
 	const email = req.query["email"]
@@ -24,9 +22,9 @@ export const passphraseHandler = (redis: RedisClient, emailc: EmailClient): Requ
 
 	const passphrase = await generatePassphrase()
 
-	redis.set(passphraseKey(email), passphrase, "EX", passphraseExpirySeconds, async (err, reply) => {
+	redis.SET(passphraseKey(email), passphrase, "EX", passphraseExpirySeconds, async (err) => {
 		if (err) {
-			console.error(`set passphrase: ${err.name}: ${err.message}`)
+			logRedisError(err, "set passphrase")
 			res.status(500).end()
 			return
 		}
@@ -58,9 +56,10 @@ export const loginHandler = (redis: RedisClient): RequestHandler => async (req, 
 		res.status(400).end()
 		return
 	}
-	redis.get(passphraseKey(email), (err, reply) => {
+
+	redis.GET(passphraseKey(email), (err, reply) => {
 		if (err) {
-			console.error(`get passphrase: ${err.name}: ${err.message}`)
+			logRedisError(err, "get passphrase: " + passphraseKey(email))
 			res.status(500).end()
 			return
 		}
@@ -73,16 +72,27 @@ export const loginHandler = (redis: RedisClient): RequestHandler => async (req, 
 			return
 		}
 
+		// invalidate the passphrase
+		redis.DEL(passphraseKey(email), () => {
+			if (err) {
+				// only log
+				logRedisError(err, "delete passphrase: " + passphraseKey(email))
+			}
+		})
+
+		// ensure account is initialized
+		redis.SETNX(accountKey(email), JSON.stringify(zeroAccount()), (err) => {
+			if (err) {
+				logRedisError(err, "initialize account")
+				res.status(500).end()
+				return
+			}
+		})
+
 		const cookie: IdentityCookie = { email: email }
 		res.cookie(cookieNameIdentity, JSON.stringify(cookie), { maxAge: cookieValidityIdentityMs, httpOnly: true, signed: true })
-
 		res.status(200).end()
 	})
-}
-
-const generatePassphrase = async () => {
-	const words = await new XKCDPassword().generate()
-	return words.join("-")
 }
 
 const passphraseEmailSubject = "Passphrase for albumday"
@@ -92,7 +102,57 @@ const passphraseEmailText = ({ email, passphrase }: { email: string, passphrase:
 Someone has requested a passphrase for ${email} to log in to albumday
 (https://album.casa). The passphrase is:
 
-  ${passphrase}
+${passphrase}
 
 Enter this passphrase to log in.
 `
+
+export const accountHandler = (redis: RedisClient): RequestHandler => async (req, res) => {
+	const wantAccount = req.query["account"]
+	if (wantAccount === undefined || typeof wantAccount !== "string" || wantAccount === "") {
+		res.status(400).end()
+		return
+	}
+
+	const email = currentEmail(req)
+	if (email === null) {
+		// TODO also support API key header
+		res.status(401).end()
+		return
+	}
+
+	if (email !== wantAccount) {
+		res.status(403).end()
+		return
+	}
+
+	redis.GET(accountKey(wantAccount), (err, reply) => {
+		if (err) {
+			logRedisError(err, "get account: " + wantAccount)
+			res.status(500).end()
+			return
+		}
+		if (reply === null) {
+			// should never happen
+			console.error("unexpected null reply for account: " + wantAccount)
+			res.status(500).end()
+			return
+		}
+
+		let account: Account
+		try {
+			account = JSON.parse(reply) as Account
+		} catch {
+			console.error("failed to JSON-parse account reply: " + wantAccount)
+			res.status(500).end()
+			return
+		}
+
+		// blank out API key
+		// TODO fix after supporting API keys fully
+		account.apiKey = ""
+
+		res.status(200).contentType("application/json").send(account).end()
+	})
+}
+

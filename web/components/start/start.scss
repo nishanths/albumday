@@ -30,6 +30,14 @@ body.Start {
 		}
 	}
 
+	.form-transition-enter {
+		transform: translateY(-30px);
+	}
+	.form-transition-enter-active {
+		transform: translateY(0);
+		transition: transform 750ms;
+	}
+
 	.form {
 		max-width: 400px;
 		min-width: 400px;

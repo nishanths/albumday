@@ -9,10 +9,13 @@
   "author": "",
   "license": "UNLICENSED",
   "dependencies": {
+    "classnames": "^2.2.6",
     "email-validator": "^2.0.4",
+    "proposal-temporal": "^0.3.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-helmet": "^6.1.0",
+    "react-responsive-modal": "^5.0.2",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-toast-notifications": "^2.4.0",
@@ -20,6 +23,7 @@
     "shared": "file:../shared"
   },
   "devDependencies": {
+    "@types/classnames": "^2.2.10",
     "@types/react": "^16.9.43",
     "@types/react-dom": "^16.9.8",
     "@types/react-helmet": "^6.0.0",

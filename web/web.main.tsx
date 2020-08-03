@@ -2,11 +2,9 @@ import React from "react"
 import * as ReactDOM from "react-dom"
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom"
 import { Bootstrap, Service } from "shared/types"
-import { TransitionGroup, CSSTransition } from "react-transition-group"
 import { Root } from "./components/root"
 import { Start } from "./components/start"
-import { Feed } from "./components/feed"
-import { Configure } from "./components/configure"
+import { Dashboard } from "./components/dashboard"
 import { ToastProvider } from "react-toast-notifications"
 import type { NProgressType } from "./types"
 
@@ -24,11 +22,8 @@ const tree = <BrowserRouter>
 		<Route exact path="/start">
 			<Start nProgress={NProgress} />
 		</Route>
-		<Route exact path="/feed">
-			<Feed />
-		</Route>
-		<Route exact path="/configure">
-			<Configure />
+		<Route exact path={["/feed", "/settings"]}>
+			<Dashboard />
 		</Route>
 	</ToastProvider>
 </BrowserRouter>

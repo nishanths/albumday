@@ -1,0 +1,45 @@
+html.Dashboard {
+	height: 100%;
+}
+
+body.Dashboard {
+	min-height: 100%;
+}
+
+.Dashboard {
+	margin: 0 auto;
+	margin-top: 80px;
+	padding: 0 10px;
+	max-width: 760px;
+
+
+	.nav {
+		font-size: 36px;
+		font-weight: bold;
+		display: flex;
+
+		.nav-item {
+			a {
+				color: $light-gray;
+				text-decoration: none;
+				&:hover {
+					color: $green-alpha;
+				}
+			}
+			&.active {
+				a {
+					color: $green;
+				}
+			}
+
+			margin-right: 25px;
+			&:last-child {
+				margin-right: 0;
+			}
+		}
+	}
+
+	.pane {
+		margin-top: 50px;
+	}
+}

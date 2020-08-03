@@ -40,3 +40,11 @@ export function newRedis(config: Pick<Config, "redisHost" | "redisPort" | "redis
 }
 
 export type RedisClient = redispkg.RedisClient
+
+export const logRedisError = (err: redispkg.RedisError, message?: string) => {
+	if (message !== undefined) {
+		console.error(`redis: ${message}: ${err.name}: ${err.message}`)
+	} else {
+		console.error(`redis: ${err.name}: ${err.message}`)
+	}
+}

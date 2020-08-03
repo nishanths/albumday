@@ -5,6 +5,7 @@ import { validate as validateEmail } from "email-validator"
 import { Link, withRouter } from "react-router-dom"
 import { RouteComponentProps } from "react-router";
 import { NProgressType } from "../../types"
+import { CSSTransition, SwitchTransition } from "react-transition-group"
 
 type State = {
 	submitting: boolean // submitting in progress for email or for passphrase
@@ -12,6 +13,7 @@ type State = {
 	error: JSX.Element | undefined
 	email: string
 	passphrase: string
+	formTransition: boolean // https://stackoverflow.com/a/50166499/3309046
 }
 
 const defaultError = <p className="error">Something went wrong. Try again.</p>
@@ -34,6 +36,7 @@ class StartComponent extends React.Component<StartProps, State> {
 			error: undefined,
 			email: "",
 			passphrase: "",
+			formTransition: false,
 		}
 	}
 
@@ -86,7 +89,7 @@ class StartComponent extends React.Component<StartProps, State> {
 
 	private async onPassphraseSubmit() {
 		const invalidPassphraseError = <>
-			<p className="error">That passphrase has expired or is incorrect.&nbsp;&nbsp;<a href="" onClick={e => { e.preventDefault(); this.onStartOver() }}>Start over?</a></p>
+			<p className="error">That passphrase has expired or is incorrect.</p><p className="error"><a href="" onClick={e => { e.preventDefault(); this.onStartOver() }}>Start over?</a></p>
 		</>
 
 		if (this.state.submitting) {
@@ -110,7 +113,7 @@ class StartComponent extends React.Component<StartProps, State> {
 			switch (r.status) {
 				case 200:
 					this.submittingDone()
-					window.location.assign("/feed")
+					this.props.history.push("/feed")
 					break
 				case 403:
 					this.submittingDone()
@@ -139,6 +142,8 @@ class StartComponent extends React.Component<StartProps, State> {
 
 	componentDidMount() {
 		this.emailRef!.focus()
+
+		this.setState({ formTransition: true })
 	}
 
 	componentWillUnmount() {
@@ -175,44 +180,46 @@ class StartComponent extends React.Component<StartProps, State> {
 				<span className="start">register or login</span>
 			</div>
 
-			<div className="form">
-				{submittedEmail === "" ?
-					<>
-						<div className="step">Step 1 of 2</div>
-						<form onSubmit={e => { e.preventDefault(); this.onEmailSubmit() }}>
-							<input
-								value={email} onChange={e => { this.setState({ email: e.target.value, error: undefined }) }}
-								type="text" id="email"
-								disabled={submitting}
-								autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false"
-								ref={r => { this.emailRef = r }}
-							/>
-						</form>
-						<div className={"instruction"}>
-							{error !== undefined ? error :
-								<><p>Enter your email address.</p></>}
-						</div>
-					</> :
-					<>
-						<div className="step">Step 2 of 2</div>
-						<form onSubmit={e => { e.preventDefault(); this.onPassphraseSubmit() }}>
-							<input
-								value={passphrase} onChange={e => { this.setState({ passphrase: e.target.value, error: undefined }) }}
-								type="password" id="password"
-								disabled={submitting}
-								autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false"
-								ref={r => { this.passphraseRef = r }}
-							/>
-						</form>
-						<div className={"instruction"}>
-							{error !== undefined ? error :
-								<>
-									<p>A passphrase was sent to {submittedEmail}. Enter the passphrase to continue.</p>
-									<p>(Or, <a href="" onClick={e => { e.preventDefault(); this.onDifferentEmail() }}>go back</a> to use a different email.)</p>
-								</>}
-						</div>
-					</>}
-			</div>
+			<CSSTransition in={this.state.formTransition} addEndListener={(node, done) => { node.addEventListener("transitionend", done, false) }} timeout={750} classNames="form-transition">
+				<div className="form">
+					{submittedEmail === "" ?
+						<>
+							<div className="step">Step 1 of 2</div>
+							<form onSubmit={e => { e.preventDefault(); this.onEmailSubmit() }}>
+								<input
+									value={email} onChange={e => { this.setState({ email: e.target.value, error: undefined }) }}
+									type="text"
+									disabled={submitting}
+									autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false"
+									ref={r => { this.emailRef = r }}
+								/>
+							</form>
+							<div className={"instruction"}>
+								{error !== undefined ? error :
+									<><p>Enter your email address.</p></>}
+							</div>
+						</> :
+						<>
+							<div className="step">Step 2 of 2</div>
+							<form onSubmit={e => { e.preventDefault(); this.onPassphraseSubmit() }}>
+								<input
+									value={passphrase} onChange={e => { this.setState({ passphrase: e.target.value, error: undefined }) }}
+									type="password"
+									disabled={submitting}
+									autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false"
+									ref={r => { this.passphraseRef = r }}
+								/>
+							</form>
+							<div className={"instruction"}>
+								{error !== undefined ? error :
+									<>
+										<p>A passphrase was sent to {submittedEmail}. Enter the passphrase to continue.</p>
+										<p>(Or, <a href="" onClick={e => { e.preventDefault(); this.onDifferentEmail() }}>go back</a> to use a different email.)</p>
+									</>}
+							</div>
+						</>}
+				</div>
+			</CSSTransition>
 		</div>
 	}
 }

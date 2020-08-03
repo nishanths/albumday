@@ -54,3 +54,6 @@ clean:
 	(cd shared && make clean)
 	(cd appengine && make clean)
 	(cd web && make clean)
+
+.PHONY: deploy-cron
+	(cd appengine && gcloud --quiet --project $(PROJECT_ID) app deploy cron.yaml)

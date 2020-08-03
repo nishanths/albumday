@@ -1,6 +1,6 @@
 import { RequestHandler } from "express"
 import { quote, Bootstrap } from "shared"
-import { currentEmail } from "./cookie"
+import { currentEmail, cookieNameIdentity } from "./cookie"
 import { RedisClient } from "./redis"
 
 export const indexHandler: RequestHandler = (req, res) => {
@@ -53,3 +53,7 @@ export const feedHandler = (redis: RedisClient): RequestHandler => (req, res) =>
 	})
 }
 
+export const logoutHandler: RequestHandler = (req, res) => {
+	res.clearCookie(cookieNameIdentity)
+	res.redirect("/")
+}

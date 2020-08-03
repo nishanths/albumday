@@ -3,6 +3,9 @@ import * as fs from "fs"
 import { Env } from "./env"
 import { assertExhaustive } from "shared"
 import { Datastore } from "@google-cloud/datastore"
+import { promisify } from "util"
+
+const readFile = promisify(fs.readFile)
 
 export type Config = {
 	redisHost: string
@@ -36,14 +39,21 @@ export const loadConfig = async (e: Env, ds: Datastore): Promise<Config> => {
 			const data = await ds.get(key)
 			const m = data[0] as Metadata
 
+			const redisFiles = await Promise.all([
+				readFile("redis/tls/redis.crt"),
+				readFile("redis/tls/redis.key"),
+				readFile("redis/tls/ca.crt"),
+				readFile("redis/tls/redis.dh"),
+			])
+
 			return {
 				redisHost: m.redisHost,
 				redisPort: 6379,
 				redisTls: {
-					cert: fs.readFileSync("redis/tls/redis.crt"),
-					key: fs.readFileSync("redis/tls/redis.key"),
-					ca: fs.readFileSync("redis/tls/ca.crt"),
-					dhparam: fs.readFileSync("redis/tls/redis.dh"),
+					cert: redisFiles[0],
+					key: redisFiles[1],
+					ca: redisFiles[2],
+					dhparam: redisFiles[3],
 				},
 				sendgridAPIKey: m.sendgridAPIKey,
 				spotifyClientID: m.spotifyClientID,
@@ -52,8 +62,8 @@ export const loadConfig = async (e: Env, ds: Datastore): Promise<Config> => {
 			}
 
 		case "dev":
-			const spotifyClientID = process.env["SPOTIFY_CLIENT_ID"]!
-			const spotifyClientSecret = process.env["SPOTIFY_CLIENT_SECRET"]!
+			const spotifyClientID = process.env["SPOTIFY_CLIENT_ID"] || ""
+			const spotifyClientSecret = process.env["SPOTIFY_CLIENT_SECRET"] || ""
 
 			return {
 				redisHost: "localhost",

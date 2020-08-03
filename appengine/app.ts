@@ -6,8 +6,8 @@ import { newRedis } from "./redis"
 import { newEmail } from "./email"
 import cookieParser from "cookie-parser"
 import { connectSpotifyHandler, authSpotifyHandler } from "./connect"
-import { indexHandler, startHandler, feedHandler } from "./apphandlers"
-import { passphraseHandler, loginHandler } from "./apihandlers"
+import { indexHandler, startHandler, feedHandler, logoutHandler } from "./app-handlers"
+import { passphraseHandler, loginHandler, accountHandler } from "./api-handlers"
 import { newDatastore } from "./datastore"
 
 const main = async () => {
@@ -19,6 +19,7 @@ const main = async () => {
 	app.use(express.static("static", { index: false }))
 	app.use(cookieParser(config.cookieSecret))
 
+	// NOTE: separate redis clients are required if using transaction commands
 	const redis = newRedis(config)
 	const emailc = newEmail(env(), config.sendgridAPIKey)
 
@@ -28,19 +29,18 @@ const main = async () => {
 	mainRouter.get("/", indexHandler)
 	mainRouter.get("/start/?", startHandler)
 	mainRouter.get("/feed/?", feedHandler(redis))
-	mainRouter.get("/configure/?", feedHandler(redis)) // TODO
-
+	mainRouter.get("/settings/?", feedHandler(redis)) // TODO
+	mainRouter.get("/logout/?", logoutHandler)
 	mainRouter.get("/connect/spotify", connectSpotifyHandler(config.spotifyClientID))
 	mainRouter.get("/auth/spotify", authSpotifyHandler(config.spotifyClientID, config.spotifyClientSecret))
-	// /connect/scrobble
-
-	// 404 handler
-	mainRouter.use((req, res) => { res.status(404).send("not found") })
+	// TODO /connect/scrobble/
 
 	apiRouter.post("/passphrase", passphraseHandler(redis, emailc))
 	apiRouter.post("/login", loginHandler(redis))
+	apiRouter.get("/account", accountHandler(redis))
 
-	// 404 handler
+	// 404 handlers
+	mainRouter.use((req, res) => { res.status(404).send("not found") })
 	apiRouter.use((req, res) => { res.status(404) })
 
 	app.use("/api/v1", apiRouter)
@@ -52,6 +52,9 @@ const main = async () => {
 		console.log('press ctrl+c to quit');
 	});
 }
+
+// TODO currentEmail() logging middleware
+// TODO require HTTPS in non-dev
 
 main()
 
