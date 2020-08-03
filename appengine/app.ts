@@ -44,7 +44,6 @@ const main = async () => {
 	mainRouter.get("/connect/spotify", connectSpotifyHandler(config.spotifyClientID))
 	mainRouter.get("/auth/spotify", authSpotifyHandler(config.spotifyClientID, config.spotifyClientSecret))
 	// TODO /connect/scrobble/
-
 	mainRouter.post("/internal/cron/daily-email", requireCronHeader, cronDailyEmailHandler(redis, tasks, config.tasksSecret))
 	mainRouter.post("/internal/task/daily-email", requireTasksSecret(config.tasksSecret), jsonParser, taskDailyEmailHandler(redis))
 
