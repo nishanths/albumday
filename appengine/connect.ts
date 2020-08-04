@@ -38,7 +38,7 @@ export const connectSpotifyHandler = (spotifyClientID: string): RequestHandler =
 	p.set("response_type", "code")
 	p.set("redirect_uri", spotifyRedirectURL(req))
 	p.set("state", stateJSON)
-	p.set("scope", "user-library-read user-top-read")
+	p.set("scope", "user-read-email user-library-read user-top-read")
 	p.set("show_dialog", "false")
 
 	res.cookie(cookieNameState, stateJSON, { maxAge: 30 * 60 * 1000, httpOnly: true, signed: true })

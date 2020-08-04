@@ -101,11 +101,11 @@ export const loginHandler = (redis: RedisClient): RequestHandler => async (req, 
 	})
 }
 
-const passphraseEmailSubject = "Passphrase for albumday"
+const passphraseEmailSubject = "Passphrase for Albumday"
 
 const passphraseEmailText = ({ email, passphrase }: { email: string, passphrase: string }) => `Hi,
 
-Someone has requested a passphrase for ${email} to log in to albumday
+Someone has requested a passphrase for ${email} to log in to Albumday
 (https://album.casa). The passphrase is below.
 
 ${passphrase}
