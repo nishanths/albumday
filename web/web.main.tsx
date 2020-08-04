@@ -7,18 +7,18 @@ import { Start } from "./components/start"
 import { Dashboard } from "./components/dashboard"
 import type { NProgressType } from "./types"
 
-declare let bootstrap: Bootstrap
+declare const bootstrap: Bootstrap
 declare const NProgress: NProgressType
 
 // configure NProgress globally
 NProgress.configure({ showSpinner: true, minimum: 0.1, trickleSpeed: 150, speed: 500 })
 
-type TreeProps = {
+type MountProps = {
 	bootstrap: Bootstrap
 }
 
-class Tree extends React.Component<TreeProps, { bootstrap: Bootstrap }> {
-	constructor(props: TreeProps) {
+class Mount extends React.Component<MountProps, { bootstrap: Bootstrap }> {
+	constructor(props: MountProps) {
 		super(props)
 		this.state = {
 			bootstrap: props.bootstrap,
@@ -53,4 +53,4 @@ class Tree extends React.Component<TreeProps, { bootstrap: Bootstrap }> {
 }
 
 
-ReactDOM.render(<Tree bootstrap={bootstrap} />, document.querySelector("#mount"))
+ReactDOM.render(<Mount bootstrap={bootstrap} />, document.querySelector("#mount"))

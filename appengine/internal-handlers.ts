@@ -3,6 +3,7 @@ import { postJSONTask, TasksClient } from "./cloud-tasks"
 import { env } from "./env"
 import { RedisClient, logRedisError } from "./redis"
 import { accountKeysPrefix, Account, emailFromAccountKey } from "./account"
+import { connectionComplete } from "shared"
 
 type DailyEmailTask = {
 	accountKey: string
@@ -60,8 +61,8 @@ export const taskDailyEmailHandler = (redis: RedisClient): RequestHandler => (re
 			res.status(204).end()
 			return
 		}
-		if (account.connection === undefined) {
-			console.info("skipping account " + email + ": connection undefined")
+		if (!connectionComplete(account)) {
+			console.info("skipping account " + email + ": connection incomplete")
 			res.status(204).end()
 			return
 		}

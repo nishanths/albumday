@@ -2,7 +2,7 @@ import { assertExhaustive } from "./typeutil"
 
 export type Account = {
 	apiKey: string
-	connection: Connection | undefined
+	connection: Connection | null
 	settings: Settings
 }
 
@@ -26,7 +26,7 @@ export type Settings = {
 }
 
 export const connectionComplete = (a: Account): boolean => {
-	if (a.connection === undefined) {
+	if (a.connection === null) {
 		return false
 	}
 	switch (a.connection.service) {

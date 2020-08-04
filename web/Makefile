@@ -1,5 +1,5 @@
 ESBUILD := npx esbuild --bundle web.main.tsx --outdir=dist/js --minify --sourcemap
-SCSS := npx sass scss/main.scss dist/css/main.css
+SCSS := npx sass --source-map --embed-sources scss/main.scss dist/css/main.css
 
 .PHONY: watch
 watch: clean
@@ -13,7 +13,7 @@ build:
 
 .PHONY: build-prod
 build-prod:
-	$(SCSS)
+	$(SCSS) --style=compressed
 	$(ESBUILD) --define:process.env.NODE_ENV='"production"'
 	npx tsc # typecheck
 

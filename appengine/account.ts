@@ -13,7 +13,7 @@ export const emailFromAccountKey = (key: string): string => {
 export const zeroAccount = (timeZone: string): Account => {
 	return {
 		apiKey: crypto.randomBytes(12).toString("hex"),
-		connection: undefined,
+		connection: null,
 		settings: {
 			timeZone,
 			emailsEnabled: true,
