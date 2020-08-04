@@ -54,33 +54,37 @@ export class Connect extends React.Component<ConnectProps, State> {
 					classNames="fade"
 				>
 					<div className="container">
-						{this.state.pickedService === null &&
-						<CSSTransition in={this.state.servicesTransition} addEndListener={(node, done) => { node.addEventListener("transitionend", done, false) }} timeout={750} classNames="services-transition">
-						<div className="services">
-							<div className="service-container spotify" onClick={() => {
-								this.setState({ pickedService: "spotify" })
-								this.startDoneProgress()
-							}}>
-								<div className="service-box"></div>
-								<div className="service-label">Spotify</div>
+						{this.state.pickedService === null ?
+							<CSSTransition
+								in={this.state.servicesTransition}
+								addEndListener={(node, done) => { node.addEventListener("transitionend", done, false) }}
+								timeout={750}
+								classNames="services-transition"
+							>
+								<div className="services">
+									<div className="service-container spotify" onClick={() => {
+										this.setState({ pickedService: "spotify" })
+										this.startDoneProgress()
+									}}>
+										<div className="service-box"></div>
+										<div className="service-label">Spotify</div>
+									</div>
+
+									<div className="or"></div>
+
+									<div className="service-container scrobble" onClick={() => {
+										this.setState({ pickedService: "scrobble" })
+										this.startDoneProgress()
+									}}>
+										<div className="service-box"></div>
+										<div className="service-label">Apple Music</div>
+									</div>
+								</div>
+							</CSSTransition> :
+							<div className="service-detail">
+								{this.state.pickedService}
 							</div>
-
-							<div className="or"></div>
-
-							<div className="service-container scrobble" onClick={() => {
-								this.setState({ pickedService: "scrobble" })
-								this.startDoneProgress()
-							}}>
-								<div className="service-box"></div>
-								<div className="service-label">Apple Music</div>
-							</div>
-						</div>
-						</CSSTransition>
-					}
-
-						{this.state.pickedService !== null && <div className="service-detail">
-							{this.state.pickedService}
-						</div>}
+						}
 					</div>
 				</CSSTransition>
 			</SwitchTransition>
