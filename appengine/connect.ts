@@ -78,7 +78,7 @@ export const authSpotifyHandler = (spotifyClientID: string, spotifyClientSecret:
 	p.set("client_secret", spotifyClientSecret)
 	const tokenRsp = await axios.post<SpotifyTokenResponse>("https://accounts.spotify.com/api/token", p.toString(), { responseType: "json" })
 
-	// TODO: update redis for email
+	// TODO: update account for email in redis
 	console.log(tokenRsp.data.refresh_token)
 
 	res.redirect("/feed")

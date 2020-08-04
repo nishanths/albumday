@@ -3,12 +3,11 @@ html.Dashboard {
 }
 
 body.Dashboard {
-	min-height: 100%;
 }
 
 .Dashboard {
 	margin: 0 auto;
-	margin-top: 80px;
+	margin-top: 40px;
 	padding: 0 10px;
 	max-width: 760px;
 
@@ -41,5 +40,9 @@ body.Dashboard {
 
 	.pane {
 		margin-top: 50px;
+	}
+
+	@media (min-width: 700px) {
+		margin-top: 40px;
 	}
 }

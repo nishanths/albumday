@@ -56,6 +56,11 @@ export const loginHandler = (redis: RedisClient): RequestHandler => async (req, 
 		res.status(400).end()
 		return
 	}
+	const timeZone = req.query["timeZone"]
+	if (timeZone === undefined || typeof timeZone !== "string" || timeZone === "") {
+		res.status(400).end()
+		return
+	}
 
 	redis.GET(passphraseKey(email), async (err, reply) => {
 		if (err) {
@@ -81,7 +86,7 @@ export const loginHandler = (redis: RedisClient): RequestHandler => async (req, 
 		})
 
 		// ensure account is initialized
-		const account = await zeroAccount()
+		const account = await zeroAccount(timeZone)
 		redis.SETNX(accountKey(email), JSON.stringify(account), (err) => {
 			if (err) {
 				logRedisError(err, "initialize account")
@@ -101,7 +106,7 @@ const passphraseEmailSubject = "Passphrase for albumday"
 const passphraseEmailText = ({ email, passphrase }: { email: string, passphrase: string }) => `Hi,
 
 Someone has requested a passphrase for ${email} to log in to albumday
-(https://album.casa). The passphrase is:
+(https://album.casa). The passphrase is below.
 
 ${passphrase}
 
@@ -117,7 +122,7 @@ export const accountHandler = (redis: RedisClient): RequestHandler => async (req
 
 	const email = currentEmail(req)
 	if (email === null) {
-		// TODO also support API key header
+		// TODO: also support API key header
 		res.status(401).end()
 		return
 	}
@@ -150,7 +155,7 @@ export const accountHandler = (redis: RedisClient): RequestHandler => async (req
 		}
 
 		// blank out API key
-		// TODO fix after supporting API keys fully
+		// TODO: stop doing this after supporting API keys fully
 		account.apiKey = ""
 
 		res.status(200).contentType("application/json").send(account).end()

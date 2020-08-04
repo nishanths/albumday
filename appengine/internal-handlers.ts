@@ -35,7 +35,7 @@ export const cronDailyEmailHandler = (redis: RedisClient, tasks: TasksClient, ta
 	})
 }
 
-export const taskDailyEmailHandler  = (redis: RedisClient): RequestHandler => (req, res) => {
+export const taskDailyEmailHandler = (redis: RedisClient): RequestHandler => (req, res) => {
 	const task = req.body as DailyEmailTask
 	const email = emailFromAccountKey(task.accountKey)
 

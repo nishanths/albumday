@@ -8,6 +8,7 @@ export const indexHandler: RequestHandler = (req, res) => {
 
 	const bootstrap: Bootstrap = {
 		loggedIn: current !== null,
+		email: current,
 	}
 	res.render("index", {
 		title: "Albumday",
@@ -25,6 +26,7 @@ export const startHandler: RequestHandler = (req, res) => {
 
 	const bootstrap: Bootstrap = {
 		loggedIn: current !== null,
+		email: current,
 	}
 	res.render("index", {
 		title: "albumday",
@@ -46,6 +48,7 @@ export const feedHandler = (redis: RedisClient): RequestHandler => (req, res) =>
 
 	const bootstrap: Bootstrap = {
 		loggedIn: current !== null,
+		email: current,
 	}
 	res.render("index", {
 		title: "albumday",

@@ -1,12 +1,6 @@
-import { Service, trimPrefix } from "shared"
+import { Service, trimPrefix, Account } from "shared"
 import * as crypto from "crypto"
 import { promisify } from "util"
-
-export type Account = {
-	apiKey: string
-	connection: Connection | undefined
-	settings: Settings
-}
 
 export const accountKey = (email: string) => `:account:${email}`
 
@@ -16,31 +10,15 @@ export const emailFromAccountKey = (key: string): string => {
 	return trimPrefix(key, accountKeysPrefix)
 }
 
-export const zeroAccount = (): Account => {
+export const zeroAccount = (timeZone: string): Account => {
 	return {
 		apiKey: crypto.randomBytes(12).toString("hex"),
 		connection: undefined,
 		settings: {
+			timeZone,
 			emailsEnabled: true,
 		},
 	}
 }
 
-export type Connection = (SpotifyConnection | ScrobbleConnection) & {
-	error: any
-}
-
-type ScrobbleConnection = {
-	service: "scrobble"
-	username: string
-}
-
-type SpotifyConnection = {
-	service: "spotify"
-	refreshToken: string
-	email: string
-}
-
-export type Settings = {
-	emailsEnabled: boolean
-}
+export { Account }

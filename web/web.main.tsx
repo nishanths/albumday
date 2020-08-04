@@ -5,28 +5,52 @@ import { Bootstrap, Service } from "shared/types"
 import { Root } from "./components/root"
 import { Start } from "./components/start"
 import { Dashboard } from "./components/dashboard"
-import { ToastProvider } from "react-toast-notifications"
 import type { NProgressType } from "./types"
 
-declare const bootstrap: Bootstrap
+declare let bootstrap: Bootstrap
 declare const NProgress: NProgressType
 
 // configure NProgress globally
 NProgress.configure({ showSpinner: true, minimum: 0.1, trickleSpeed: 150, speed: 500 })
 
-const tree = <BrowserRouter>
-	<ToastProvider>
-		<Route exact path="/">
-			<Root />
-		</Route>
-		<Route exact path="/start">
-			<Start nProgress={NProgress} />
-		</Route>
-		<Route exact path={["/feed", "/settings"]}>
-			<Dashboard />
-		</Route>
-	</ToastProvider>
-</BrowserRouter>
+type TreeProps = {
+	bootstrap: Bootstrap
+}
+
+class Tree extends React.Component<TreeProps, { bootstrap: Bootstrap }> {
+	constructor(props: TreeProps) {
+		super(props)
+		this.state = {
+			bootstrap: props.bootstrap,
+		}
+	}
+
+	render() {
+		return <BrowserRouter>
+			<Switch>
+				<Route exact path="/">
+					<Root />
+				</Route>
+
+				<Route exact path="/start">
+					<Start nProgress={NProgress} onLogin={email => {
+						this.setState({
+							bootstrap: { loggedIn: true, email },
+						})
+					}} />
+				</Route>
+
+				<Route exact path={["/feed", "/settings"]}>
+					<Dashboard nProgress={NProgress} email={this.state.bootstrap.email!} onLogout={() => {
+						this.setState({
+							bootstrap: { loggedIn: false, email: null },
+						})
+					}} />
+				</Route>
+			</Switch>
+		</BrowserRouter>
+	}
+}
 
 
-ReactDOM.render(tree, document.querySelector("#mount"))
+ReactDOM.render(<Tree bootstrap={bootstrap} />, document.querySelector("#mount"))
