@@ -30,11 +30,18 @@ export const connectionComplete = (a: Account): boolean => {
 		return false
 	}
 	switch (a.connection.service) {
-	case "spotify":
-		return a.connection.refreshToken !== ""
-	case "scrobble":
-		return a.connection.username !== ""
-	default:
-		assertExhaustive(a.connection)
+		case "spotify":
+			return a.connection.refreshToken !== ""
+		case "scrobble":
+			return a.connection.username !== ""
+		default:
+			assertExhaustive(a.connection)
 	}
 }
+
+export type Bootstrap = {
+	loggedIn: boolean
+	email: string | null
+}
+
+export type Service = Connection["service"]

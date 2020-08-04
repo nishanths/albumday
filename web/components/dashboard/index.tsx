@@ -84,7 +84,7 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 					}).showToast()
 					break
 			}
-		} catch(e) {
+		} catch (e) {
 			console.error(e)
 			Toastify({
 				...defaultToastOptions,
@@ -127,7 +127,7 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 
 		const pane = this.state.account !== null &&
 			<div className="pane">
-				{(this.pane() === "feed" || !connectionComplete(this.state.account)) ?
+				{this.pane() === "feed" ?
 					<Feed
 						account={this.state.account}
 						email={this.props.email}

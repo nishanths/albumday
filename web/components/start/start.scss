@@ -17,16 +17,17 @@ body.Start {
 		bottom: 100px;
 
 		.name {
-			color: #777;
+			font-weight: bold;
 			font-size: 24px;
 			a {
 				text-decoration: none;
-				color: #777;
+				color: $light-gray;
 			}
 		}
 		.start {
 			font-weight: bold;
 			font-size: 24px;
+			color: $color-default;
 		}
 	}
 
@@ -56,7 +57,7 @@ body.Start {
 				box-shadow: none;
 				outline: 3px solid hsla(0, 0, 0, 0.2);
 				font-family: $font-family;
-				color: #444;
+				color: $color-default;
 
 				&:focus {
 					border-color: transparent;

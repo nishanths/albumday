@@ -1,0 +1,84 @@
+.Connect {
+	.main-instruction {
+		font-size: 26px;
+		font-weight: bold;
+		color: $color-default;
+		margin-bottom: 60px;
+	}
+	.container {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		.services {
+			display: flex;
+		    justify-content: center;
+		    width: 100%;
+		    max-width: 500px;
+
+		    .or {
+		    	height: inherit;
+			    border-right: 1px solid rgb(120 120 120 / 19%);
+		    }
+
+			.service-container {
+			    box-sizing: content-box;
+			    cursor: pointer;
+
+				.service-box {
+			    	display: flex;
+			    	align-items: center;
+			    	justify-content: center;
+					height: 100px;
+					width: 100px;
+				}
+
+				&.spotify {
+					border-right: solid 30px transparent;
+					.service-box {
+						background-image: url(/img/spotify.svg);
+						background-size: 100px;
+					}
+				}
+				&.scrobble {
+					border-left: solid 30px transparent;
+					.service-box {
+						background-image: url(/img/apple_music.svg);
+					}
+				}
+
+				.service-label {
+					line-height: 1.5;
+					color: $light-gray;
+					text-align: center;
+					font-size: 15px;
+					margin-top: 20px;
+					a {
+						color: $light-gray;
+					}
+				}
+			}
+		}
+	}
+
+	@media (min-width: 460px) {
+		.container {
+			.services {
+				.service-container {
+					&.spotify {
+						border-right: solid 50px transparent;
+					}
+					&.scrobble {
+						border-left: solid 50px transparent;
+					}
+				}
+			}
+		}
+	}
+
+	@media (min-width: 700px) {
+		.main-instruction {
+			margin-bottom: 90px;
+		}
+	}
+}

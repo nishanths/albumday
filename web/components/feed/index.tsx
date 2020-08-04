@@ -1,5 +1,7 @@
 import React from "react"
-import { Account } from "shared"
+import { Account, connectionComplete } from "shared"
+import Toastify from "toastify-js"
+import { Connect } from "../connect"
 
 export type FeedProps = {
 	account: Account
@@ -12,7 +14,17 @@ export class Feed extends React.Component<FeedProps> {
 		super(props)
 	}
 
+	componentDidMount() {
+
+	}
+
 	render() {
-		return <>feed</>
+		if (connectionComplete(this.props.account)) {
+			return <></>
+		}
+
+		return <div className="Feed">
+			<Connect />
+		</div>
 	}
 }

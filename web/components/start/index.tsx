@@ -197,7 +197,7 @@ class StartComponent extends React.Component<StartProps, State> {
 			</Helmet>
 
 			<div className="heading">
-				<span className="name"><Link to="/">Albumday</Link> / </span>
+				<span className="name"><Link to="/">Albumday</Link> | </span>
 				<span className="start">Register or Login</span>
 			</div>
 
