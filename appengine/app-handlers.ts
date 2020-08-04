@@ -29,7 +29,7 @@ export const startHandler: RequestHandler = (req, res) => {
 		email: current,
 	}
 	res.render("index", {
-		title: "albumday",
+		title: "Albumday",
 		bootstrapJSON: quote(JSON.stringify(bootstrap))
 	})
 }
@@ -47,7 +47,7 @@ export const feedHandler = (redis: RedisClient): RequestHandler => (req, res) =>
 		email: current,
 	}
 	res.render("index", {
-		title: "albumday",
+		title: "Albumday",
 		bootstrapJSON: quote(JSON.stringify(bootstrap))
 	})
 }
