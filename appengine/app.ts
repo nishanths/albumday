@@ -37,12 +37,11 @@ const main = async () => {
 	// routes
 	mainRouter.get("/", indexHandler)
 	mainRouter.get("/start/?", startHandler)
-	mainRouter.get("/feed/?", feedHandler(redis))
-	mainRouter.get("/settings/?", feedHandler(redis)) // TODO
+	mainRouter.get(["/feed/?", "/settings/?"], feedHandler(redis))
 	mainRouter.get("/logout/?", logoutHandler)
 	mainRouter.get("/connect/spotify", connectSpotifyHandler(config.spotifyClientID))
 	mainRouter.get("/auth/spotify", authSpotifyHandler(config.spotifyClientID, config.spotifyClientSecret, redis))
-	// TODO /connect/scrobble/
+	// TODO: /connect/scrobble/
 	mainRouter.post("/internal/cron/daily-email", requireCronHeader, cronDailyEmailHandler(redis, tasks, config.tasksSecret))
 	mainRouter.post("/internal/task/daily-email", requireTasksSecret(config.tasksSecret), jsonParser, taskDailyEmailHandler(redis))
 
@@ -65,7 +64,7 @@ const main = async () => {
 }
 
 const logRequestAuthentication: RequestHandler = (req, res, next) => {
-	// TODO also support API key
+	// TODO: also support API key
 	const email = currentEmail(req)
 	const s = email === null ? "unauthenticated user" : email
 	console.log(`request from ${s}`)

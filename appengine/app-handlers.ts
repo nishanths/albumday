@@ -42,10 +42,6 @@ export const feedHandler = (redis: RedisClient): RequestHandler => (req, res) =>
 		return
 	}
 
-	// TODO: check if connect-data (spotify, scrobble) to be present
-	// if not present need to render "connect" view of feed page
-	// else need to render "feed" view of feed page
-
 	const bootstrap: Bootstrap = {
 		loggedIn: current !== null,
 		email: current,
