@@ -6,6 +6,7 @@ export function newRedis(config: Pick<Config, "redisHost" | "redisPort" | "redis
 		host: config.redisHost,
 		port: config.redisPort,
 		tls: config.redisTls,
+		db: 0,
 		retry_strategy: (opt) => {
 			if (opt.attempt > 3) { return undefined }
 			return 10
