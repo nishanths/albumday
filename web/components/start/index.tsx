@@ -4,7 +4,7 @@ import { validate as validateEmail } from "email-validator"
 import { Link, withRouter } from "react-router-dom"
 import { RouteComponentProps } from "react-router";
 import { NProgressType } from "../../types"
-import { CSSTransition, SwitchTransition } from "react-transition-group"
+import { CSSTransition } from "react-transition-group"
 import { Temporal } from "proposal-temporal"
 import Toastify, { ToastHandle, Options as ToastOptions } from "toastify-js"
 import { defaultToastOptions, colors } from "../../shared"

@@ -1,14 +1,61 @@
 .Connect {
 	.main-instruction {
-		font-size: 26px;
-		font-weight: bold;
-		color: $color-default;
+		.title {
+			font-size: 26px;
+			font-weight: bold;
+			color: $color-default;
+			margin-bottom: 3px;
+		}
+		.subtitle {
+			color: $light-gray;
+			max-width: 450px;
+		}
 		margin-bottom: 60px;
 	}
+
+	.fade-enter.container {
+		  opacity: 0;
+		  transform: translateX(-5%);
+		}
+		.fade-enter-active.container {
+		  opacity: 1;
+		  transform: translateX(0%);
+		}
+		.fade-exit.container {
+		  opacity: 1;
+		  transform: translateX(0%);
+		}
+		.fade-exit-active.container {
+		  opacity: 0;
+		  transform: translateX(20%);
+		}
+		.fade-enter-active.container,
+		.fade-exit-active.container {
+		  transition: opacity 500ms, transform 500ms;
+		}
+
 	.container {
 		display: flex;
 		align-items: center;
 		justify-content: center;
+
+		.services-transition-enter {
+			transform: translateY(-20px);
+		}
+		.services-transition-enter-active {
+			transform: translateY(0);
+			transition: transform 750ms;
+		}
+
+		// .services-transition-exit {
+		// 	transform: translateY(-20px);
+		// }
+		// .services-transition-exit-active {
+		// 	transform: translateY(0);
+		// 	transition: transform 750ms;
+		// }
+
+
 
 		.services {
 			display: flex;

@@ -99,6 +99,7 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 
 	componentWillUnmount() {
 		this.abort.abort()
+		this.props.nProgress.done()
 	}
 
 	private requestStart() {
@@ -134,6 +135,7 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 						onAccountChange={(account) => {
 							this.setState({ account })
 						}}
+						nProgress={this.props.nProgress}
 					/> :
 					<Settings
 						account={this.state.account}
