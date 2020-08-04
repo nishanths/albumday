@@ -4,6 +4,8 @@ import { URLSearchParams } from "url"
 import { RequestHandler, Request } from "express"
 import { currentEmail } from "./cookie"
 import axios from "axios"
+import { RedisClient, logRedisError } from "./redis"
+import { accountKey, Account } from "./account"
 
 const cookieNameState = "albumday:state"
 
@@ -48,7 +50,7 @@ type SpotifyCallback = { state: string } & (
 	| { error: string, code: undefined | null | "" }
 )
 
-export const authSpotifyHandler = (spotifyClientID: string, spotifyClientSecret: string): RequestHandler => async (req, res) => {
+export const authSpotifyHandler = (spotifyClientID: string, spotifyClientSecret: string, redis: RedisClient): RequestHandler => async (req, res) => {
 	const c = req.query as SpotifyCallback
 
 	if (c.error !== undefined && c.error !== null && c.error !== "") {
@@ -76,12 +78,49 @@ export const authSpotifyHandler = (spotifyClientID: string, spotifyClientSecret:
 	p.set("redirect_uri", spotifyRedirectURL(req))
 	p.set("client_id", spotifyClientID)
 	p.set("client_secret", spotifyClientSecret)
-	const tokenRsp = await axios.post<SpotifyTokenResponse>("https://accounts.spotify.com/api/token", p.toString(), { responseType: "json" })
 
-	// TODO: update account for email in redis
-	console.log(tokenRsp.data.refresh_token)
+	let tokenRsp: SpotifyTokenResponse
+	try {
+		const r = await axios.post<SpotifyTokenResponse>("https://accounts.spotify.com/api/token", p.toString(), { responseType: "json" })
+		tokenRsp = r.data
+	} catch (e) {
+		console.error("spotify api token:", e)
+		res.redirect("/feed")
+		return
+	}
 
-	res.redirect("/feed")
+	const accountEmail = cookieState.email
+
+	// XXX: requires transaction
+	redis.GET(accountKey(accountEmail), (err, reply) => {
+		if (err) {
+			logRedisError(err, "get account")
+			res.redirect("/feed")
+			return
+		}
+		if (reply === null) {
+			console.error("unexpected null reply for account: " + accountEmail)
+			res.redirect("/feed")
+			return
+		}
+
+		const account = JSON.parse(reply) as Account
+		account.connection = {
+			service: "spotify" as const,
+			refreshToken: tokenRsp.refresh_token,
+			error: null,
+		}
+
+		redis.SET(accountKey(accountEmail), JSON.stringify(account), err => {
+			if (err) {
+				logRedisError(err, "set account")
+				res.redirect("/feed")
+				return
+			}
+
+			res.redirect("/feed")
+		})
+	})
 }
 
 type SpotifyTokenResponse = {
@@ -92,4 +131,4 @@ type SpotifyTokenResponse = {
 	refresh_token: string
 }
 
-const spotifyRedirectURL = (req: Request) => req.protocol + "://" + req.get("host") + "/auth/spotify"
+const spotifyRedirectURL = (userReq: Request) => userReq.protocol + "://" + userReq.hostname + "/auth/spotify"

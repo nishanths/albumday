@@ -18,7 +18,6 @@ type ScrobbleConnection = {
 type SpotifyConnection = {
 	service: "spotify"
 	refreshToken: string
-	email: string
 }
 
 export type Settings = {

@@ -41,7 +41,7 @@ const main = async () => {
 	mainRouter.get("/settings/?", feedHandler(redis)) // TODO
 	mainRouter.get("/logout/?", logoutHandler)
 	mainRouter.get("/connect/spotify", connectSpotifyHandler(config.spotifyClientID))
-	mainRouter.get("/auth/spotify", authSpotifyHandler(config.spotifyClientID, config.spotifyClientSecret))
+	mainRouter.get("/auth/spotify", authSpotifyHandler(config.spotifyClientID, config.spotifyClientSecret, redis))
 	// TODO /connect/scrobble/
 	mainRouter.post("/internal/cron/daily-email", requireCronHeader, cronDailyEmailHandler(redis, tasks, config.tasksSecret))
 	mainRouter.post("/internal/task/daily-email", requireTasksSecret(config.tasksSecret), jsonParser, taskDailyEmailHandler(redis))
