@@ -218,7 +218,7 @@ class StartComponent extends React.Component<StartProps, State> {
 							<div className={"instruction"}>
 								{<>
 									<p>Enter your email address.</p>
-									<p><Link to="/">Go back to album.casa.</Link></p>
+									<p><Link to="/">Return to album.casa.</Link></p>
 								</>}
 							</div>
 						</> :
