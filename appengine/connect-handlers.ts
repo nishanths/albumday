@@ -56,6 +56,7 @@ export const authSpotifyHandler = (spotifyClientID: string, spotifyClientSecret:
 
 	const c = req.query as SpotifyCallback
 	if (c.error !== undefined && c.error !== null && c.error !== "") {
+		res.clearCookie(cookieNameState)
 		res.redirect(errorRedirect)
 		return
 	}
@@ -64,11 +65,13 @@ export const authSpotifyHandler = (spotifyClientID: string, spotifyClientSecret:
 	const incomingState = JSON.parse(c.state) as StateCookie
 	const cookieStateJSON = req.signedCookies[cookieNameState] as string | undefined
 	if (cookieStateJSON === undefined) {
+		res.clearCookie(cookieNameState)
 		res.status(400).send("missing state cookie").end()
 		return
 	}
 	const cookieState = JSON.parse(cookieStateJSON) as StateCookie
 	if (cookieState.state !== incomingState.state) {
+		res.clearCookie(cookieNameState)
 		res.status(500).send("state mismatch").end()
 		return
 	}
@@ -87,6 +90,7 @@ export const authSpotifyHandler = (spotifyClientID: string, spotifyClientSecret:
 		tokenRsp = r.data
 	} catch (e) {
 		console.error("spotify api token:", e)
+		res.clearCookie(cookieNameState)
 		res.redirect(errorRedirect)
 		return
 	}
@@ -97,11 +101,13 @@ export const authSpotifyHandler = (spotifyClientID: string, spotifyClientSecret:
 	redis.GET(accountKey(accountEmail), (err, reply) => {
 		if (err) {
 			logRedisError(err, "get account")
+			res.clearCookie(cookieNameState)
 			res.redirect(errorRedirect)
 			return
 		}
 		if (reply === null) {
 			console.error("unexpected null reply for account: " + accountEmail)
+			res.clearCookie(cookieNameState)
 			res.redirect(errorRedirect)
 			return
 		}
@@ -116,10 +122,12 @@ export const authSpotifyHandler = (spotifyClientID: string, spotifyClientSecret:
 		redis.SET(accountKey(accountEmail), JSON.stringify(account), err => {
 			if (err) {
 				logRedisError(err, "set account")
+				res.clearCookie(cookieNameState)
 				res.redirect(errorRedirect)
 				return
 			}
 
+			res.clearCookie(cookieNameState)
 			res.redirect(successRedirect)
 		})
 	})
@@ -162,6 +170,10 @@ export const connectScrobbleHandler = (redis: RedisClient): RequestHandler => as
 		if (err.response?.status === 403) {
 			// profile is private
 			res.status(409).send("profile appears to be private").end()
+			return
+		}
+		if (err.response?.status === 404) {
+			res.status(404).send("profile appears to be missing").end()
 			return
 		}
 		res.status(500).end()

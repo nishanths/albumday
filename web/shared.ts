@@ -3,6 +3,7 @@ import { Options as ToastOptions } from "toastify-js"
 export const colors = {
 	green: "rgba(49, 199, 67, 1)",
 	brightRed: "rgba(251, 83, 76, 1)",
+	yellow: "rgba(252, 188, 59, 1)",
 }
 
 export const defaultToastOptions: Partial<ToastOptions> = {

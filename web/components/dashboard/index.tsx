@@ -73,6 +73,9 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 						text: "Cookie appears to be b0rked. Please log out and try again.",
 						backgroundColor: colors.brightRed,
 						duration: -1,
+						onClick: () => {
+							window.location.assign("/start")
+						},
 					}).showToast()
 					break
 				default:

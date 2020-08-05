@@ -205,7 +205,7 @@ class StartComponent extends React.Component<StartProps, State> {
 				<div className="form">
 					{submittedEmail === "" ?
 						<>
-							<div className="step">Log in or register. Step 1 of 2</div>
+							<div className="step">Log in or register</div>
 							<form onSubmit={e => { e.preventDefault(); this.onEmailSubmit() }}>
 								<input
 									value={email} onChange={e => { this.setState({ email: e.target.value, error: undefined }) }}
@@ -223,7 +223,7 @@ class StartComponent extends React.Component<StartProps, State> {
 							</div>
 						</> :
 						<>
-							<div className="step">Step 2 of 2</div>
+							<div className="step">Log in or register</div>
 							<form onSubmit={e => { e.preventDefault(); this.onPassphraseSubmit() }}>
 								<input
 									value={passphrase} onChange={e => { this.setState({ passphrase: e.target.value, error: undefined }) }}
