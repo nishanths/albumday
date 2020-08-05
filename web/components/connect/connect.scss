@@ -7,49 +7,46 @@
 			margin-bottom: 3px;
 		}
 		.subtitle {
-			color: $light-gray;
+			color: $color-instruction;
 			max-width: 450px;
 		}
 		margin-bottom: 60px;
 	}
 
-	.fade-enter.container {
+	.services-next-step-transition-enter.container {
 		opacity: 0;
 		transform: translateX(-5%);
 	}
-	.fade-enter-active.container {
+	.services-next-step-transition-enter-active.container {
 		opacity: 1;
 		transform: translateX(0%);
 	}
-	.fade-exit.container {
+	.services-next-step-transition-exit.container {
 		opacity: 1;
 		transform: translateX(0%);
 	}
-	.fade-exit-active.container {
+	.services-next-step-transition-exit-active.container {
 		opacity: 0;
 		transform: translateX(20%);
 	}
-	.fade-enter-active.container,
-	.fade-exit-active.container {
+	.services-next-step-transition-enter-active.container,
+	.services-next-step-transition-exit-active.container {
 		transition: opacity 500ms, transform 500ms;
 	}
 
 	.container {
 		display: flex;
-		align-items: center;
-		justify-content: center;
 
-		.services-transition-enter {
+		.services-down-transition-enter {
 			transform: translateY(-20px);
 		}
-		.services-transition-enter-active {
+		.services-down-transition-enter-active {
 			transform: translateY(0);
 			transition: transform 750ms;
 		}
 
 		.services {
 			display: flex;
-			justify-content: center;
 			width: 100%;
 			max-width: 500px;
 
@@ -68,6 +65,15 @@
 					justify-content: center;
 					height: 100px;
 					width: 100px;
+
+				    transition: 250ms $transition-exit-func transform;
+				}
+
+				&:hover {
+					.service-box {
+						transform: scale(1.07);
+						transition: 500ms $transition-enter-func transform;
+					}
 				}
 
 				&.spotify {
@@ -86,12 +92,12 @@
 
 				.service-label {
 					line-height: 1.5;
-					color: $light-gray;
+					color: $color-instruction;
 					text-align: center;
 					font-size: 15px;
-					margin-top: 20px;
+					margin-top: 30px;
 					a {
-						color: $light-gray;
+						color: $color-instruction;
 					}
 				}
 			}
@@ -103,10 +109,10 @@
 			.services {
 				.service-container {
 					&.spotify {
-						border-right: solid 50px transparent;
+						border-right: solid 40px transparent;
 					}
 					&.scrobble {
-						border-left: solid 50px transparent;
+						border-left: solid 40px transparent;
 					}
 				}
 			}

@@ -1,6 +1,6 @@
 .PHONY: watch
 watch: clean
-	@./watch
+	@source ./watch # source for env vars forwarding
 
 .PHONY: build
 build:

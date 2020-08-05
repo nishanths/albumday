@@ -1,33 +1,33 @@
-html.Dashboard {
-	height: 100%;
+html.DashboardHTML {
 }
 
-body.Dashboard {
+body.DashboardBody {
 }
 
 .Dashboard {
 	margin: 0 auto;
 	margin-top: 20px;
-	padding: 0 10px;
+	padding: 0 15px 0 15px;
 	max-width: 700px;
-
-
 	.nav {
-		font-size: 36px;
-		font-weight: bold;
 		display: flex;
 
 		.nav-item {
+			font-size: 36px;
+			font-weight: bold;
+
 			a {
 				color: $light-gray;
 				text-decoration: none;
+				transition: all 150ms $ease-out-expo;
 				&:hover {
-					color: $green-alpha;
+					color: $http-pink;
+					opacity: 0.95;
 				}
 			}
 			&.active {
 				a {
-					color: $green;
+					color: $http-pink;
 				}
 			}
 
@@ -42,7 +42,12 @@ body.Dashboard {
 		margin-top: 50px;
 	}
 
+	@media (min-width: 350px) {
+		padding: 0 20px;
+	}
+
 	@media (min-width: 600px) {
+		padding: 0 30px;
 		margin-top: 40px;
 	}
 }

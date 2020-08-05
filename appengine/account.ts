@@ -17,6 +17,7 @@ export const zeroAccount = (timeZone: string): Account => {
 		settings: {
 			timeZone,
 			emailsEnabled: true,
+			emailFormat: "html",
 		},
 	}
 }

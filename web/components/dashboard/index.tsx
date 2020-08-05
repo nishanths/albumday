@@ -25,9 +25,9 @@ type State = {
 const paneToTitle = (p: Pane): string => {
 	switch (p) {
 		case "feed":
-			return "Feed"
+			return "feed"
 		case "settings":
-			return "Settings"
+			return "settings"
 		default:
 			assertExhaustive(p)
 	}
@@ -70,7 +70,7 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 					// cookie expired or malicious request?
 					Toastify({
 						...defaultToastOptions,
-						text: "Cookie appears to be b0rked. Please reload.",
+						text: "Cookie appears to be b0rked. Please log out and try again.",
 						backgroundColor: colors.brightRed,
 						duration: -1,
 					}).showToast()
@@ -112,17 +112,17 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 
 	render() {
 		const helmet = <Helmet>
-			<html className="Dashboard" />
-			<title>Albumday / {paneToTitle(this.pane())}</title>
-			<body className="Dashboard" />
+			<html className="DashboardHTML" />
+			<title>album birthdays / {paneToTitle(this.pane())}</title>
+			<body className="DashboardBody" />
 		</Helmet>
 
 		const nav = <div className="nav">
 			<div className={classNames("nav-item", { "active": this.pane() === "feed" })} title="Switch to Feed">
-				<Link to="/feed">Feed</Link>
+				<Link to="/feed">feed</Link>
 			</div>
 			<div className={classNames("nav-item", { "active": this.pane() === "settings" })} title="Switch to Settings">
-				<Link to="/settings">Settings</Link>
+				<Link to="/settings">settings</Link>
 			</div>
 		</div>
 
@@ -136,6 +136,7 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 							this.setState({ account })
 						}}
 						nProgress={this.props.nProgress}
+						location={this.props.location}
 					/> :
 					<Settings
 						account={this.state.account}

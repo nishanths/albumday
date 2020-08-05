@@ -1,15 +1,18 @@
 import React from "react"
-import { Service, scrobbleBaseURL } from "shared"
+import { Service, scrobbleBaseURL, Connection } from "shared"
 import { NProgressType } from "../../types"
 import { CSSTransition, SwitchTransition } from "react-transition-group"
+import { RouteComponentProps } from "react-router"
+import { Scrobble } from "./scrobble"
 
 type State = {
 	pickedService: Service | null
-	servicesTransition: boolean
+	servicesDownTransition: boolean
 }
 
 export type ConnectProps = {
 	nProgress: NProgressType
+	onConnectionChange: (c: Connection) => void
 }
 
 export class Connect extends React.Component<ConnectProps, State> {
@@ -19,11 +22,11 @@ export class Connect extends React.Component<ConnectProps, State> {
 		super(props)
 		this.state = {
 			pickedService: null,
-			servicesTransition: false,
+			servicesDownTransition: false,
 		}
 	}
 
-	// Start and stop the progress bar to simulate the effect of a change taking
+	// Start and done the progress bar to simulate the effect of a change taking
 	// place.
 	private startDoneProgress() {
 		this.props.nProgress.start()
@@ -33,7 +36,7 @@ export class Connect extends React.Component<ConnectProps, State> {
 	}
 
 	componentDidMount() {
-		this.setState({ servicesTransition: true })
+		this.setState({ servicesDownTransition: true })
 	}
 
 	componentWillUnmount() {
@@ -44,27 +47,26 @@ export class Connect extends React.Component<ConnectProps, State> {
 		return <div className="Connect">
 			<div className="main-instruction">
 				<div className="title">Link your music.</div>
-				<div className="subtitle">To receive email notifications and see your feed, set up your music service.</div>
+				<div className="subtitle">To receive email notifications and see your feed, connect with your music service.</div>
 			</div>
 
 			<SwitchTransition mode="out-in">
 				<CSSTransition
 					addEndListener={(node, done) => { node.addEventListener("transitionend", done, false) }}
 					key={"" + (this.state.pickedService === null)}
-					classNames="fade"
+					classNames="services-next-step-transition"
 				>
 					<div className="container">
 						{this.state.pickedService === null ?
 							<CSSTransition
-								in={this.state.servicesTransition}
+								in={this.state.servicesDownTransition}
 								addEndListener={(node, done) => { node.addEventListener("transitionend", done, false) }}
 								timeout={750}
-								classNames="services-transition"
+								classNames="services-down-transition"
 							>
 								<div className="services">
 									<div className="service-container spotify" onClick={() => {
-										this.setState({ pickedService: "spotify" })
-										this.startDoneProgress()
+										window.location.pathname = "/connect/spotify"
 									}}>
 										<div className="service-box"></div>
 										<div className="service-label">Spotify</div>
@@ -74,7 +76,6 @@ export class Connect extends React.Component<ConnectProps, State> {
 
 									<div className="service-container scrobble" onClick={() => {
 										this.setState({ pickedService: "scrobble" })
-										this.startDoneProgress()
 									}}>
 										<div className="service-box"></div>
 										<div className="service-label">Apple Music</div>
@@ -82,7 +83,12 @@ export class Connect extends React.Component<ConnectProps, State> {
 								</div>
 							</CSSTransition> :
 							<div className="service-detail">
-								{this.state.pickedService}
+								{this.state.pickedService === "scrobble" &&
+									<Scrobble
+										onBack={() => { this.setState({ pickedService: null }) }}
+										nProgress={this.props.nProgress}
+										onConnectionChange={this.props.onConnectionChange}
+									/>}
 							</div>
 						}
 					</div>

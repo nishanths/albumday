@@ -7,7 +7,12 @@ export type Account = {
 }
 
 export type Connection = (SpotifyConnection | ScrobbleConnection) & {
-	error: any
+	error: ConnectionError | null
+}
+
+type ConnectionError = {
+	display: string
+	timestamp: number
 }
 
 type ScrobbleConnection = {
@@ -23,6 +28,7 @@ type SpotifyConnection = {
 export type Settings = {
 	timeZone: string
 	emailsEnabled: boolean
+	emailFormat: "html" | "plain-text"
 }
 
 export const connectionComplete = (a: Account): boolean => {

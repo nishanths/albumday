@@ -33,11 +33,14 @@ class Mount extends React.Component<MountProps, { bootstrap: Bootstrap }> {
 				</Route>
 
 				<Route exact path="/start">
-					<Start nProgress={NProgress} onLogin={email => {
-						this.setState({
-							bootstrap: { loggedIn: true, email },
-						})
-					}} />
+					{this.state.bootstrap.loggedIn ?
+						<Redirect to="/feed" /> :
+						<Start nProgress={NProgress} onLogin={email => {
+							this.setState({
+								bootstrap: { loggedIn: true, email },
+							})
+						}} />
+					}
 				</Route>
 
 				<Route exact path={["/feed", "/settings"]}>

@@ -1,33 +1,35 @@
-html.Start {
+html.StartHTML {
 	height: 100%;
 }
 
-body.Start {
+body.StartBody {
 	min-height: 100%;
-}
-
-.Start {
-	flex-direction: column;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+}
 
+.Start {
 	.heading {
 		position: relative;
 		bottom: 100px;
+		text-align: center;
 
 		.name {
-			font-weight: bold;
-			font-size: 24px;
+			display: none;
+			font-size: 36px;
+			margin-bottom: 5px;
 			a {
 				text-decoration: none;
 				color: $light-gray;
 			}
+			.bold {
+				font-weight: bold;
+			}
 		}
 		.start {
-			font-weight: bold;
-			font-size: 24px;
-			color: $color-default;
+			font-size: 26px;
+			color: $light-gray;
 		}
 	}
 
@@ -40,10 +42,10 @@ body.Start {
 	}
 
 	.form {
-		max-width: 400px;
-		min-width: 400px;
+		min-width: 300px;
+		max-width: 300px;
 		min-height: 185px; // manually inspected
-		padding: 0 20px;
+		padding: 0 10px;
 
 		form {
 			display: flex;
@@ -61,10 +63,13 @@ body.Start {
 
 				&:focus {
 					border-color: transparent;
-					outline: 3px solid $green;
+					outline: 3px solid $http-pink;
 				}
 				&:disabled {
 					opacity: 0.5;
+				}
+				&::placeholder {
+					color: #ddd;
 				}
 
 				width: 100%;
@@ -78,7 +83,7 @@ body.Start {
 			width: 100%;
 			line-height: 1.4em;
 			font-size: 15px;
-			color: #777;
+			color: $color-instruction;
 			margin-top: 14px;
 			p {
 				margin-top: 0;
@@ -89,8 +94,16 @@ body.Start {
 			width: 100%;
 			line-height: 1.35em;
 			font-size: 15px;
-			color: #777;
+			color: $color-instruction;
 			margin-bottom: 14px;
+		}
+	}
+
+	@media (min-width: 600px) {
+		.form {
+			max-width: 400px;
+			min-width: 400px;
+			padding: 0 20px;
 		}
 	}
 }

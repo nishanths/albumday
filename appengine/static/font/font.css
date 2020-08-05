@@ -24,32 +24,7 @@
  * © 2015 MyFonts Inc
 */
 
-@import url("//hello.myfonts.net/count/2f00b2");
-
-@font-face {
-  font-family: cooper-hewitt;
-  font-weight: 400;
-  src: url("cooper-hewitt/CooperHewitt-Book.otf") format("opentype");
-}
-
-@font-face {
-  font-family: cooper-hewitt;
-  font-weight: 500;
-  src: url("cooper-hewitt/CooperHewitt-Medium.otf") format("opentype");
-}
-
-@font-face {
-  font-family: cooper-hewitt;
-  font-weight: 600;
-  src: url("cooper-hewitt/CooperHewitt-Semibold.otf") format("opentype");
-}
-
-@font-face {
-  font-family: cooper-hewitt;
-  font-weight: 700;
-  src: url("cooper-hewitt/CooperHewitt-Bold.otf") format("opentype");
-}
-
+/*@import url("//hello.myfonts.net/count/2f00b2");*/
 
 @font-face {
   font-family: 'proxima-nova';

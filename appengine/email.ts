@@ -33,4 +33,4 @@ class LoggingEmailClient implements EmailClient {
 	}
 }
 
-export const defaultFromEmail = { name: "Albumday", email: "hardworkingbot@gmail.com" }
+export const defaultFromEmail = { name: "album birthdays", email: "hardworkingbot@gmail.com" }

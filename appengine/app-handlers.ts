@@ -11,25 +11,20 @@ export const indexHandler: RequestHandler = (req, res) => {
 		email: current,
 	}
 	res.render("index", {
-		title: "Albumday",
+		title: "album birthdays",
 		bootstrapJSON: quote(JSON.stringify(bootstrap))
 	})
 }
 
 export const startHandler: RequestHandler = (req, res) => {
-	const current = currentEmail(req)
-
-	if (current !== null) {
-		res.redirect("/feed")
-		return
-	}
-
+	// for hard-visits, clear cookie and show login page
+	res.clearCookie(cookieNameIdentity)
 	const bootstrap: Bootstrap = {
-		loggedIn: current !== null,
-		email: current,
+		loggedIn: false,
+		email: null,
 	}
 	res.render("index", {
-		title: "Albumday",
+		title: "album birthdays",
 		bootstrapJSON: quote(JSON.stringify(bootstrap))
 	})
 }
@@ -47,7 +42,7 @@ export const feedHandler = (redis: RedisClient): RequestHandler => (req, res) =>
 		email: current,
 	}
 	res.render("index", {
-		title: "Albumday",
+		title: "album birthdays",
 		bootstrapJSON: quote(JSON.stringify(bootstrap))
 	})
 }

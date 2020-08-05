@@ -153,6 +153,7 @@ class StartComponent extends React.Component<StartProps, State> {
 
 	componentWillUnmount() {
 		this.abort.abort()
+		this.toast?.hideToast()
 		this.submittingDone()
 	}
 
@@ -191,21 +192,20 @@ class StartComponent extends React.Component<StartProps, State> {
 
 		return <div className="Start">
 			<Helmet>
-				<html className="Start" />
-				<title>Albumday / Register or Login</title>
-				<body className="Start" />
+				<html className="StartHTML" />
+				<title>album birthdays / register or login</title>
+				<body className="StartBody" />
 			</Helmet>
 
 			<div className="heading">
-				<span className="name"><Link to="/">Albumday</Link> | </span>
-				<span className="start">Register or Login</span>
+				<div className="name"><Link to="/">album <span className="bold">birthdays</span></Link></div>
 			</div>
 
 			<CSSTransition in={this.state.formTransition} addEndListener={(node, done) => { node.addEventListener("transitionend", done, false) }} timeout={750} classNames="form-transition">
 				<div className="form">
 					{submittedEmail === "" ?
 						<>
-							<div className="step">Step 1 of 2</div>
+							<div className="step">Log in or register. Step 1 of 2</div>
 							<form onSubmit={e => { e.preventDefault(); this.onEmailSubmit() }}>
 								<input
 									value={email} onChange={e => { this.setState({ email: e.target.value, error: undefined }) }}
@@ -216,7 +216,10 @@ class StartComponent extends React.Component<StartProps, State> {
 								/>
 							</form>
 							<div className={"instruction"}>
-								{<p>Enter your email address.</p>}
+								{<>
+									<p>Enter your email address.</p>
+									<p><Link to="/">Go back to album.casa.</Link></p>
+								</>}
 							</div>
 						</> :
 						<>
@@ -233,7 +236,7 @@ class StartComponent extends React.Component<StartProps, State> {
 							<div className={"instruction"}>
 								{<>
 									<p>A passphrase was sent to {submittedEmail}. Enter the passphrase to continue.</p>
-									<p><a href="" onClick={e => { e.preventDefault(); this.onDifferentEmail() }}>Change email</a></p>
+									<p><a href="" onClick={e => { e.preventDefault(); this.onDifferentEmail() }}>Use a different email.</a></p>
 								</>}
 							</div>
 						</>}

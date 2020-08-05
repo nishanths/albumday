@@ -1,0 +1,62 @@
+.Connect .Scrobble {
+	.logo {
+		background-image: url(/img/apple_music.svg);
+		height: 75px;
+		width: 75px;
+		margin-left: -10px;
+		margin-bottom: 30px;
+	}
+
+	.input-container {
+		width: 280px;
+
+		input[type=text] {
+			border: none;
+			caret-color: hsla(0, 0, 0, 0.6);
+			border-radius: 0;
+			background-image: none;
+			background-color: transparent;
+			box-shadow: none;
+			outline: 3px solid hsla(0, 0, 0, 0.2);
+			font-family: $font-family;
+			color: $color-default;
+
+			&:focus {
+				border-color: transparent;
+				outline: 3px solid $http-pink;
+			}
+			&:disabled {
+				opacity: 0.5;
+			}
+			&::placeholder {
+				color: #ddd;
+			}
+
+			width: 100%;
+			padding: 8px 12px 8px 12px;
+			font-size: 21px;
+			display: inline-block;
+		}
+
+		.instruction {
+			width: 100%;
+			line-height: 1.4em;
+			font-size: 15px;
+			color: $color-instruction;
+			margin-top: 14px;
+			p {
+				margin-top: 0;
+			}
+		}
+
+		.back-button {
+			margin-top: 30px;
+		}
+	}
+
+	@media (min-width: 600px) {
+		.input-container {
+			width: 400px;
+		}
+	}
+}

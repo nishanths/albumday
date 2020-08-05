@@ -1,14 +1,25 @@
 $font-family: proxima-nova, -apple-system, BlinkMacSystemFont, sans-serif;
 
 $color-default: #444;
+$color-instruction: #777;
 $yellow: rgba(252, 188, 59, 1); // macOS window minimize
 $medium-red: rgba(188, 68, 64, 1);
 $bright-red: rgba(251, 83, 76, 1);
 $dark-red: rgba(140, 16, 16, 1);
 $light-blue: rgba(74, 132, 177, 1);
 $blue: rgba(47, 105, 149, 1);
+$blue-standard: rgba(30, 114, 250, 1);
+$blue-active: #1a61d4;
 $green: rgba(49, 199, 67, 1);
 $green-alpha: rgba(49, 199, 67, 0.7);
 $mdn-blue: rgba(128, 201, 236, 1);
 $light-gray: rgba(120, 120, 120, 0.5);
-$sexy-blue: rgba(13, 52, 73, 1);
+$sexy-blue: rgba(13, 52, 73, 1); // chrome viewport inspector breakpoint sizes
+$purple: rgba(153, 75, 155, 1); // macOS system preferences General Accent colors
+$http-pink: #d6156d; // https://httpstatuses.com/
+
+$ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+$ease-in-back: cubic-bezier(0.6, -0.28, 0.735, 0.045);
+$ease-out-back: cubic-bezier(0.17, 0.89, 0.12, 1.49); // modified
+$transition-enter-func: $ease-out-back;
+$transition-exit-func: $ease-out-back;

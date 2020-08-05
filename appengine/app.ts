@@ -6,7 +6,7 @@ import { loadConfig } from "./config"
 import { newRedis } from "./redis"
 import { newEmail } from "./email"
 import cookieParser from "cookie-parser"
-import { connectSpotifyHandler, authSpotifyHandler } from "./connect"
+import { connectSpotifyHandler, authSpotifyHandler, connectScrobbleHandler } from "./connect-handlers"
 import { indexHandler, startHandler, feedHandler, logoutHandler } from "./app-handlers"
 import { passphraseHandler, loginHandler, accountHandler } from "./api-handlers"
 import { cronDailyEmailHandler, taskDailyEmailHandler } from "./internal-handlers"
@@ -41,7 +41,7 @@ const main = async () => {
 	mainRouter.get("/logout/?", logoutHandler)
 	mainRouter.get("/connect/spotify", connectSpotifyHandler(config.spotifyClientID))
 	mainRouter.get("/auth/spotify", authSpotifyHandler(config.spotifyClientID, config.spotifyClientSecret, redis))
-	// TODO: /connect/scrobble/
+	mainRouter.post("/connect/scrobble", connectScrobbleHandler(redis))
 	mainRouter.post("/internal/cron/daily-email", requireCronHeader, cronDailyEmailHandler(redis, tasks, config.tasksSecret))
 	mainRouter.post("/internal/task/daily-email", requireTasksSecret(config.tasksSecret), jsonParser, taskDailyEmailHandler(redis))
 

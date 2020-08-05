@@ -1,6 +1,7 @@
 import { RequestHandler } from "express"
 import { defaultFromEmail, EmailClient } from "./email"
 import { okStatus } from "shared"
+import { env } from "./env"
 import { RedisClient, logRedisError } from "./redis"
 import { validate as validateEmail } from "email-validator"
 import { cookieNameIdentity, IdentityCookie, cookieValidityIdentityMs, currentEmail } from "./cookie"
@@ -72,7 +73,7 @@ export const loginHandler = (redis: RedisClient): RequestHandler => async (req, 
 			res.status(403).send("passphrase expired").end()
 			return
 		}
-		if (reply !== passphrase) {
+		if (env() !== "dev" && reply !== passphrase) {
 			res.status(403).send("bad passphrase").end()
 			return
 		}
@@ -95,17 +96,19 @@ export const loginHandler = (redis: RedisClient): RequestHandler => async (req, 
 			}
 		})
 
+		// TODO: update timeZone on every login
+
 		const cookie: IdentityCookie = { email: email }
 		res.cookie(cookieNameIdentity, JSON.stringify(cookie), { maxAge: cookieValidityIdentityMs, httpOnly: true, signed: true })
 		res.status(200).end()
 	})
 }
 
-const passphraseEmailSubject = "Passphrase for Albumday"
+const passphraseEmailSubject = "Passphrase for album birthdays"
 
 const passphraseEmailText = ({ email, passphrase }: { email: string, passphrase: string }) => `Hi,
 
-Someone has requested a passphrase for ${email} to log in to Albumday
+Someone has requested a passphrase for ${email} to log in to album birthdays
 (https://album.casa). The passphrase is below.
 
 ${passphrase}

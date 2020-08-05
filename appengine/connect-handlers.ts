@@ -1,9 +1,9 @@
 import * as crypto from "crypto"
-import { Service } from "shared"
+import { Service, scrobbleAPIBaseURL } from "shared"
 import { URLSearchParams } from "url"
 import { RequestHandler, Request } from "express"
 import { currentEmail } from "./cookie"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import { RedisClient, logRedisError } from "./redis"
 import { accountKey, Account } from "./account"
 
@@ -38,7 +38,7 @@ export const connectSpotifyHandler = (spotifyClientID: string): RequestHandler =
 	p.set("response_type", "code")
 	p.set("redirect_uri", spotifyRedirectURL(req))
 	p.set("state", stateJSON)
-	p.set("scope", "user-read-email user-library-read user-top-read")
+	p.set("scope", "user-library-read user-top-read")
 	p.set("show_dialog", "false")
 
 	res.cookie(cookieNameState, stateJSON, { maxAge: 30 * 60 * 1000, httpOnly: true, signed: true })
@@ -51,10 +51,12 @@ type SpotifyCallback = { state: string } & (
 )
 
 export const authSpotifyHandler = (spotifyClientID: string, spotifyClientSecret: string, redis: RedisClient): RequestHandler => async (req, res) => {
-	const c = req.query as SpotifyCallback
+	const errorRedirect = "/feed?connect-error=1"
+	const successRedirect = "/feed?connect-success=1"
 
+	const c = req.query as SpotifyCallback
 	if (c.error !== undefined && c.error !== null && c.error !== "") {
-		res.redirect("/feed")
+		res.redirect(errorRedirect)
 		return
 	}
 
@@ -85,7 +87,7 @@ export const authSpotifyHandler = (spotifyClientID: string, spotifyClientSecret:
 		tokenRsp = r.data
 	} catch (e) {
 		console.error("spotify api token:", e)
-		res.redirect("/feed")
+		res.redirect(errorRedirect)
 		return
 	}
 
@@ -95,18 +97,18 @@ export const authSpotifyHandler = (spotifyClientID: string, spotifyClientSecret:
 	redis.GET(accountKey(accountEmail), (err, reply) => {
 		if (err) {
 			logRedisError(err, "get account")
-			res.redirect("/feed")
+			res.redirect(errorRedirect)
 			return
 		}
 		if (reply === null) {
 			console.error("unexpected null reply for account: " + accountEmail)
-			res.redirect("/feed")
+			res.redirect(errorRedirect)
 			return
 		}
 
 		const account = JSON.parse(reply) as Account
 		account.connection = {
-			service: "spotify" as const,
+			service: "spotify",
 			refreshToken: tokenRsp.refresh_token,
 			error: null,
 		}
@@ -114,11 +116,11 @@ export const authSpotifyHandler = (spotifyClientID: string, spotifyClientSecret:
 		redis.SET(accountKey(accountEmail), JSON.stringify(account), err => {
 			if (err) {
 				logRedisError(err, "set account")
-				res.redirect("/feed")
+				res.redirect(errorRedirect)
 				return
 			}
 
-			res.redirect("/feed")
+			res.redirect(successRedirect)
 		})
 	})
 }
@@ -131,4 +133,69 @@ type SpotifyTokenResponse = {
 	refresh_token: string
 }
 
-const spotifyRedirectURL = (userReq: Request) => userReq.protocol + "://" + userReq.hostname + "/auth/spotify"
+const spotifyRedirectURL = (userReq: Request) => userReq.protocol + "://" + userReq.get("host") + "/auth/spotify"
+
+export const connectScrobbleHandler = (redis: RedisClient): RequestHandler => async (req, res) => {
+	const email = currentEmail(req)
+	if (email === null) {
+		// TODO: also support API key header
+		res.status(401).end()
+		return
+	}
+
+	const scrobbleUsername = req.query["username"]
+	if (scrobbleUsername === undefined || typeof scrobbleUsername !== "string" || scrobbleUsername === "") {
+		res.status(400).end()
+		return
+	}
+
+	const params = new URLSearchParams()
+	params.set("username", scrobbleUsername)
+	params.set("limit", "" + 0)
+	const scrobbleURL = scrobbleAPIBaseURL + "/api/v1/scrobbled?" + params.toString()
+
+	try {
+		await axios.get(scrobbleURL)
+	} catch (e) {
+		const err = e as AxiosError
+		console.error("get scrobbled", err.message)
+		if (err.response?.status === 403) {
+			// profile is private
+			res.status(409).send("profile appears to be private").end()
+			return
+		}
+		res.status(500).end()
+		return
+	}
+
+	// XXX: requires transaction
+	redis.GET(accountKey(email), (err, reply) => {
+		if (err) {
+			logRedisError(err, "get account")
+			res.status(500).end()
+			return
+		}
+		if (reply === null) {
+			console.error("unexpected null reply for account: " + email)
+			res.status(500).end()
+			return
+		}
+
+		const account = JSON.parse(reply) as Account
+		account.connection = {
+			service: "scrobble",
+			username: scrobbleUsername,
+			error: null,
+		}
+
+		redis.SET(accountKey(email), JSON.stringify(account), err => {
+			if (err) {
+				logRedisError(err, "set account")
+				res.status(500).end()
+				return
+			}
+
+			res.status(200).end()
+		})
+	})
+}
