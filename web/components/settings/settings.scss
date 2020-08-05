@@ -1,0 +1,18 @@
+.Settings {
+	font-size: 17px;
+
+	ul {
+		line-height: 1.5rem;
+		padding-left: 20px;
+		max-width: 530px;
+
+		strong {
+			color: $color-default;
+		}
+
+		li {
+			margin-bottom: 1.5rem;
+			color: $color-instruction;
+		}
+	}
+}

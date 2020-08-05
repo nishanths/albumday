@@ -7,7 +7,7 @@ import { Feed } from "../feed"
 import { Settings } from "../settings"
 import { assertExhaustive, Account, connectionComplete } from "shared"
 import { NProgressType } from "../../types"
-import Toastify from "toastify-js"
+import Toastify, { ToastHandle } from "toastify-js"
 import { defaultToastOptions, colors } from "../../shared"
 
 export type DashboardProps = RouteComponentProps & {
@@ -35,6 +35,18 @@ const paneToTitle = (p: Pane): string => {
 
 class DashboardComponent extends React.Component<DashboardProps, State> {
 	private readonly abort = new AbortController()
+	private readonly connectionToast: ToastHandle = Toastify({
+		...defaultToastOptions,
+		backgroundColor: colors.yellow,
+		duration: -1,
+		text: "Connect your music service to receive album birthday email notifications.",
+		onClick: () => {
+			if (this.pane() !== "feed") {
+				this.props.history.push("/feed")
+			}
+		},
+	})
+	private showingConnectionToast = false
 
 	constructor(props: DashboardProps) {
 		super(props)
@@ -102,6 +114,7 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 
 	componentWillUnmount() {
 		this.abort.abort()
+		this.connectionToast.hideToast()
 		this.props.nProgress.done()
 	}
 
@@ -114,6 +127,16 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 	}
 
 	render() {
+		if (this.state.account !== null && !connectionComplete(this.state.account)) {
+			if (!this.showingConnectionToast) {
+				this.showingConnectionToast = true
+				this.connectionToast.showToast()
+			}
+		} else if (this.showingConnectionToast) {
+			this.showingConnectionToast = false
+			this.connectionToast.hideToast()
+		}
+
 		const helmet = <Helmet>
 			<html className="DashboardHTML" />
 			<title>album birthdays / {paneToTitle(this.pane())}</title>

@@ -31,7 +31,7 @@ export type Settings = {
 	emailFormat: "html" | "plain-text"
 }
 
-export const connectionComplete = (a: Account): boolean => {
+export function connectionComplete(a: Account): boolean {
 	if (a.connection === null) {
 		return false
 	}

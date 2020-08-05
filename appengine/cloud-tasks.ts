@@ -50,7 +50,6 @@ const postJSONTaskDev = async (path: string, payload: any, secret: string): Prom
 		[tasksSecretHeader]: secret,
 		"content-type": "application/json",
 	}
-	console.log(devBaseURL() + path)
 	await axios.post(devBaseURL() + path, JSON.stringify(payload), { headers })
 }
 
