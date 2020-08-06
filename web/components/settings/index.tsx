@@ -94,10 +94,103 @@ export class Settings extends React.Component<SettingsProps> {
 		}
 	}
 
-	private setEmailNotifications(on: boolean) {
+	private async setEmailNotifications(on: boolean) {
+		try {
+			this.requestStart()
+			const r = await fetch("/api/v1/account/email-notifications", {
+				method: "PUT",
+				signal: this.abort.signal,
+				headers: {
+					"content-type": "application/json",
+				},
+				body: JSON.stringify(on),
+			})
+			this.requestEnd()
+			switch (r.status) {
+				case 200:
+					Toastify({
+						...defaultToastOptions,
+						text: "Updated.",
+					}).showToast()
+					this.props.onAccountChange({
+						...this.props.account,
+						settings: {
+							...this.props.account.settings,
+							emailsEnabled: on,
+						},
+					})
+					break
+				case 401:
+				case 403:
+					// cookie expired or malicious request?
+					Toastify({
+						...defaultToastOptions,
+						text: "Cookie appears to be b0rked. Please log out and try again.",
+						backgroundColor: colors.brightRed,
+						duration: -1,
+						onClick: () => {
+							window.location.assign("/start")
+						},
+					}).showToast()
+					break
+				default:
+					Toastify({
+						...defaultToastOptions,
+						text: `Failed to update. Please try again.`,
+						backgroundColor: colors.brightRed,
+					}).showToast()
+					break
+			}
+		} catch (e) {
+			console.error(e)
+			this.requestEnd()
+		}
 	}
 
-	private onConnectionUnlink() {
+	private async onConnectionUnlink() {
+		try {
+			this.requestStart()
+			const r = await fetch("/api/v1/account/connection", {
+				method: "DELETE",
+				signal: this.abort.signal,
+			})
+			this.requestEnd()
+			switch (r.status) {
+				case 200:
+					Toastify({
+						...defaultToastOptions,
+						text: "Unlinked music service.",
+					}).showToast()
+					this.props.onAccountChange({
+						...this.props.account,
+						connection: null,
+					})
+					break
+				case 401:
+				case 403:
+					// cookie expired or malicious request?
+					Toastify({
+						...defaultToastOptions,
+						text: "Cookie appears to be b0rked. Please log out and try again.",
+						backgroundColor: colors.brightRed,
+						duration: -1,
+						onClick: () => {
+							window.location.assign("/start")
+						},
+					}).showToast()
+					break
+				default:
+					Toastify({
+						...defaultToastOptions,
+						text: `Failed to update. Please try again.`,
+						backgroundColor: colors.brightRed,
+					}).showToast()
+					break
+			}
+		} catch (e) {
+			console.error(e)
+			this.requestEnd()
+		}
 	}
 
 	private linkedWithText(): JSX.Element {

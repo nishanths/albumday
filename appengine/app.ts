@@ -27,6 +27,9 @@ const main = async () => {
 	app.use(express.static("static", { index: false }))
 	app.use(cookieParser(config.cookieSecret))
 	const jsonParser = bodyParser.json()
+	const rawParser = bodyParser.raw({
+		type: "*/*",
+	})
 
 	const mainRouter = express.Router({ caseSensitive: true, strict: true })
 	const apiRouter = express.Router({ caseSensitive: true, strict: true })
@@ -50,7 +53,9 @@ const main = async () => {
 	apiRouter.get("/account", accountHandler(redis))
 	apiRouter.delete("/account", deleteAccountHandler(redis))
 	apiRouter.delete("/account/connection", deleteAccountConnectionHandler(redis))
-	apiRouter.put("/account/email-notifications", jsonParser, setEmailNotificationsHandler(redis))
+	// NOTE: use raw parser. JSON body parser seems to fail at parsing bodies
+	// that are a JSON boolean (e.g. "false").
+	apiRouter.put("/account/email-notifications", rawParser, setEmailNotificationsHandler(redis))
 
 	// 404 handlers
 	mainRouter.use((req, res) => { res.status(404).send("not found") })
