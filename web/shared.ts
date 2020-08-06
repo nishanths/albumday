@@ -13,6 +13,5 @@ export const defaultToastOptions: Partial<ToastOptions> = {
 	position: "center",
 	duration: 3000,
 	backgroundColor: colors.green,
-	stopOnFocus: true,
 	className: "toastify-toast",
 }

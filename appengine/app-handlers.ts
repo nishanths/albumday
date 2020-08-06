@@ -49,5 +49,5 @@ export const feedHandler = (redis: RedisClient): RequestHandler => (req, res) =>
 
 export const logoutHandler: RequestHandler = (req, res) => {
 	res.clearCookie(cookieNameIdentity)
-	res.redirect("/")
+	res.redirect("/start")
 }

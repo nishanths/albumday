@@ -3,7 +3,7 @@ import { supportEmail, Account, Service, assertExhaustive, connectionComplete, C
 import { colors, defaultToastOptions } from "../../shared"
 import { NProgressType } from "../../types"
 import { Link } from "react-router-dom"
-import Toastify from "toastify-js"
+import Toastify, { ToastHandle } from "toastify-js"
 
 export type SettingsProps = {
 	account: Account
@@ -32,6 +32,19 @@ Proceed to delete your account?
 
 export class Settings extends React.Component<SettingsProps> {
 	private readonly abort = new AbortController()
+
+	private readonly connectionToast: ToastHandle = Toastify({
+		...defaultToastOptions,
+		gravity: "bottom",
+		backgroundColor: colors.yellow,
+		duration: -1,
+		text: "You must set up a music service to get album birthday notifications.",
+		onClick: () => {
+			this.showingConnectionToast = false
+			this.connectionToast.hideToast()
+		},
+	})
+	private showingConnectionToast = false
 
 	constructor(props: SettingsProps) {
 		super(props)
@@ -110,7 +123,7 @@ export class Settings extends React.Component<SettingsProps> {
 				case 200:
 					Toastify({
 						...defaultToastOptions,
-						text: "Updated.",
+						text: "Updated!",
 					}).showToast()
 					this.props.onAccountChange({
 						...this.props.account,
@@ -215,9 +228,20 @@ export class Settings extends React.Component<SettingsProps> {
 
 	componentWillUnmount() {
 		this.abort.abort()
+		this.connectionToast.hideToast()
 	}
 
 	render() {
+		if (this.props.account !== null && !connectionComplete(this.props.account)) {
+			if (!this.showingConnectionToast) {
+				this.showingConnectionToast = true
+				this.connectionToast.showToast()
+			}
+		} else if (this.showingConnectionToast) {
+			this.showingConnectionToast = false
+			this.connectionToast.hideToast()
+		}
+
 		const account =  <li>
 			<strong>Account</strong>: Logged in as {this.props.email} — <a href="/logout">log out</a>, <a href="" onClick={e => { e.preventDefault(); this.onDeleteAccount() }}> delete account.</a>
 		</li>

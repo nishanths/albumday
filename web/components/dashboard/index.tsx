@@ -35,18 +35,6 @@ const paneToTitle = (p: Pane): string => {
 
 class DashboardComponent extends React.Component<DashboardProps, State> {
 	private readonly abort = new AbortController()
-	private readonly connectionToast: ToastHandle = Toastify({
-		...defaultToastOptions,
-		gravity: "bottom",
-		backgroundColor: colors.yellow,
-		duration: -1,
-		text: "You must set up a music service to get album birthday notifications.",
-		onClick: () => {
-			this.showingConnectionToast = false
-			this.connectionToast.hideToast()
-		},
-	})
-	private showingConnectionToast = false
 
 	constructor(props: DashboardProps) {
 		super(props)
@@ -114,7 +102,6 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 
 	componentWillUnmount() {
 		this.abort.abort()
-		this.connectionToast.hideToast()
 		this.props.nProgress.done()
 	}
 
@@ -127,16 +114,6 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 	}
 
 	render() {
-		if (this.state.account !== null && !connectionComplete(this.state.account)) {
-			if (!this.showingConnectionToast) {
-				this.showingConnectionToast = true
-				this.connectionToast.showToast()
-			}
-		} else if (this.showingConnectionToast) {
-			this.showingConnectionToast = false
-			this.connectionToast.hideToast()
-		}
-
 		const helmet = <Helmet>
 			<html className="DashboardHTML" />
 			<title>album birthdays / {paneToTitle(this.pane())}</title>
