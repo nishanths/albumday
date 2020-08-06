@@ -12,8 +12,10 @@ body.StartBody {
 .Start {
 	.heading {
 		position: relative;
-		bottom: 100px;
-		text-align: center;
+		bottom: 75px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 
 		.name {
 			display: none;
@@ -31,6 +33,13 @@ body.StartBody {
 			font-size: 26px;
 			color: $light-gray;
 		}
+		.logo {
+			background-image: url(/img/noun_birthday.svg);
+			height: 90px;
+			width: 90px;
+			background-repeat: no-repeat;
+			background-size: 90px;
+		}
 	}
 
 	.form-transition-enter {
@@ -38,7 +47,7 @@ body.StartBody {
 	}
 	.form-transition-enter-active {
 		transform: translateY(0);
-		transition: transform 750ms;
+		transition: transform 750ms $transition-enter-func;
 	}
 
 	.form {

@@ -1,1 +1,1 @@
-Arrow Right by Richard Kunák from the Noun Project
+Birthday by Flatart from the Noun Project

@@ -104,16 +104,16 @@ export const loginHandler = (redis: RedisClient): RequestHandler => async (req, 
 	})
 }
 
-const passphraseEmailSubject = "Passphrase for album birthdays"
+const passphraseEmailSubject = "Login code for album birthdays"
 
 const passphraseEmailText = ({ email, passphrase }: { email: string, passphrase: string }) => `Hi,
 
-Someone has requested a passphrase for ${email} to log in to album birthdays
-(https://album.casa). The passphrase is below.
+Someone has requested a login code for ${email} to log in to album birthdays
+(https://album.casa). The code is below.
 
 ${passphrase}
 
-Enter this passphrase to log in.
+Enter this code to log in.
 `
 
 export const accountHandler = (redis: RedisClient): RequestHandler => async (req, res) => {
@@ -165,3 +165,33 @@ export const accountHandler = (redis: RedisClient): RequestHandler => async (req
 	})
 }
 
+export const deleteAccountHandler = (redis: RedisClient): RequestHandler => async (req, res) => {
+	const email = currentEmail(req)
+	if (email === null) {
+		// TODO: also support API key header
+		res.status(401).send("missing credentials").end()
+		return
+	}
+
+	if (email !== email) {
+		res.status(403).send("bad credentials").end()
+		return
+	}
+
+	redis.DEL(passphraseKey(email), err => {
+		if (err) {
+			// only log
+			logRedisError(err, "delete passphrase: " + email)
+		}
+	})
+
+	redis.DEL(accountKey(email), err => {
+		if (err) {
+			logRedisError(err, "delete account: " + email)
+			res.status(500).send("failed to delete account").end()
+			return
+		}
+		res.clearCookie(cookieNameIdentity)
+		res.status(200).send("deleted account").end()
+	})
+}

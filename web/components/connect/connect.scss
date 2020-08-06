@@ -27,11 +27,13 @@
 	}
 	.services-next-step-transition-exit-active.container {
 		opacity: 0;
-		transform: translateX(20%);
+		transform: translateX(10%);
 	}
-	.services-next-step-transition-enter-active.container,
+	.services-next-step-transition-enter-active.container {
+		transition: opacity 300ms $transition-enter-func, transform 300ms $transition-enter-func;
+	}
 	.services-next-step-transition-exit-active.container {
-		transition: opacity 500ms, transform 500ms;
+		transition: opacity 300ms $transition-exit-func, transform 300ms $transition-exit-func;
 	}
 
 	.container {
@@ -42,7 +44,7 @@
 		}
 		.services-down-transition-enter-active {
 			transform: translateY(0);
-			transition: transform 750ms;
+			transition: transform 750ms $transition-enter-func;
 		}
 
 		.services {

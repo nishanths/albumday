@@ -173,6 +173,7 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 						onLogout={() => {
 							this.props.onLogout?.()
 						}}
+						nProgress={this.props.nProgress}
 					/>
 				}
 			</div>

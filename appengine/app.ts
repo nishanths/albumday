@@ -8,7 +8,7 @@ import { newEmail } from "./email"
 import cookieParser from "cookie-parser"
 import { connectSpotifyHandler, authSpotifyHandler, connectScrobbleHandler } from "./connect-handlers"
 import { indexHandler, startHandler, feedHandler, logoutHandler } from "./app-handlers"
-import { passphraseHandler, loginHandler, accountHandler } from "./api-handlers"
+import { passphraseHandler, loginHandler, accountHandler, deleteAccountHandler } from "./api-handlers"
 import { cronDailyEmailHandler, taskDailyEmailHandler } from "./internal-handlers"
 import { newDatastore } from "./datastore"
 import { currentEmail } from "./cookie"
@@ -48,6 +48,7 @@ const main = async () => {
 	apiRouter.post("/passphrase", passphraseHandler(redis, emailc))
 	apiRouter.post("/login", loginHandler(redis))
 	apiRouter.get("/account", accountHandler(redis))
+	apiRouter.delete("/account", deleteAccountHandler(redis))
 
 	// 404 handlers
 	mainRouter.use((req, res) => { res.status(404).send("not found") })

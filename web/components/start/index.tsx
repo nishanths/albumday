@@ -193,12 +193,13 @@ class StartComponent extends React.Component<StartProps, State> {
 		return <div className="Start">
 			<Helmet>
 				<html className="StartHTML" />
-				<title>album birthdays / register or login</title>
+				<title>album birthdays / log in or register</title>
 				<body className="StartBody" />
 			</Helmet>
 
 			<div className="heading">
 				<div className="name"><Link to="/">album <span className="bold">birthdays</span></Link></div>
+				<Link to="/" title="Back to home page (https://album.casa)"><div className="logo"></div></Link>
 			</div>
 
 			<CSSTransition in={this.state.formTransition} addEndListener={(node, done) => { node.addEventListener("transitionend", done, false) }} timeout={750} classNames="form-transition">
@@ -235,7 +236,7 @@ class StartComponent extends React.Component<StartProps, State> {
 							</form>
 							<div className={"instruction"}>
 								{<>
-									<p>A passphrase was sent to {submittedEmail}. Enter the passphrase to continue.</p>
+									<p>A login code was sent to {submittedEmail}. Enter the code to continue.</p>
 									<p><a href="" onClick={e => { e.preventDefault(); this.onDifferentEmail() }}>Use a different email</a></p>
 								</>}
 							</div>
