@@ -117,7 +117,7 @@ class StartComponent extends React.Component<StartProps, State> {
 				case 200:
 					this.submittingDone()
 					this.props.onLogin?.(this.state.submittedEmail)
-					this.props.history.push("/feed")
+					this.props.history.push("/birthdays")
 					break
 				case 403:
 					this.submittingDone()
@@ -218,7 +218,7 @@ class StartComponent extends React.Component<StartProps, State> {
 							<div className={"instruction"}>
 								{<>
 									<p>Enter your email address.</p>
-									<p><Link to="/">Return to album.casa.</Link></p>
+									<p><Link to="/">Return to home page</Link></p>
 								</>}
 							</div>
 						</> :
@@ -236,7 +236,7 @@ class StartComponent extends React.Component<StartProps, State> {
 							<div className={"instruction"}>
 								{<>
 									<p>A passphrase was sent to {submittedEmail}. Enter the passphrase to continue.</p>
-									<p><a href="" onClick={e => { e.preventDefault(); this.onDifferentEmail() }}>Use a different email.</a></p>
+									<p><a href="" onClick={e => { e.preventDefault(); this.onDifferentEmail() }}>Use a different email</a></p>
 								</>}
 							</div>
 						</>}

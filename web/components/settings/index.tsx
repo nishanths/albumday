@@ -27,7 +27,7 @@ export class Settings extends React.Component<SettingsProps> {
 			<ul>
 				<li><strong>Account</strong>: Logged in as foo@gmail.com — <a href="">log out</a>, <a href=""> delete account.</a></li>
 				<li><strong>Email notifications</strong>: Enabled. A daily email will be sent with album birthdays — <a href="">turn off.</a></li>
-				<li><strong>Music service</strong>: Connected to Spotify — <a href="">disconnect.</a></li>
+				<li><strong>Music service</strong>: Linked with Spotify — <a href="">disconnect.</a></li>
 			</ul>
 		</div>
 	}

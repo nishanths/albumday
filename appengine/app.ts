@@ -37,7 +37,7 @@ const main = async () => {
 	// routes
 	mainRouter.get("/", indexHandler)
 	mainRouter.get("/start/?", startHandler)
-	mainRouter.get(["/feed/?", "/settings/?"], feedHandler(redis))
+	mainRouter.get(["/birthdays/?", "/settings/?"], feedHandler(redis))
 	mainRouter.get("/logout/?", logoutHandler)
 	mainRouter.get("/connect/spotify", connectSpotifyHandler(config.spotifyClientID))
 	mainRouter.get("/auth/spotify", authSpotifyHandler(config.spotifyClientID, config.spotifyClientSecret, redis))

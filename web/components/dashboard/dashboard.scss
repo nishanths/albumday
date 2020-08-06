@@ -9,17 +9,18 @@ body.DashboardBody {
 	margin-top: 20px;
 	padding: 0 15px 0 15px;
 	max-width: 700px;
+
 	.nav {
 		display: flex;
 
 		.nav-item {
-			font-size: 36px;
+			font-size: 30px;
 			font-weight: bold;
 
 			a {
 				color: $light-gray;
 				text-decoration: none;
-				transition: all 150ms $ease-out-expo;
+				transition: opacity 150ms $ease-out-expo;
 				&:hover {
 					color: $http-pink;
 					opacity: 0.95;
@@ -44,10 +45,20 @@ body.DashboardBody {
 
 	@media (min-width: 350px) {
 		padding: 0 20px;
+		.nav {
+			.nav-item {
+				font-size: 34px;
+			}
+		}
 	}
 
 	@media (min-width: 600px) {
 		padding: 0 30px;
-		margin-top: 40px;
+		margin-top: 60px;
+		.nav {
+			.nav-item {
+				font-size: 36px;
+			}
+		}
 	}
 }

@@ -16,7 +16,7 @@ export type DashboardProps = RouteComponentProps & {
 	onLogout?: () => void
 }
 
-type Pane = "feed" | "settings"
+type Pane = "birthdays" | "settings"
 
 type State = {
 	account: Account | null
@@ -24,8 +24,8 @@ type State = {
 
 const paneToTitle = (p: Pane): string => {
 	switch (p) {
-		case "feed":
-			return "feed"
+		case "birthdays":
+			return "birthdays"
 		case "settings":
 			return "settings"
 		default:
@@ -37,13 +37,13 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 	private readonly abort = new AbortController()
 	private readonly connectionToast: ToastHandle = Toastify({
 		...defaultToastOptions,
+		gravity: "bottom",
 		backgroundColor: colors.yellow,
 		duration: -1,
-		text: "Connect your music service to receive album birthday email notifications.",
+		text: "You must set up a music service to get album birthday notifications.",
 		onClick: () => {
-			if (this.pane() !== "feed") {
-				this.props.history.push("/feed")
-			}
+			this.showingConnectionToast = false
+			this.connectionToast.hideToast()
 		},
 	})
 	private showingConnectionToast = false
@@ -57,9 +57,9 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 
 	private pane(): Pane {
 		switch (this.props.location.pathname) {
-			case "/feed":
-			case "/feed/":
-				return "feed"
+			case "/birthdays":
+			case "/birthdays/":
+				return "birthdays"
 			case "/settings":
 			case "/settings/":
 				return "settings"
@@ -144,17 +144,17 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 		</Helmet>
 
 		const nav = <div className="nav">
-			<div className={classNames("nav-item", { "active": this.pane() === "feed" })} title="Switch to Feed">
-				<Link to="/feed">feed</Link>
+			<div className={classNames("nav-item", { "active": this.pane() === "birthdays" })} title="switch to birthdays">
+				<Link to="/birthdays">birthdays</Link>
 			</div>
-			<div className={classNames("nav-item", { "active": this.pane() === "settings" })} title="Switch to Settings">
+			<div className={classNames("nav-item", { "active": this.pane() === "settings" })} title="switch to settings">
 				<Link to="/settings">settings</Link>
 			</div>
 		</div>
 
 		const pane = this.state.account !== null &&
 			<div className="pane">
-				{this.pane() === "feed" ?
+				{this.pane() === "birthdays" ?
 					<Feed
 						account={this.state.account}
 						email={this.props.email}

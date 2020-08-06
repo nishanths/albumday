@@ -51,8 +51,8 @@ type SpotifyCallback = { state: string } & (
 )
 
 export const authSpotifyHandler = (spotifyClientID: string, spotifyClientSecret: string, redis: RedisClient): RequestHandler => async (req, res) => {
-	const errorRedirect = "/feed?connect-error=1"
-	const successRedirect = "/feed?connect-success=1"
+	const errorRedirect = "/birthdays?connect-error=1"
+	const successRedirect = "/birthdays?connect-success=1"
 
 	const c = req.query as SpotifyCallback
 	if (c.error !== undefined && c.error !== null && c.error !== "") {
