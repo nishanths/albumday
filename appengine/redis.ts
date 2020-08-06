@@ -49,3 +49,41 @@ export const logRedisError = (err: redispkg.RedisError, message?: string) => {
 		console.error(`redis: ${err.name}: ${err.message}`)
 	}
 }
+
+export const updateEntity = <T>(redis: RedisClient, key: string, mutator: (entity: T) => T, desc = key): Promise<void> => {
+	return new Promise((resolve, reject) => {
+		// XXX: requires transaction
+		redis.GET(key, (err, reply) => {
+			if (err) {
+				logRedisError(err, `get ${desc}`)
+				reject()
+				return
+			}
+			if (reply === null) {
+				console.error(`unexpected null reply for ${desc}`)
+				reject()
+				return
+			}
+
+			let updatedEntityStr: string
+
+			try {
+				const entity = JSON.parse(reply) as T
+				updatedEntityStr = JSON.stringify(mutator(entity))
+			} catch (e) {
+				console.error(`${desc}` + e)
+				reject()
+				return
+			}
+
+			redis.SET(key, updatedEntityStr, err => {
+				if (err) {
+					logRedisError(err, `set ${desc}`)
+					reject()
+					return
+				}
+				resolve()
+			})
+		})
+	})
+}

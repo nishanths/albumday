@@ -2,7 +2,7 @@ import { RequestHandler } from "express"
 import { defaultFromEmail, EmailClient } from "./email"
 import { okStatus } from "shared"
 import { env } from "./env"
-import { RedisClient, logRedisError } from "./redis"
+import { RedisClient, logRedisError, updateEntity } from "./redis"
 import { validate as validateEmail } from "email-validator"
 import { cookieNameIdentity, IdentityCookie, cookieValidityIdentityMs, currentEmail } from "./cookie"
 import { Account, accountKey, zeroAccount } from "./account"
@@ -173,11 +173,6 @@ export const deleteAccountHandler = (redis: RedisClient): RequestHandler => asyn
 		return
 	}
 
-	if (email !== email) {
-		res.status(403).send("bad credentials").end()
-		return
-	}
-
 	redis.DEL(passphraseKey(email), err => {
 		if (err) {
 			// only log
@@ -194,4 +189,55 @@ export const deleteAccountHandler = (redis: RedisClient): RequestHandler => asyn
 		res.clearCookie(cookieNameIdentity)
 		res.status(200).send("deleted account").end()
 	})
+}
+
+export const deleteAccountConnectionHandler = (redis: RedisClient): RequestHandler => async (req, res) => {
+	const email = currentEmail(req)
+	if (email === null) {
+		// TODO: also support API key header
+		res.status(401).send("missing credentials").end()
+		return
+	}
+
+	try {
+		await updateEntity<Account>(redis, accountKey(email), a => {
+			return {
+				...a,
+				connection: null,
+			}
+		})
+		res.status(200).end()
+	} catch {
+		res.status(500).end()
+	}
+}
+
+export const setEmailNotificationsHandler = (redis: RedisClient): RequestHandler => async (req, res) => {
+	const email = currentEmail(req)
+	if (email === null) {
+		// TODO: also support API key header
+		res.status(401).send("missing credentials").end()
+		return
+	}
+
+	const newValue = req.body
+	if (typeof newValue !== "boolean") {
+		res.status(400).end()
+		return
+	}
+
+	try {
+		await updateEntity<Account>(redis, accountKey(email), a => {
+			return {
+				...a,
+				settings: {
+					...a.settings,
+					emailsEnabled: newValue,
+				}
+			}
+		})
+		res.status(200).end()
+	} catch {
+		res.status(500).end()
+	}
 }

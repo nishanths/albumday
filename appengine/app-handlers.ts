@@ -17,7 +17,7 @@ export const indexHandler: RequestHandler = (req, res) => {
 }
 
 export const startHandler: RequestHandler = (req, res) => {
-	// for hard-visits, clear cookie and show login page
+	// for hard visits, clear cookie and show login page
 	res.clearCookie(cookieNameIdentity)
 	const bootstrap: Bootstrap = {
 		loggedIn: false,

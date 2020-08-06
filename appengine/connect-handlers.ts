@@ -4,7 +4,7 @@ import { URLSearchParams } from "url"
 import { RequestHandler, Request } from "express"
 import { currentEmail } from "./cookie"
 import axios, { AxiosError } from "axios"
-import { RedisClient, logRedisError } from "./redis"
+import { RedisClient, logRedisError, updateEntity } from "./redis"
 import { accountKey, Account } from "./account"
 
 const cookieNameState = "albumday:state"
@@ -97,40 +97,23 @@ export const authSpotifyHandler = (spotifyClientID: string, spotifyClientSecret:
 
 	const accountEmail = cookieState.email
 
-	// XXX: requires transaction
-	redis.GET(accountKey(accountEmail), (err, reply) => {
-		if (err) {
-			logRedisError(err, "get account")
-			res.clearCookie(cookieNameState)
-			res.redirect(errorRedirect)
-			return
-		}
-		if (reply === null) {
-			console.error("unexpected null reply for account: " + accountEmail)
-			res.clearCookie(cookieNameState)
-			res.redirect(errorRedirect)
-			return
-		}
-
-		const account = JSON.parse(reply) as Account
-		account.connection = {
-			service: "spotify",
-			refreshToken: tokenRsp.refresh_token,
-			error: null,
-		}
-
-		redis.SET(accountKey(accountEmail), JSON.stringify(account), err => {
-			if (err) {
-				logRedisError(err, "set account")
-				res.clearCookie(cookieNameState)
-				res.redirect(errorRedirect)
-				return
+	try {
+		await updateEntity<Account>(redis, accountKey(accountEmail), a => {
+			return {
+				...a,
+				connection: {
+					service: "spotify",
+					refreshToken: tokenRsp.refresh_token,
+					error: null,
+				},
 			}
-
-			res.clearCookie(cookieNameState)
-			res.redirect(successRedirect)
 		})
-	})
+		res.clearCookie(cookieNameState)
+		res.redirect(successRedirect)
+	} catch {
+		res.clearCookie(cookieNameState)
+		res.redirect(errorRedirect)
+	}
 }
 
 type SpotifyTokenResponse = {
@@ -180,34 +163,19 @@ export const connectScrobbleHandler = (redis: RedisClient): RequestHandler => as
 		return
 	}
 
-	// XXX: requires transaction
-	redis.GET(accountKey(email), (err, reply) => {
-		if (err) {
-			logRedisError(err, "get account")
-			res.status(500).end()
-			return
-		}
-		if (reply === null) {
-			console.error("unexpected null reply for account: " + email)
-			res.status(500).end()
-			return
-		}
-
-		const account = JSON.parse(reply) as Account
-		account.connection = {
-			service: "scrobble",
-			username: scrobbleUsername,
-			error: null,
-		}
-
-		redis.SET(accountKey(email), JSON.stringify(account), err => {
-			if (err) {
-				logRedisError(err, "set account")
-				res.status(500).end()
-				return
+	try {
+		await updateEntity<Account>(redis, accountKey(email), a => {
+			return {
+				...a,
+				connection: {
+					service: "scrobble",
+					username: scrobbleUsername,
+					error: null,
+				},
 			}
-
-			res.status(200).end()
 		})
-	})
+		res.status(200).end()
+	} catch {
+		res.status(500).end()
+	}
 }

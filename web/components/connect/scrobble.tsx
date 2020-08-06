@@ -88,7 +88,7 @@ export class Scrobble extends React.Component<ScrobbleProps, State> {
 				case 409:
 					this.showNewToast({
 						...defaultToastOptions,
-						text: "Profile appears to be private. Make public and try again.",
+						text: "Profile appears to be private. Make it public and try again.",
 						backgroundColor: colors.yellow,
 					})
 					this.usernameRef!.focus()
