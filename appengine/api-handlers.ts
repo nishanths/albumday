@@ -7,6 +7,7 @@ import { validate as validateEmail } from "email-validator"
 import { cookieNameIdentity, IdentityCookie, cookieValidityIdentityMs, currentEmail } from "./cookie"
 import { Account, accountKey, zeroAccount } from "./account"
 import { passphraseExpirySeconds, passphraseKey, generatePassphrase } from "./passphrase"
+import { scrobbleService } from "./music-service"
 
 export const passphraseHandler = (redis: RedisClient, emailc: EmailClient): RequestHandler => async (req, res) => {
 	const email = req.query["email"]
@@ -169,7 +170,7 @@ export const deleteAccountHandler = (redis: RedisClient): RequestHandler => asyn
 	const email = currentEmail(req)
 	if (email === null) {
 		// TODO: also support API key header
-		res.status(401).send("missing credentials").end()
+		res.status(401).send(`delete account: bad credentials`).end()
 		return
 	}
 
@@ -183,9 +184,11 @@ export const deleteAccountHandler = (redis: RedisClient): RequestHandler => asyn
 	redis.DEL(accountKey(email), err => {
 		if (err) {
 			logRedisError(err, "delete account: " + email)
+			console.log(`failed to delete account ${email}`)
 			res.status(500).send("failed to delete account").end()
 			return
 		}
+		console.log(`successfully deleted account ${email}`)
 		res.clearCookie(cookieNameIdentity)
 		res.status(200).send("deleted account").end()
 	})
@@ -216,7 +219,7 @@ export const setEmailNotificationsHandler = (redis: RedisClient): RequestHandler
 	const email = currentEmail(req)
 	if (email === null) {
 		// TODO: also support API key header
-		res.status(401).send("missing credentials").end()
+		res.status(401).send("bad credentials").end()
 		return
 	}
 
@@ -242,4 +245,7 @@ export const setEmailNotificationsHandler = (redis: RedisClient): RequestHandler
 	} catch {
 		res.status(500).end()
 	}
+}
+
+export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (req, res) => {
 }

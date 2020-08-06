@@ -3,8 +3,7 @@ import { scrobbleBaseURL } from "shared"
 
 type State = {}
 
-export type ButtonProps = {
-	buttonProps?: Partial<React.ButtonHTMLAttributes<HTMLButtonElement>>
+export type ButtonProps = React.RefAttributes<HTMLButtonElement> & {
 }
 
 export class Button extends React.Component<ButtonProps, State> {
@@ -16,7 +15,7 @@ export class Button extends React.Component<ButtonProps, State> {
 
 	render() {
 		return <div className="Button">
-			<button {...this.props.buttonProps}>{this.props.children}</button>
+			<button {...this.props}>{this.props.children}</button>
 		</div>
 	}
 }

@@ -39,6 +39,11 @@ body.StartBody {
 			width: 90px;
 			background-repeat: no-repeat;
 			background-size: 90px;
+		    transition: 250ms $transition-exit-func transform;
+		    &:hover {
+				transform: scale(1.07);
+				transition: 500ms $transition-enter-func transform;
+			}
 		}
 	}
 

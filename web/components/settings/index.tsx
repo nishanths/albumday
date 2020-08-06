@@ -38,7 +38,7 @@ export class Settings extends React.Component<SettingsProps> {
 		gravity: "bottom",
 		backgroundColor: colors.yellow,
 		duration: -1,
-		text: "You must set up a music service to get album birthday notifications.",
+		text: "You must set up a music service to receive album birthday notifications.",
 		onClick: () => {
 			this.showingConnectionToast = false
 			this.connectionToast.hideToast()
@@ -84,7 +84,7 @@ export class Settings extends React.Component<SettingsProps> {
 					// cookie expired or malicious request?
 					Toastify({
 						...defaultToastOptions,
-						text: "Cookie appears to be b0rked. Please log out and try again.",
+						text: "Cookie appears to be b0rked. Please reload the page.",
 						backgroundColor: colors.brightRed,
 						duration: -1,
 						onClick: () => {
@@ -138,7 +138,7 @@ export class Settings extends React.Component<SettingsProps> {
 					// cookie expired or malicious request?
 					Toastify({
 						...defaultToastOptions,
-						text: "Cookie appears to be b0rked. Please log out and try again.",
+						text: "Cookie appears to be b0rked. Please reload the page.",
 						backgroundColor: colors.brightRed,
 						duration: -1,
 						onClick: () => {
@@ -184,7 +184,7 @@ export class Settings extends React.Component<SettingsProps> {
 					// cookie expired or malicious request?
 					Toastify({
 						...defaultToastOptions,
-						text: "Cookie appears to be b0rked. Please log out and try again.",
+						text: "Cookie appears to be b0rked. Please reload the page.",
 						backgroundColor: colors.brightRed,
 						duration: -1,
 						onClick: () => {
@@ -228,7 +228,9 @@ export class Settings extends React.Component<SettingsProps> {
 
 	componentWillUnmount() {
 		this.abort.abort()
-		this.connectionToast.hideToast()
+		if (this.showingConnectionToast) {
+			this.connectionToast.hideToast()
+		}
 	}
 
 	render() {

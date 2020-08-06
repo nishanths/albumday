@@ -176,7 +176,7 @@ class StartComponent extends React.Component<StartProps, State> {
 
 		this.toast?.hideToast()
 		if (error !== undefined) {
-			const extraOptions: Partial<ToastOptions> = error === invalidPassphraseError ? {
+			const extraOptions: ToastOptions = error === invalidPassphraseError ? {
 				onClick: () => { this.onStartOver() },
 				duration: -1,
 			} : {}
@@ -207,12 +207,12 @@ class StartComponent extends React.Component<StartProps, State> {
 					{submittedEmail === "" ?
 						<>
 							<div className="step">Log in or register</div>
-							<form onSubmit={e => { e.preventDefault(); this.onEmailSubmit() }}>
+							<form onSubmit={e => { e.preventDefault(); this.onEmailSubmit() }} noValidate>
 								<input
 									value={email} onChange={e => { this.setState({ email: e.target.value, error: undefined }) }}
-									type="text"
+									type="email"
 									disabled={submitting}
-									autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false"
+									autoCorrect="off" autoCapitalize="off" spellCheck="false"
 									ref={r => { this.emailRef = r }}
 								/>
 							</form>

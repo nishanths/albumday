@@ -8,7 +8,8 @@ import { newEmail } from "./email"
 import cookieParser from "cookie-parser"
 import { connectSpotifyHandler, authSpotifyHandler, connectScrobbleHandler } from "./connect-handlers"
 import { indexHandler, startHandler, feedHandler, logoutHandler } from "./app-handlers"
-import { passphraseHandler, loginHandler, accountHandler, deleteAccountHandler, deleteAccountConnectionHandler, setEmailNotificationsHandler } from "./api-handlers"
+import { passphraseHandler, loginHandler, accountHandler, birthdaysHandler,
+		deleteAccountHandler, deleteAccountConnectionHandler, setEmailNotificationsHandler } from "./api-handlers"
 import { cronDailyEmailHandler, taskDailyEmailHandler } from "./internal-handlers"
 import { newDatastore } from "./datastore"
 import { currentEmail } from "./cookie"
@@ -56,6 +57,7 @@ const main = async () => {
 	// NOTE: use raw parser. JSON body parser seems to fail at parsing bodies
 	// that are a JSON boolean (e.g. "false").
 	apiRouter.put("/account/email-notifications", rawParser, setEmailNotificationsHandler(redis))
+	apiRouter.get("/birthdays", birthdaysHandler(redis))
 
 	// 404 handlers
 	mainRouter.use((req, res) => { res.status(404).send("not found") })

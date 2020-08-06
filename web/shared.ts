@@ -1,4 +1,4 @@
-import { Options as ToastOptions } from "toastify-js"
+import { ToastOptions } from "toastify-js"
 
 export const colors = {
 	green: "rgba(49, 199, 67, 1)",
@@ -8,7 +8,7 @@ export const colors = {
 	yellow: "rgba(252, 188, 59, 1)",
 }
 
-export const defaultToastOptions: Partial<ToastOptions> = {
+export const defaultToastOptions: ToastOptions = {
 	gravity: "top",
 	position: "center",
 	duration: 3000,

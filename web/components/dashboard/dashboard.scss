@@ -20,9 +20,10 @@ body.DashboardBody {
 			a {
 				color: $light-gray;
 				text-decoration: none;
-				transition: opacity 150ms $ease-out-expo;
+				transition: color 100ms ease-in;
 				&:hover {
 					color: $http-pink;
+					transition: color 50ms ease-in;
 					opacity: 0.95;
 				}
 			}

@@ -89,7 +89,8 @@ export const authSpotifyHandler = (spotifyClientID: string, spotifyClientSecret:
 		const r = await axios.post<SpotifyTokenResponse>("https://accounts.spotify.com/api/token", p.toString(), { responseType: "json" })
 		tokenRsp = r.data
 	} catch (e) {
-		console.error("spotify api token:", e)
+		const err = e as AxiosError
+		console.error("spotify api token:", err.message)
 		res.clearCookie(cookieNameState)
 		res.redirect(errorRedirect)
 		return
@@ -179,3 +180,5 @@ export const connectScrobbleHandler = (redis: RedisClient): RequestHandler => as
 		res.status(500).end()
 	}
 }
+
+

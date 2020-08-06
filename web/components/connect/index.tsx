@@ -47,7 +47,7 @@ export class Connect extends React.Component<ConnectProps, State> {
 		return <div className="Connect">
 			<div className="main-instruction">
 				<div className="title">Set up your music service.</div>
-				<div className="subtitle">To get album birthday email notifications, link your music service.</div>
+				<div className="subtitle">To receive album birthday email notifications, select your music service.</div>
 			</div>
 
 			<SwitchTransition mode="out-in">

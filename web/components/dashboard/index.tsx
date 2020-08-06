@@ -70,7 +70,7 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 					// cookie expired or malicious request?
 					Toastify({
 						...defaultToastOptions,
-						text: "Cookie appears to be b0rked. Please log out and try again.",
+						text: "Cookie appears to be b0rked. Please reload the page.",
 						backgroundColor: colors.brightRed,
 						duration: -1,
 						onClick: () => {
@@ -81,7 +81,7 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 				default:
 					Toastify({
 						...defaultToastOptions,
-						text: "Failed to load account. Please try reloading the page.",
+						text: "Failed to load account. Please reload the page.",
 						backgroundColor: colors.brightRed,
 						duration: -1,
 					}).showToast()
@@ -91,7 +91,7 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 			console.error(e)
 			Toastify({
 				...defaultToastOptions,
-				text: "Failed to load account. Please try reloading the page.",
+				text: "Failed to load account. Please reload the page.",
 				backgroundColor: colors.brightRed,
 				duration: -1,
 			}).showToast()

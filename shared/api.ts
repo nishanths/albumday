@@ -6,21 +6,30 @@ export type Account = {
 	settings: Settings
 }
 
-export type Connection = (SpotifyConnection | ScrobbleConnection) & {
+export type Service = Connection["service"]
+
+export type KnownConnection = SpotifyConnection | ScrobbleConnection
+
+export type Connection = KnownConnection & {
 	error: ConnectionError | null
 }
 
-type ConnectionError = {
-	display: string
+export type ConnectionError = {
+	reason: ConnectionErrReason
 	timestamp: number
 }
 
-type ScrobbleConnection = {
+type ConnectionErrReason =
+	| "generic" // generic error
+	| "permission" // insuffcient permissions, likely that profile is private
+	| "not found" // no such profile
+
+export type ScrobbleConnection = {
 	service: "scrobble"
 	username: string
 }
 
-type SpotifyConnection = {
+export type SpotifyConnection = {
 	service: "spotify"
 	refreshToken: string
 }
@@ -50,4 +59,19 @@ export type Bootstrap = {
 	email: string | null
 }
 
-export type Service = Connection["service"]
+export type Song = {
+	artist: string
+    album: string
+    title: string
+
+    released: {
+        year: number | null
+        month: number | null
+        day: number | null
+    }
+
+    link: string | null
+    artworkURL: string | null
+
+    playCount: number | null
+}

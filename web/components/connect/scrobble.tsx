@@ -68,7 +68,7 @@ export class Scrobble extends React.Component<ScrobbleProps, State> {
 				case 401:
 					this.showNewToast({
 						...defaultToastOptions,
-						text: "Cookie appears to be b0rked. Please log out and try again.",
+						text: "Cookie appears to be b0rked. Please reload the page.",
 						backgroundColor: colors.brightRed,
 						duration: -1,
 						onClick: () => {
@@ -124,7 +124,7 @@ export class Scrobble extends React.Component<ScrobbleProps, State> {
 		this.props.nProgress.done()
 	}
 
-	private showNewToast(o: Partial<ToastOptions>) {
+	private showNewToast(o: ToastOptions) {
 		this.toast?.hideToast()
 		this.toast = Toastify(o)
 		this.toast.showToast()
