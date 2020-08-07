@@ -1,13 +1,15 @@
 import { RequestHandler } from "express"
 import { defaultFromEmail, EmailClient } from "./email"
-import { okStatus } from "shared"
+import { okStatus, connectionComplete, KnownConnection, isConnectionError, assertExhaustive } from "shared"
 import { env } from "./env"
 import { RedisClient, logRedisError, updateEntity } from "./redis"
 import { validate as validateEmail } from "email-validator"
 import { cookieNameIdentity, IdentityCookie, cookieValidityIdentityMs, currentEmail } from "./cookie"
 import { Account, accountKey, zeroAccount } from "./account"
 import { passphraseExpirySeconds, passphraseKey, generatePassphrase } from "./passphrase"
-import { scrobbleService } from "./music-service"
+import { musicService, Song } from "./music-service"
+import { rawQuery } from "./util"
+import { URLSearchParams } from "url"
 
 export const passphraseHandler = (redis: RedisClient, emailc: EmailClient): RequestHandler => async (req, res) => {
 	const email = req.query["email"]
@@ -162,7 +164,7 @@ export const accountHandler = (redis: RedisClient): RequestHandler => async (req
 		// TODO: stop doing this after supporting API keys fully
 		account.apiKey = ""
 
-		res.status(200).contentType("application/json").send(account).end()
+		res.status(200).json(account).end()
 	})
 }
 
@@ -247,15 +249,87 @@ export const setEmailNotificationsHandler = (redis: RedisClient): RequestHandler
 	}
 }
 
+function parseTimestamps(timestamps: string[]): [number[], boolean] {
+	const ret: number[] = []
+	for (const t of timestamps) {
+		try {
+			ret.push(parseInt(t, 10))
+		} catch {
+			return [[], false]
+		}
+	}
+	return [ret, true]
+}
+
 export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (req, res) => {
-	const timestamp = req.query["timestamp"]
-	if (timestamp === undefined || typeof timestamp !== "number") {
+	const q = rawQuery(req)
+	const params = new URLSearchParams(q)
+
+	const [timestamps, ok] = parseTimestamps(params.getAll("timestamp"))
+	if (!ok) {
 		res.status(400).end()
 		return
 	}
+
 	const timeZone = req.query["timeZone"]
 	if (timeZone === undefined || typeof timeZone !== "string" || timeZone === "") {
 		res.status(400).end()
 		return
 	}
+
+	const email = currentEmail(req)
+	if (email === null) {
+		// TODO: also support API key header
+		res.status(401).send("bad credentials").end()
+		return
+	}
+	redis.GET(accountKey(email), async (err, reply) => {
+		if (err) {
+			logRedisError(err, "get account")
+			res.status(500).end()
+			return
+		}
+		if (reply === null) {
+			// should never happen
+			console.error("unexpected null reply for account: " + email)
+			res.status(500).end()
+			return
+		}
+
+		const account = JSON.parse(reply) as Account
+		if (!connectionComplete(account)) {
+			res.status(412).end()
+			return
+		}
+
+		const conn = account.connection!
+		const svc = musicService(conn.service)
+
+		let songs: Song[]
+		try {
+			songs = svc.transform(await svc.fetch(conn))
+		} catch (e) {
+			console.error(e)
+
+			if (isConnectionError(e)) {
+				switch (e.reason) {
+					case "permission":
+					case "not found":
+						res.status(422).end()
+						return
+					case "generic":
+						res.status(500).end()
+						return
+					default:
+						assertExhaustive(e.reason)
+				}
+			}
+
+			res.status(500).end()
+			return
+		}
+
+		// TODO: compute birthdays for each timestamp in the request
+		// and respond
+	})
 }

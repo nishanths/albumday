@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios"
+import fetch from "node-fetch"
 import { Connection, ConnectionError, ScrobbleConnection, scrobbleAPIBaseURL } from "shared"
 import { URLSearchParams, URL } from "url"
 import { Temporal } from "proposal-temporal"
@@ -26,41 +26,46 @@ type ScrobbleResponse = {
 	songs: ScrobbleSong[]
 }
 
-const fetch = async (conn: ScrobbleConnection): Promise<ScrobbleSong[]> => {
+const scrobbleFetch = async (conn: ScrobbleConnection): Promise<ScrobbleSong[]> => {
 	const params = new URLSearchParams()
 	params.set("username", conn.username)
 
 	const scrobbleURL = scrobbleAPIBaseURL + "/scrobbled?" + params.toString()
 
-	try {
-		const rsp = await axios.get<ScrobbleResponse>(scrobbleURL, { responseType: "json" })
-		return rsp.data.songs
-	} catch (e) {
-		const axiosErr = e as AxiosError
-		console.error("get scrobbled", axiosErr.message)
-
-		let err: ConnectionError
-		if (axiosErr.response?.status === 403) {
-			err = {
+	const rsp = await fetch(scrobbleURL)
+	switch (rsp.status) {
+		case 200: {
+			const r = await rsp.json() as ScrobbleResponse
+			return r.songs
+		}
+		case 403: {
+			const err: ConnectionError = {
+				type: "connection error",
 				reason: "permission",
 				timestamp: Temporal.now.absolute().getEpochSeconds(),
 			}
-		} else if (axiosErr.response?.status === 404) {
-			err = {
+			throw err
+		}
+		case 404: {
+			const err: ConnectionError = {
+				type: "connection error",
 				reason: "not found",
 				timestamp: Temporal.now.absolute().getEpochSeconds(),
 			}
-		} else {
-			err = {
+			throw err
+		}
+		default: {
+			const err: ConnectionError = {
+				type: "connection error",
 				reason: "generic",
 				timestamp: Temporal.now.absolute().getEpochSeconds(),
 			}
+			throw err
 		}
-		throw err
 	}
 }
 
-const transform = (songs: ScrobbleSong[]): Song[] => {
+const scrobbleTransform = (songs: ScrobbleSong[]): Song[] => {
 	return songs.map(s => transformSong(s))
 }
 
@@ -88,6 +93,6 @@ const trackToAlbumLink = (trackViewURL: string): string | null => {
 }
 
 export const scrobbleService: MusicService<ScrobbleConnection, ScrobbleSong[]> = {
-	fetch,
-	transform,
+	fetch: scrobbleFetch,
+	transform: scrobbleTransform,
 }

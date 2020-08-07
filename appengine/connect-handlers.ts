@@ -1,9 +1,9 @@
 import * as crypto from "crypto"
-import { Service, scrobbleAPIBaseURL } from "shared"
+import { Service, scrobbleAPIBaseURL, okStatus } from "shared"
 import { URLSearchParams } from "url"
 import { RequestHandler, Request } from "express"
 import { currentEmail } from "./cookie"
-import axios, { AxiosError } from "axios"
+import fetch from "node-fetch"
 import { RedisClient, logRedisError, updateEntity } from "./redis"
 import { accountKey, Account } from "./account"
 
@@ -38,7 +38,7 @@ export const connectSpotifyHandler = (spotifyClientID: string): RequestHandler =
 	p.set("response_type", "code")
 	p.set("redirect_uri", spotifyRedirectURL(req))
 	p.set("state", stateJSON)
-	p.set("scope", "user-library-read user-top-read")
+	p.set("scope", "user-library-read")
 	p.set("show_dialog", "false")
 
 	res.cookie(cookieNameState, stateJSON, { maxAge: 30 * 60 * 1000, httpOnly: true, signed: true })
@@ -86,11 +86,19 @@ export const authSpotifyHandler = (spotifyClientID: string, spotifyClientSecret:
 
 	let tokenRsp: SpotifyTokenResponse
 	try {
-		const r = await axios.post<SpotifyTokenResponse>("https://accounts.spotify.com/api/token", p.toString(), { responseType: "json" })
-		tokenRsp = r.data
+		const r = await fetch("https://accounts.spotify.com/api/token", {
+			method: "POST",
+			body: p.toString(),
+			headers: {
+				"content-type": "application/x-www-form-urlencoded",
+			}
+		})
+		if (!okStatus(r.status)) {
+			throw "bad status " + r.status
+		}
+		tokenRsp = await r.json() as SpotifyTokenResponse
 	} catch (e) {
-		const err = e as AxiosError
-		console.error("spotify api token:", err.message)
+		console.error("spotify api token", e)
 		res.clearCookie(cookieNameState)
 		res.redirect(errorRedirect)
 		return
@@ -147,19 +155,24 @@ export const connectScrobbleHandler = (redis: RedisClient): RequestHandler => as
 	const scrobbleURL = scrobbleAPIBaseURL + "/scrobbled?" + params.toString()
 
 	try {
-		await axios.get(scrobbleURL)
+		const r = await fetch(scrobbleURL)
+		if (!okStatus(r.status)) {
+			console.error("get scrobbled: bad status: " + r.status)
+			if (r.status === 403) {
+				// profile is private
+				res.status(409).send("profile appears to be private").end()
+				return
+			}
+			if (r.status === 404) {
+				res.status(404).send("profile appears to be missing").end()
+				return
+			}
+			res.status(500).end()
+			return
+		}
+
 	} catch (e) {
-		const err = e as AxiosError
-		console.error("get scrobbled", err.message)
-		if (err.response?.status === 403) {
-			// profile is private
-			res.status(409).send("profile appears to be private").end()
-			return
-		}
-		if (err.response?.status === 404) {
-			res.status(404).send("profile appears to be missing").end()
-			return
-		}
+		console.error("get scrobbled", e)
 		res.status(500).end()
 		return
 	}

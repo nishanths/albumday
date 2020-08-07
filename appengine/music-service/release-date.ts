@@ -26,6 +26,7 @@ const timeZoneNames = [
 	"Europe/Paris",
 	"Europe/Berlin",
 	"Europe/Minsk",
+	"Europe/Madrid",
 
 	"Australia/Adelaide",
 	"Australia/Brisbane",

@@ -1,6 +1,6 @@
 import { CloudTasksClient } from '@google-cloud/tasks'
 import { Env, devBaseURL, env } from "./env"
-import axios from "axios"
+import fetch from "node-fetch"
 import { RequestHandler } from "express"
 import { assertExhaustive } from "shared"
 
@@ -50,7 +50,11 @@ const postJSONTaskDev = async (path: string, payload: any, secret: string): Prom
 		[tasksSecretHeader]: secret,
 		"content-type": "application/json",
 	}
-	await axios.post(devBaseURL() + path, JSON.stringify(payload), { headers })
+	await fetch(devBaseURL() + path, {
+		method: "POST",
+		headers,
+		body: JSON.stringify(payload),
+	})
 }
 
 export const requireTasksSecret = (wantSecret: string): RequestHandler => (req, res, next) => {

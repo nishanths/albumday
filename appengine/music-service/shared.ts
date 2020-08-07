@@ -25,3 +25,4 @@ export interface MusicService<Conn extends KnownConnection, T> {
 	fetch: (conn: Conn) => Promise<T>
 	transform: (t: T) => Song[]
 }
+

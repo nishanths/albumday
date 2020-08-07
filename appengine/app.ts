@@ -1,6 +1,5 @@
 import express, { RequestHandler } from "express"
 import bodyParser from "body-parser"
-import { quote } from "shared"
 import { env, devPort } from "./env"
 import { loadConfig } from "./config"
 import { newRedis } from "./redis"

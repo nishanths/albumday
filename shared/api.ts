@@ -14,9 +14,16 @@ export type Connection = KnownConnection & {
 	error: ConnectionError | null
 }
 
+const connectionErrorID = "connection error" as const
+
 export type ConnectionError = {
+	type: typeof connectionErrorID,
 	reason: ConnectionErrReason
 	timestamp: number
+}
+
+export function isConnectionError(e: any): e is ConnectionError {
+	return e["type"] === connectionErrorID
 }
 
 type ConnectionErrReason =
@@ -37,7 +44,7 @@ export type SpotifyConnection = {
 export type Settings = {
 	timeZone: string
 	emailsEnabled: boolean
-	emailFormat: "html" | "plain-text"
+	emailFormat: "html" | "plain text"
 }
 
 export function connectionComplete(a: Account): boolean {
