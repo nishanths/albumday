@@ -10,6 +10,7 @@ import { passphraseExpirySeconds, passphraseKey, generatePassphrase } from "./pa
 import { musicService, Song } from "./music-service"
 import { rawQuery } from "./util"
 import { URLSearchParams } from "url"
+import retry, { Options as RetryOptions, RetryFunction } from "async-retry"
 
 export const passphraseHandler = (redis: RedisClient, emailc: EmailClient): RequestHandler => async (req, res) => {
 	const email = req.query["email"]
@@ -305,12 +306,27 @@ export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (r
 		const conn = account.connection!
 		const svc = musicService(conn.service)
 
+		const opts: RetryOptions = {
+			retries: 5,
+			minTimeout: 500,
+			randomize: true
+		}
+		const f: RetryFunction<unknown> = async (bail) => {
+			try {
+				return await svc.fetch(conn)
+			} catch (e) {
+				if (isConnectionError(e) && (e.reason === "permission" || e.reason === "not found")) {
+					bail(e)
+				}
+			}
+		}
+
 		let songs: Song[]
 		try {
-			songs = svc.transform(await svc.fetch(conn))
+			const fetched = await retry(f, opts)
+			songs = svc.transform(fetched)
 		} catch (e) {
 			console.error(e)
-
 			if (isConnectionError(e)) {
 				switch (e.reason) {
 					case "permission":
@@ -324,7 +340,6 @@ export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (r
 						assertExhaustive(e.reason)
 				}
 			}
-
 			res.status(500).end()
 			return
 		}

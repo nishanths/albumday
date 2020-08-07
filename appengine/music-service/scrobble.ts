@@ -4,6 +4,7 @@ import { URLSearchParams, URL } from "url"
 import { Temporal } from "proposal-temporal"
 import { MusicService, Song } from "./shared"
 import { determineReleaseDate } from "./release-date"
+import { RateLimiter } from "limiter"
 
 type ScrobbleSong = {
 	albumTitle: string
@@ -26,43 +27,53 @@ type ScrobbleResponse = {
 	songs: ScrobbleSong[]
 }
 
+const limiter = new RateLimiter(1, "second")
+
 const scrobbleFetch = async (conn: ScrobbleConnection): Promise<ScrobbleSong[]> => {
 	const params = new URLSearchParams()
 	params.set("username", conn.username)
 
 	const scrobbleURL = scrobbleAPIBaseURL + "/scrobbled?" + params.toString()
 
-	const rsp = await fetch(scrobbleURL)
-	switch (rsp.status) {
-		case 200: {
-			const r = await rsp.json() as ScrobbleResponse
-			return r.songs
-		}
-		case 403: {
-			const err: ConnectionError = {
-				type: "connection error",
-				reason: "permission",
-				timestamp: Temporal.now.absolute().getEpochSeconds(),
+	return new Promise((resolve, reject) => {
+		limiter.removeTokens(1, async () => {
+			const rsp = await fetch(scrobbleURL)
+			switch (rsp.status) {
+				case 200: {
+					const r = await rsp.json() as ScrobbleResponse
+					resolve(r.songs)
+					return
+				}
+				case 403: {
+					const err: ConnectionError = {
+						type: "connection error",
+						reason: "permission",
+						timestamp: Temporal.now.absolute().getEpochSeconds(),
+					}
+					reject(err)
+					return
+				}
+				case 404: {
+					const err: ConnectionError = {
+						type: "connection error",
+						reason: "not found",
+						timestamp: Temporal.now.absolute().getEpochSeconds(),
+					}
+					reject(err)
+					return
+				}
+				default: {
+					const err: ConnectionError = {
+						type: "connection error",
+						reason: "generic",
+						timestamp: Temporal.now.absolute().getEpochSeconds(),
+					}
+					reject(err)
+					return
+				}
 			}
-			throw err
-		}
-		case 404: {
-			const err: ConnectionError = {
-				type: "connection error",
-				reason: "not found",
-				timestamp: Temporal.now.absolute().getEpochSeconds(),
-			}
-			throw err
-		}
-		default: {
-			const err: ConnectionError = {
-				type: "connection error",
-				reason: "generic",
-				timestamp: Temporal.now.absolute().getEpochSeconds(),
-			}
-			throw err
-		}
-	}
+		})
+	})
 }
 
 const scrobbleTransform = (songs: ScrobbleSong[]): Song[] => {
