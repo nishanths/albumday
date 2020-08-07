@@ -66,3 +66,4 @@ export type Bootstrap = {
 	email: string | null
 }
 
+export type CacheParam = "off" | "on"

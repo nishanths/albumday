@@ -1,24 +1,27 @@
-import { KnownConnection } from "shared"
+import { scrobbleService } from "./scrobble"
+import { spotifyService } from "./spotify"
+import { Service, assertExhaustive, KnownConnection, isConnectionError } from "shared"
+import retry, { Options as RetryOptions, RetryFunction } from "async-retry"
 
 export type Song = {
-	artist: string | null
-	album: string | null
-	title: string | null
+	artist: string | undefined
+	album: string | undefined
+	title: string | undefined
 
-	released: ReleaseDate | null
+	released: ReleaseDate | undefined
 
-	link: string | null
-	albumLink: string | null
-	artworkURL: string | null
+	link: string | undefined
+	albumLink: string | undefined
+	artworkURL: string | undefined
 
-	playCount: number | null
-	loved: boolean | null
+	playCount: number | undefined
+	loved: boolean | undefined
 }
 
 export type ReleaseDate = {
-	year: number | null
-	month: number | null
-	day: number | null
+	year: number | undefined
+	month: number | undefined
+	day: number | undefined
 }
 
 export interface MusicService<Conn extends KnownConnection, T> {
@@ -26,3 +29,39 @@ export interface MusicService<Conn extends KnownConnection, T> {
 	transform: (t: T) => Song[]
 }
 
+type AnyMusicService = MusicService<KnownConnection, any>
+
+function musicService(s: Service): AnyMusicService {
+	switch (s) {
+		case "spotify":
+			return spotifyService as AnyMusicService
+		case "scrobble":
+			return scrobbleService as AnyMusicService
+		default:
+			assertExhaustive(s)
+	}
+}
+
+const defaultRetryOptions: RetryOptions = {
+	retries: 5,
+	minTimeout: 500,
+	randomize: true,
+}
+
+export async function fetchSongs(conn: KnownConnection, retryOptions: RetryOptions = defaultRetryOptions): Promise<Song[]> {
+	const svc = musicService(conn.service)
+
+	const f: RetryFunction<unknown> = async (bail) => {
+		try {
+			return await svc.fetch(conn)
+		} catch (e) {
+			if (isConnectionError(e) && (e.reason === "permission" || e.reason === "not found")) {
+				bail(e)
+			}
+		}
+	}
+
+	const fetched = await retry(f, retryOptions)
+	const songs = svc.transform(fetched)
+	return songs
+}

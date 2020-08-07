@@ -1,4 +1,5 @@
 import { Request } from "express"
+import { CacheParam } from "shared"
 
 export function rawQuery(req: Request): string {
 	const startIdx = req.originalUrl.indexOf("?")
@@ -12,3 +13,6 @@ export function rawQuery(req: Request): string {
 	return req.originalUrl.substring(startIdx, endIdx)
 }
 
+export function isCacheParam(s: string): s is CacheParam {
+	return s === "on" || s === "off"
+}

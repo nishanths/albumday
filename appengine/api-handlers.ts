@@ -1,16 +1,16 @@
 import { RequestHandler } from "express"
 import { defaultFromEmail, EmailClient } from "./email"
-import { okStatus, connectionComplete, KnownConnection, isConnectionError, assertExhaustive } from "shared"
+import { okStatus, connectionComplete, KnownConnection, isConnectionError, assertExhaustive, CacheParam } from "shared"
 import { env } from "./env"
 import { RedisClient, logRedisError, updateEntity } from "./redis"
 import { validate as validateEmail } from "email-validator"
 import { cookieNameIdentity, IdentityCookie, cookieValidityIdentityMs, currentEmail } from "./cookie"
 import { Account, accountKey, zeroAccount } from "./account"
 import { passphraseExpirySeconds, passphraseKey, generatePassphrase } from "./passphrase"
-import { musicService, Song } from "./music-service"
-import { rawQuery } from "./util"
+import { rawQuery, isCacheParam } from "./util"
 import { URLSearchParams } from "url"
-import retry, { Options as RetryOptions, RetryFunction } from "async-retry"
+import { fetchSongs, Song } from "./music-service"
+import { libraryCacheKey, getSongsFromCache, putSongsToCache } from "./library-cache"
 
 export const passphraseHandler = (redis: RedisClient, emailc: EmailClient): RequestHandler => async (req, res) => {
 	const email = req.query["email"]
@@ -268,13 +268,19 @@ export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (r
 
 	const [timestamps, ok] = parseTimestamps(params.getAll("timestamp"))
 	if (!ok) {
-		res.status(400).end()
+		res.status(400).send("bad timestamp").end()
 		return
 	}
 
-	const timeZone = req.query["timeZone"]
-	if (timeZone === undefined || typeof timeZone !== "string" || timeZone === "") {
-		res.status(400).end()
+	const timeZone = params.get("timeZone")
+	if (timeZone === null || timeZone === "") {
+		res.status(400).send("bad timeZone").end()
+		return
+	}
+
+	const cache = params.get("cache") || "on"
+	if (!isCacheParam(cache)) {
+		res.status(400).send("bad cache").end()
 		return
 	}
 
@@ -284,6 +290,7 @@ export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (r
 		res.status(401).send("bad credentials").end()
 		return
 	}
+
 	redis.GET(accountKey(email), async (err, reply) => {
 		if (err) {
 			logRedisError(err, "get account")
@@ -304,29 +311,31 @@ export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (r
 		}
 
 		const conn = account.connection!
-		const svc = musicService(conn.service)
+		const cacheKey = libraryCacheKey(conn.service, email)
 
-		const opts: RetryOptions = {
-			retries: 5,
-			minTimeout: 500,
-			randomize: true
-		}
-		const f: RetryFunction<unknown> = async (bail) => {
+		if (cache === "on") {
+			// try to use cached value
 			try {
-				return await svc.fetch(conn)
-			} catch (e) {
-				if (isConnectionError(e) && (e.reason === "permission" || e.reason === "not found")) {
-					bail(e)
+				const songs = getSongsFromCache(redis, cacheKey)
+				if (songs !== null) {
+					// done!
+					// TODO: compute birthdays
+					// TODO: respond
+					return
 				}
+				// no songs in cache: fall through
+			} catch (e) {
+				console.error("failed to get songs from cache", e)
+				// error getting from cache: fall through
 			}
 		}
 
+		// compute afresh
 		let songs: Song[]
 		try {
-			const fetched = await retry(f, opts)
-			songs = svc.transform(fetched)
+			songs = await fetchSongs(conn)
 		} catch (e) {
-			console.error(e)
+			console.error("fetch songs", e)
 			if (isConnectionError(e)) {
 				switch (e.reason) {
 					case "permission":
@@ -344,7 +353,15 @@ export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (r
 			return
 		}
 
-		// TODO: compute birthdays for each timestamp in the request
-		// and respond
+		// update cache, best effort.
+		try {
+			await putSongsToCache(redis, cacheKey, songs)
+		} catch (e) {
+			console.error("failed to cache songs", e) // only log
+		}
+
+		// TODO: compute birthdays
+		// TODO: respond
 	})
 }
+

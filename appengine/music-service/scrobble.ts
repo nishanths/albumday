@@ -2,7 +2,7 @@ import fetch from "node-fetch"
 import { Connection, ConnectionError, ScrobbleConnection, scrobbleAPIBaseURL } from "shared"
 import { URLSearchParams, URL } from "url"
 import { Temporal } from "proposal-temporal"
-import { MusicService, Song } from "./shared"
+import type { MusicService, Song } from "./shared"
 import { determineReleaseDate } from "./release-date"
 import { RateLimiter } from "limiter"
 
@@ -82,11 +82,11 @@ const scrobbleTransform = (songs: ScrobbleSong[]): Song[] => {
 
 const transformSong = (s: ScrobbleSong): Song => {
 	return {
-		artist: s.artistName || null,
-		album: s.albumTitle || null,
-		title: s.title || null,
-		released: s.releaseDate !== 0 ? determineReleaseDate(s.releaseDate) : null,
-		link: s.trackViewURL || null,
+		artist: s.artistName || undefined,
+		album: s.albumTitle || undefined,
+		title: s.title || undefined,
+		released: s.releaseDate !== 0 ? determineReleaseDate(s.releaseDate) : undefined,
+		link: s.trackViewURL || undefined,
 		albumLink: trackToAlbumLink(s.trackViewURL),
 		artworkURL: `${scrobbleAPIBaseURL}/artwork?hash=${encodeURIComponent(s.artworkHash)}`,
 		playCount: s.playCount,
@@ -94,9 +94,9 @@ const transformSong = (s: ScrobbleSong): Song => {
 	}
 }
 
-const trackToAlbumLink = (trackViewURL: string): string | null => {
+const trackToAlbumLink = (trackViewURL: string): string | undefined => {
 	if (trackViewURL === "") {
-		return null
+		return undefined
 	}
 	const u = new URL(trackViewURL)
 	u.search = ""

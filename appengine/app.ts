@@ -49,6 +49,8 @@ const main = async () => {
 	mainRouter.post("/connect/scrobble", connectScrobbleHandler(redis))
 	mainRouter.post("/internal/cron/daily-email", requireCronHeader, cronDailyEmailHandler(redis, tasks, config.tasksSecret))
 	mainRouter.post("/internal/task/daily-email", requireTasksSecret(config.tasksSecret), jsonParser, taskDailyEmailHandler(redis))
+	mainRouter.post("/internal/cron/refresh-library", requireCronHeader) // TODO
+	mainRouter.post("/internal/task/refresh-library", requireTasksSecret(config.tasksSecret), jsonParser) // TODO
 
 	apiRouter.post("/passphrase", passphraseHandler(redis, emailc))
 	apiRouter.post("/login", loginHandler(redis))
