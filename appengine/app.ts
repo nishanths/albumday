@@ -8,16 +8,18 @@ import { newEmail } from "./email"
 import cookieParser from "cookie-parser"
 import { connectSpotifyHandler, authSpotifyHandler, connectScrobbleHandler } from "./connect-handlers"
 import { indexHandler, startHandler, feedHandler, logoutHandler } from "./app-handlers"
-import { passphraseHandler, loginHandler, accountHandler, birthdaysHandler,
-		deleteAccountHandler, deleteAccountConnectionHandler, setEmailNotificationsHandler } from "./api-handlers"
+import {
+	passphraseHandler, loginHandler, accountHandler, birthdaysHandler,
+	deleteAccountHandler, deleteAccountConnectionHandler, setEmailNotificationsHandler
+} from "./api-handlers"
 import { cronDailyEmailHandler, taskDailyEmailHandler } from "./internal-handlers"
 import { newDatastore } from "./datastore"
 import { currentEmail } from "./cookie"
 import { requireTasksSecret, newTasksClient } from "./cloud-tasks"
 
 const main = async () => {
-	const ds = newDatastore()
-	const tasks = newTasksClient()
+	const ds = newDatastore() // null in dev
+	const tasks = newTasksClient() // ...
 	const config = await loadConfig(env(), ds)
 	// NOTE: separate redis clients are required if using transaction commands
 	const redis = newRedis(config)
@@ -60,8 +62,8 @@ const main = async () => {
 	apiRouter.get("/birthdays", birthdaysHandler(redis))
 
 	// 404 handlers
-	mainRouter.use((req, res) => { res.status(404).send("not found") })
-	apiRouter.use((req, res) => { res.status(404) })
+	mainRouter.use((req, res) => { res.status(404).send("not found").end() })
+	apiRouter.use((req, res) => { res.status(404).end() })
 
 	app.use("/api/v1", apiRouter)
 	app.use("/", mainRouter)
@@ -82,7 +84,7 @@ const logRequestAuthentication: RequestHandler = (req, res, next) => {
 }
 
 const requireCronHeader: RequestHandler = (req, res, next) => {
-	if (req.headers["x-appengine-cron"] === "true") {
+	if (env() === "dev" || req.headers["x-appengine-cron"] === "true") {
 		next()
 		return
 	}

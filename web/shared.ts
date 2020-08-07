@@ -11,7 +11,7 @@ export const colors = {
 export const defaultToastOptions: ToastOptions = {
 	gravity: "top",
 	position: "center",
-	duration: 3000,
+	duration: 2100,
 	backgroundColor: colors.green,
-	className: "toastify-toast",
+	className: "toastify-custom toastify-custom-higher-precedence toastify-custom-higher-precedence-2",
 }

@@ -1,13 +1,13 @@
 import { CloudTasksClient } from '@google-cloud/tasks'
-import { Env, devBaseURL } from "./env"
+import { Env, devBaseURL, env } from "./env"
 import axios from "axios"
 import { RequestHandler } from "express"
 import { assertExhaustive } from "shared"
 
-export type TasksClient = ReturnType<typeof newTasksClient>
+export type TasksClient = Exclude<ReturnType<typeof newTasksClient>, null>
 
 export function newTasksClient() {
-	return new CloudTasksClient()
+	return env() !== "dev" ? new CloudTasksClient() : null
 }
 
 const tasksSecretHeader = "x-tasks-secret"

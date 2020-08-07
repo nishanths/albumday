@@ -1,6 +1,6 @@
 import React from "react"
 import { scrobbleBaseURL, Connection } from "shared"
-import Toastify, { ToastHandle, Options as ToastOptions } from "toastify-js"
+import Toastify, { ToastHandle, ToastOptions } from "toastify-js"
 import { defaultToastOptions, colors } from "../../shared"
 import { NProgressType } from "../../types"
 
@@ -88,7 +88,7 @@ export class Scrobble extends React.Component<ScrobbleProps, State> {
 				case 409:
 					this.showNewToast({
 						...defaultToastOptions,
-						text: "Profile appears to be private. Make it public and try again.",
+						text: "Profile appears to be private. Change to public and try again.",
 						backgroundColor: colors.yellow,
 					})
 					this.usernameRef!.focus()
@@ -108,7 +108,6 @@ export class Scrobble extends React.Component<ScrobbleProps, State> {
 				...defaultToastOptions,
 				text: "Failed to connect with Apple Music. Please try again.",
 				backgroundColor: colors.brightRed,
-				duration: 5000,
 			})
 			this.submittingDone()
 		}
@@ -157,11 +156,11 @@ export class Scrobble extends React.Component<ScrobbleProps, State> {
 						ref={r => { this.usernameRef = r }}
 					/>
 					<div className="instruction">
-						Connecting to Apple Music requires a <a href={scrobbleBaseURL} target="_blank">scrobble</a> profile. Enter your scrobble username.
+						Connecting to Apple Music uses a <a href={scrobbleBaseURL} target="_blank">scrobble</a> profile. Enter your scrobble username.
 					</div>
 				</form>
 				<div className="back-button">
-					<a href="" onClick={e => { e.preventDefault(); this.props.onBack() }}>Go back</a>
+					<a href="" onClick={e => { e.preventDefault(); this.props.onBack() }}>Return to service select</a>
 				</div>
 			</div>
 		</div>

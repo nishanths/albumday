@@ -59,19 +59,3 @@ export type Bootstrap = {
 	email: string | null
 }
 
-export type Song = {
-	artist: string
-    album: string
-    title: string
-
-    released: {
-        year: number | null
-        month: number | null
-        day: number | null
-    }
-
-    link: string | null
-    artworkURL: string | null
-
-    playCount: number | null
-}

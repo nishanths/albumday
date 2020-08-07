@@ -17,5 +17,9 @@ a {
 	color: $blue-active;
 }
 
-.toastify-toast {
+.toastify-custom.toastify-custom-higher-precedence.toastify-custom-higher-precedence-2 {
+	// Original CSS uses "max-width: fit-content", which is an invalid value on Firefox.
+	// Bug reveals itself on Firefox.
+	max-width: -moz-fit-content;
+	max-width: fit-content;
 }

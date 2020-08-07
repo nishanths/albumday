@@ -9,7 +9,7 @@ type DailyEmailTask = {
 	accountKey: string
 }
 
-export const cronDailyEmailHandler = (redis: RedisClient, tasks: TasksClient, tasksSecret: string): RequestHandler => (req, res) => {
+export const cronDailyEmailHandler = (redis: RedisClient, tasks: TasksClient | null, tasksSecret: string): RequestHandler => (req, res) => {
 	// NOTE: redis.io/commands/keys says: "Redis running on an entry level laptop can
 	// scan a 1 million key database in 40 milliseconds."
 	redis.KEYS(accountKeysPrefix, async (err, keys) => {

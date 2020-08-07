@@ -6,7 +6,7 @@ import { RouteComponentProps } from "react-router";
 import { NProgressType } from "../../types"
 import { CSSTransition } from "react-transition-group"
 import { Temporal } from "proposal-temporal"
-import Toastify, { ToastHandle, Options as ToastOptions } from "toastify-js"
+import Toastify, { ToastHandle, ToastOptions } from "toastify-js"
 import { defaultToastOptions, colors } from "../../shared"
 
 type State = {

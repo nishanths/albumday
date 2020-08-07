@@ -144,7 +144,7 @@ export const connectScrobbleHandler = (redis: RedisClient): RequestHandler => as
 	const params = new URLSearchParams()
 	params.set("username", scrobbleUsername)
 	params.set("limit", "" + 0)
-	const scrobbleURL = scrobbleAPIBaseURL + "/api/v1/scrobbled?" + params.toString()
+	const scrobbleURL = scrobbleAPIBaseURL + "/scrobbled?" + params.toString()
 
 	try {
 		await axios.get(scrobbleURL)

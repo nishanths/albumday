@@ -248,4 +248,14 @@ export const setEmailNotificationsHandler = (redis: RedisClient): RequestHandler
 }
 
 export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (req, res) => {
+	const timestamp = req.query["timestamp"]
+	if (timestamp === undefined || typeof timestamp !== "number") {
+		res.status(400).end()
+		return
+	}
+	const timeZone = req.query["timeZone"]
+	if (timeZone === undefined || typeof timeZone !== "string" || timeZone === "") {
+		res.status(400).end()
+		return
+	}
 }

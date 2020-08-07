@@ -22,8 +22,8 @@ function displayService(s: Service): string {
 }
 
 const deleteAccountConfirm = `Deleting your account will delete account information from our servers. ` +
-`It will also stop any album birthday emails you may be receiving. ` +
-`You may still receive important account-related emails after deleting your account.
+	`It will also stop any album birthday emails you may be receiving. ` +
+	`You may still receive important account-related emails after deleting your account.
 
 You may register again with the same email address in the future.
 
@@ -209,12 +209,12 @@ export class Settings extends React.Component<SettingsProps> {
 	private linkedWithText(): JSX.Element {
 		const conn = this.props.account.connection!
 		switch (conn.service) {
-		case "spotify":
-			return <>Linked with Spotify</>
-		case "scrobble":
-			return <>Linked with Apple Music, using scrobble profile <a className="connection-external-link" href={scrobbleBaseURL + "/u/" + conn.username} target="_blank">{conn.username}</a></>
-		default:
-			assertExhaustive(conn)
+			case "spotify":
+				return <>Linked with Spotify</>
+			case "scrobble":
+				return <>Linked with Apple Music, using scrobble profile <a className="connection-external-link" href={scrobbleBaseURL + "/u/" + conn.username} target="_blank">{conn.username}</a></>
+			default:
+				assertExhaustive(conn)
 		}
 	}
 
@@ -244,7 +244,7 @@ export class Settings extends React.Component<SettingsProps> {
 			this.connectionToast.hideToast()
 		}
 
-		const account =  <li>
+		const account = <li>
 			<strong>Account</strong>: Logged in as {this.props.email} — <a href="/logout">log out</a>, <a href="" onClick={e => { e.preventDefault(); this.onDeleteAccount() }}> delete account.</a>
 		</li>
 
