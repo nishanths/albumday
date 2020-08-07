@@ -227,7 +227,14 @@ export const setEmailNotificationsHandler = (redis: RedisClient): RequestHandler
 	}
 
 	const body = req.body as Buffer
-	const newValue = JSON.parse(body.toString("utf-8"))
+	let newValue: any
+	try {
+		newValue = JSON.parse(body.toString("utf-8"))
+	} catch (e) {
+		console.error("JSON parse", e)
+		res.status(400).end()
+		return
+	}
 
 	if (typeof newValue !== "boolean") {
 		res.status(400).end()
