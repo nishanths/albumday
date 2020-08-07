@@ -278,6 +278,10 @@ export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (r
 		res.status(400).send("bad timestamp").end()
 		return
 	}
+	if (timestamps.length > 2) {
+		res.status(400).send("too many timestamps").end()
+		return
+	}
 
 	const timeZone = params.get("timeZone")
 	if (timeZone === null || timeZone === "") {
