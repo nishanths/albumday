@@ -1,1 +1,1 @@
-export { Song, ReleaseDate, fetchSongs } from "./shared"
+export { Song, ReleaseDate, fetchSongs, equalReleaseDate } from "./shared"

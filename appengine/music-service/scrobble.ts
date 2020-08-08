@@ -77,15 +77,26 @@ const scrobbleFetch = async (conn: ScrobbleConnection): Promise<ScrobbleSong[]> 
 }
 
 const scrobbleTransform = (songs: ScrobbleSong[]): Song[] => {
-	return songs.map(s => transformSong(s))
+	const ret: Song[] = []
+	for (const s of songs) {
+		const r = transformSong(s)
+		if (r === undefined) {
+			continue
+		}
+		ret.push(r)
+	}
+	return ret
 }
 
-const transformSong = (s: ScrobbleSong): Song => {
+const transformSong = (s: ScrobbleSong): Song | undefined => {
+	if (s.artistName === "" || s.albumTitle === "" || s.title === "" || s.releaseDate === 0) {
+		return undefined
+	}
 	return {
-		artist: s.artistName || undefined,
-		album: s.albumTitle || undefined,
-		title: s.title || undefined,
-		released: s.releaseDate !== 0 ? determineReleaseDate(s.releaseDate) : undefined,
+		artist: s.artistName,
+		album: s.albumTitle,
+		title: s.title,
+		release: determineReleaseDate(s.releaseDate),
 		link: s.trackViewURL || undefined,
 		albumLink: trackToAlbumLink(s.trackViewURL),
 		artworkURL: `${scrobbleAPIBaseURL}/artwork?hash=${encodeURIComponent(s.artworkHash)}`,

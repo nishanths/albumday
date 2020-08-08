@@ -58,7 +58,7 @@ body.StartBody {
 	.form {
 		min-width: 300px;
 		max-width: 300px;
-		min-height: 185px; // manually inspected
+		min-height: 225px; // manually inspected + leeway
 		padding: 0 10px;
 
 		form {

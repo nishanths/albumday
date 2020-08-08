@@ -1,5 +1,5 @@
 import { Connection, ConnectionError, SpotifyConnection } from "shared"
-import { MusicService, Song } from "./shared"
+import { MusicService, Song, ReleaseDate } from "./shared"
 
 const fetch = async (conn: SpotifyConnection): Promise<any[]> => {
 	return []

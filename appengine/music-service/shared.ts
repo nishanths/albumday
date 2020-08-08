@@ -4,11 +4,11 @@ import { Service, assertExhaustive, KnownConnection, isConnectionError } from "s
 import retry, { Options as RetryOptions, RetryFunction } from "async-retry"
 
 export type Song = {
-	artist: string | undefined
-	album: string | undefined
-	title: string | undefined
+	artist: string
+	album: string
+	title: string
 
-	released: ReleaseDate | undefined
+	release: ReleaseDate
 
 	link: string | undefined
 	albumLink: string | undefined
@@ -19,9 +19,15 @@ export type Song = {
 }
 
 export type ReleaseDate = {
-	year: number | undefined
-	month: number | undefined
+	year: number
+	month: number
 	day: number | undefined
+}
+
+export function equalReleaseDate(a: ReleaseDate, b: ReleaseDate): boolean {
+	return a.year === b.year &&
+		a.month === b.month &&
+		a.day === b.day
 }
 
 export interface MusicService<Conn extends KnownConnection, T> {

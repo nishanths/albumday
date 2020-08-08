@@ -8,8 +8,8 @@ export function newRedis(config: Pick<Config, "redisHost" | "redisPort" | "redis
 		tls: config.redisTls,
 		db: 0,
 		retry_strategy: (opt) => {
-			if (opt.attempt > 3) { return undefined }
-			return 10
+			if (opt.attempt > 5) { return undefined }
+			return Math.min(Math.pow(2, opt.attempt) * 250, 5000)
 		},
 	})
 

@@ -1,8 +1,6 @@
 import { Temporal } from "proposal-temporal"
 import { ReleaseDate } from "./shared"
-
-const toNano = BigInt(Math.pow(10, 6))
-const secondsToNano = (s: bigint) => s * toNano
+import { secondsToNano } from "shared"
 
 // TODO: add more
 const timeZoneNames = [

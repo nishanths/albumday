@@ -11,6 +11,7 @@ import { rawQuery, isCacheParam } from "./util"
 import { URLSearchParams } from "url"
 import { fetchSongs, Song } from "./music-service"
 import { libraryCacheKey, getSongsFromCache, putSongsToCache } from "./library-cache"
+import { computeBirthdays } from "./birthday"
 
 export const passphraseHandler = (redis: RedisClient, emailc: EmailClient): RequestHandler => async (req, res) => {
 	const email = req.query["email"]
@@ -337,11 +338,12 @@ export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (r
 		if (cache === "on") {
 			// try to use cached value
 			try {
-				const songs = getSongsFromCache(redis, cacheKey)
+				const songs = await getSongsFromCache(redis, cacheKey)
 				if (songs !== null) {
 					// done!
-					// TODO: compute birthdays
 					// TODO: respond
+					computeBirthdays(timestamps[0], timeZone, songs)
+					res.status(200).send("done").end()
 					return
 				}
 				// no songs in cache: fall through
@@ -383,6 +385,8 @@ export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (r
 
 		// TODO: compute birthdays
 		// TODO: respond
+		computeBirthdays(timestamps[0], timeZone, songs)
+		res.status(200).send("done").end()
 	})
 }
 

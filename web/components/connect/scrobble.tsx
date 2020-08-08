@@ -38,12 +38,11 @@ export class Scrobble extends React.Component<ScrobbleProps, State> {
 		}
 		const username = this.usernameRef!.value.trim()
 		if (username === "") {
-			Toastify({
+			this.showNewToast({
 				...defaultToastOptions,
 				text: "Please enter a username.",
 				backgroundColor: colors.yellow,
-				duration: 2000,
-			}).showToast()
+			})
 			return
 		}
 
