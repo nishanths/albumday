@@ -42,7 +42,7 @@ export class Scrobble extends React.Component<ScrobbleProps, State> {
 				...defaultToastOptions,
 				text: "Please enter a username.",
 				backgroundColor: colors.yellow,
-				duration: 1000,
+				duration: 2000,
 			}).showToast()
 			return
 		}
