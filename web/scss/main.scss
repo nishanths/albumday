@@ -18,6 +18,12 @@ a {
 	&:hover {
 		color: #0099ff; // redis.io hover links
 	}
+	&.gray {
+		color: $color-instruction;
+		&:hover {
+			color: $color-instruction;
+		}
+	}
 }
 
 .toastify-custom.toastify-custom-higher-precedence.toastify-custom-higher-precedence-2 {

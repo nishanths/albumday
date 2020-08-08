@@ -18,6 +18,9 @@
 
 	.connection-external-link {
 		color: $color-instruction;
+		&:hover {
+			color: $color-instruction;
+		}
 	}
 
 	.danger {
