@@ -15,6 +15,9 @@ body {
 a {
 	text-decoration: underline;
 	color: $blue-active;
+	&:hover {
+		color: #0099ff; // redis.io hover links
+	}
 }
 
 .toastify-custom.toastify-custom-higher-precedence.toastify-custom-higher-precedence-2 {

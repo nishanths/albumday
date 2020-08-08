@@ -42,7 +42,7 @@ export const taskDailyEmailHandler = (redis: RedisClient): RequestHandler => (re
 
 	redis.GET(task.accountKey, (err, reply) => {
 		if (err) {
-			logRedisError(err, "GET account: " + task.accountKey)
+			logRedisError(err, "get account: " + task.accountKey)
 			res.status(500).end()
 			return
 		}

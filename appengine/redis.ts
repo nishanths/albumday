@@ -42,7 +42,7 @@ export function newRedis(config: Pick<Config, "redisHost" | "redisPort" | "redis
 
 export type RedisClient = redispkg.RedisClient
 
-export const logRedisError = (err: redispkg.RedisError, message?: string) => {
+export const logRedisError = (err: redispkg.RedisError, message?: string): void => {
 	if (message !== undefined) {
 		console.error(`redis: ${message}: ${err.name}: ${err.message}`)
 	} else {
@@ -71,7 +71,7 @@ export const updateEntity = <T>(redis: RedisClient, key: string, mutator: (entit
 				const entity = JSON.parse(reply) as T
 				updatedEntityStr = JSON.stringify(mutator(entity))
 			} catch (e) {
-				console.error(`${desc}` + e)
+				console.error(`parse and mutate: ${desc}: ` + e)
 				reject()
 				return
 			}

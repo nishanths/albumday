@@ -1,6 +1,6 @@
 import { RequestHandler } from "express"
 import { defaultFromEmail, EmailClient } from "./email"
-import { okStatus, connectionComplete, KnownConnection, isConnectionError, assertExhaustive, CacheParam } from "shared"
+import { okStatus, connectionComplete, KnownConnection, isConnectionError, assertExhaustive, CacheParam, services } from "shared"
 import { env } from "./env"
 import { RedisClient, logRedisError, updateEntity } from "./redis"
 import { validate as validateEmail } from "email-validator"
@@ -177,10 +177,20 @@ export const deleteAccountHandler = (redis: RedisClient): RequestHandler => asyn
 		return
 	}
 
+	// delete passphrase
 	redis.DEL(passphraseKey(email), err => {
 		if (err) {
 			// only log
 			logRedisError(err, "delete passphrase: " + email)
+		}
+	})
+
+	// delete library caches
+	const cacheKeys = services.map(s => libraryCacheKey(s, email))
+	redis.DEL(...cacheKeys, err => {
+		if (err) {
+			// only log
+			logRedisError(err, "delete library cache: " + email)
 		}
 	})
 

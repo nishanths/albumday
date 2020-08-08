@@ -38,6 +38,12 @@ export class Scrobble extends React.Component<ScrobbleProps, State> {
 		}
 		const username = this.usernameRef!.value.trim()
 		if (username === "") {
+			Toastify({
+				...defaultToastOptions,
+				text: "Please enter a username.",
+				backgroundColor: colors.yellow,
+				duration: 1000,
+			}).showToast()
 			return
 		}
 
@@ -160,7 +166,8 @@ export class Scrobble extends React.Component<ScrobbleProps, State> {
 					</div>
 				</form>
 				<div className="back-button">
-					<a href="" onClick={e => { e.preventDefault(); this.props.onBack() }}>Return to service select</a>
+					<p><a href="" onClick={e => { e.preventDefault(); this.onUsernameSubmit() }}>Continue</a></p>
+					<p><a href="" onClick={e => { e.preventDefault(); this.props.onBack() }}>Return to service select</a></p>
 				</div>
 			</div>
 		</div>

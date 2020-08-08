@@ -6,6 +6,9 @@ export type Account = {
 	settings: Settings
 }
 
+// NOTE: keep this in sync with the Service type.
+export const services: Service[] = ["spotify", "scrobble"]
+
 export type Service = Connection["service"]
 
 export type KnownConnection = SpotifyConnection | ScrobbleConnection

@@ -21,6 +21,8 @@ type State = {
 const defaultError = "Something unexpectedly went wrong. Please try again."
 const invalidEmailError = "Please enter a valid email."
 const invalidPassphraseError = "That passphrase is expired, has been used already, or is incorrect. Click to start over."
+const emptyEmailError = "Please enter an email."
+const emptyPassphraseError = "Please enter passphrase."
 
 type StartProps = RouteComponentProps & {
 	nProgress: NProgressType
@@ -51,6 +53,7 @@ class StartComponent extends React.Component<StartProps, State> {
 		}
 		const email = this.emailRef!.value.trim()
 		if (email === "") {
+			this.setState({ error: emptyEmailError })
 			return
 		}
 
@@ -99,6 +102,7 @@ class StartComponent extends React.Component<StartProps, State> {
 		}
 		const passphrase = this.passphraseRef!.value.trim()
 		if (passphrase === "") {
+			this.setState({ error: emptyPassphraseError })
 			return
 		}
 
@@ -176,10 +180,17 @@ class StartComponent extends React.Component<StartProps, State> {
 
 		this.toast?.hideToast()
 		if (error !== undefined) {
-			const extraOptions: ToastOptions = error === invalidPassphraseError ? {
-				onClick: () => { this.onStartOver() },
-				duration: -1,
-			} : {}
+			let extraOptions: ToastOptions = {}
+			if (error === invalidPassphraseError) {
+				extraOptions = {
+					onClick: () => { this.onStartOver() },
+					duration: -1,
+				}
+			} else if (error === emptyEmailError || error === emptyPassphraseError) {
+				extraOptions = {
+					backgroundColor: colors.yellow,
+				}
+			}
 			this.toast = Toastify({
 				...defaultToastOptions,
 				text: error,
@@ -219,6 +230,7 @@ class StartComponent extends React.Component<StartProps, State> {
 							<div className={"instruction"}>
 								{<>
 									<p>Enter your email address.</p>
+									<p><a href="" onClick={e => { e.preventDefault(); this.onEmailSubmit() }}>Continue</a></p>
 									<p><Link to="/">Return to home page</Link></p>
 								</>}
 							</div>
@@ -237,6 +249,7 @@ class StartComponent extends React.Component<StartProps, State> {
 							<div className={"instruction"}>
 								{<>
 									<p>A login code was sent to {submittedEmail}. Enter the code to continue.</p>
+									<p><a href="" onClick={e => { e.preventDefault(); this.onPassphraseSubmit() }}>Submit</a></p>
 									<p><a href="" onClick={e => { e.preventDefault(); this.onDifferentEmail() }}>Use a different email</a></p>
 								</>}
 							</div>
