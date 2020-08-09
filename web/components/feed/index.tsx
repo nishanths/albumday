@@ -23,6 +23,10 @@ export class Feed extends React.Component<FeedProps> {
 		this.maybeShowConnectionNotification()
 	}
 
+	componentWillReceiveProps() {
+		console.log("receiving props", this.props)
+	}
+
 	// Handle connection status messages that require redirects
 	// (currently Spotify).
 	private maybeShowConnectionNotification() {
@@ -53,6 +57,8 @@ export class Feed extends React.Component<FeedProps> {
 			</div>
 		}
 
-		return <div>actual feed</div>
+		return <div className="Feed">
+			actual feed
+		</div>
 	}
 }

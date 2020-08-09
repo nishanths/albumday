@@ -56,7 +56,7 @@ function albumHash(a: Album): string {
 }
 
 export function computeBirthdays(timestamp: number, timeZoneName: string, songs: Song[]): BirthdayItem[] {
-	const abs = new Temporal.Absolute(secondsToNano(BigInt(timestamp)))
+	const abs = new Temporal.Absolute(secondsToNano(timestamp as unknown as bigint))
 	const d = abs.toDateTime(timeZoneName)
 	const targetDate: FullDate = {
 		year: d.year,

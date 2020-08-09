@@ -42,7 +42,7 @@ const gmtTimeZone = new Temporal.TimeZone("Etc/GMT")
 const defaultTimeZone = gmtTimeZone
 
 export function determineReleaseDate(unixSec: number): ReleaseDate {
-	const unixNano = secondsToNano(BigInt(unixSec))
+	const unixNano = secondsToNano(unixSec as unknown as bigint)
 	const abs = new Temporal.Absolute(unixNano)
 
 	for (const tz of timeZones) {

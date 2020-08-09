@@ -52,14 +52,19 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 			case "/settings/":
 				return "settings"
 			default:
-				throw "unknown path " + this.props.location.pathname
+				console.error("unknown path " + this.props.location.pathname + "; using fallback")
+				return "birthdays"
 		}
 	}
 
-	async componentDidMount() {
+	async componentDidUpdate(prevProps: DashboardProps) {
+		if (prevProps.email === this.props.email) {
+			return
+		}
+
 		try {
 			this.requestStart()
-			const rsp = await fetch("/api/v1/account?account=" + encodeURIComponent(this.props.email!), { signal: this.abort.signal })
+			const rsp = await fetch("/api/v1/account?account=" + encodeURIComponent(this.props.email), { signal: this.abort.signal })
 			switch (rsp.status) {
 				case 200:
 					const account = await rsp.json() as Account
