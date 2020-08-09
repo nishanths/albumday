@@ -23,8 +23,8 @@ export class Feed extends React.Component<FeedProps> {
 		this.maybeShowConnectionNotification()
 	}
 
-	componentWillReceiveProps() {
-		console.log("receiving props", this.props)
+	componentDidUpdate(prevProps: FeedProps) {
+		console.log("receiving props", prevProps)
 	}
 
 	// Handle connection status messages that require redirects
