@@ -57,11 +57,18 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 		}
 	}
 
-	async componentDidUpdate(prevProps: DashboardProps) {
+	componentDidMount() {
+		this.fetchAccount()
+	}
+
+	componentDidUpdate(prevProps: DashboardProps) {
 		if (prevProps.email === this.props.email) {
 			return
 		}
+		this.fetchAccount()
+	}
 
+	private async fetchAccount() {
 		try {
 			this.requestStart()
 			const rsp = await fetch("/api/v1/account?account=" + encodeURIComponent(this.props.email), { signal: this.abort.signal })
