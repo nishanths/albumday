@@ -44,7 +44,7 @@ export class Settings extends React.Component<SettingsProps> {
 			this.connectionToast.hideToast()
 		},
 	})
-	private showingConnectionToast = false
+	private showingConnectionToast = false // doable because duration: -1 for associated toast
 
 	constructor(props: SettingsProps) {
 		super(props)
@@ -223,6 +223,12 @@ export class Settings extends React.Component<SettingsProps> {
 	}
 
 	private requestEnd() {
+		this.props.nProgress.done()
+	}
+
+	componentWillMount() {
+		// to show an indicator of change
+		this.props.nProgress.start()
 		this.props.nProgress.done()
 	}
 

@@ -1,7 +1,7 @@
 import { Song, ReleaseDate, equalReleaseDate } from "./music-service"
 import { Temporal } from "proposal-temporal"
 import {
-	secondsToNano, MapDefault, assertExhaustive, OmitStrict,
+	MapDefault, assertExhaustive, OmitStrict,
 	BirthdayItem as APIBirthdayItem, assertType, TypeEq, pick,
 } from "shared"
 
@@ -56,7 +56,7 @@ function albumHash(a: Album): string {
 }
 
 export function computeBirthdays(timestamp: number, timeZoneName: string, songs: Song[]): BirthdayItem[] {
-	const abs = new Temporal.Absolute(secondsToNano(timestamp as unknown as bigint))
+	const abs = Temporal.Absolute.fromEpochSeconds(timestamp)
 	const d = abs.toDateTime(timeZoneName)
 	const targetDate: FullDate = {
 		year: d.year,

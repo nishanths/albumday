@@ -71,15 +71,14 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 	private async fetchAccount() {
 		try {
 			this.requestStart()
-			const rsp = await fetch("/api/v1/account?account=" + encodeURIComponent(this.props.email), { signal: this.abort.signal })
+			const rsp = await fetch("/api/v1/account", { signal: this.abort.signal })
+			this.requestDone()
 			switch (rsp.status) {
 				case 200:
 					const account = await rsp.json() as Account
 					this.setState({ account })
 					break
 				case 401:
-				case 403:
-					// cookie expired or malicious request?
 					Toastify({
 						...defaultToastOptions,
 						text: "Cookie appears to be b0rked. Please reload the page.",
@@ -101,14 +100,13 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 			}
 		} catch (e) {
 			console.error(e)
+			this.requestDone()
 			Toastify({
 				...defaultToastOptions,
 				text: "Failed to load account. Please reload the page.",
 				backgroundColor: colors.brightRed,
 				duration: -1,
 			}).showToast()
-		} finally {
-			this.requestDone()
 		}
 	}
 
@@ -152,6 +150,7 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 						}}
 						nProgress={this.props.nProgress}
 						location={this.props.location}
+						history={this.props.history}
 					/> :
 					<Settings
 						account={this.state.account}

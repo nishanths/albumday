@@ -1,6 +1,5 @@
 import { Temporal } from "proposal-temporal"
 import { ReleaseDate } from "./shared"
-import { secondsToNano } from "shared"
 
 // TODO: add more
 const timeZoneNames = [
@@ -42,8 +41,7 @@ const gmtTimeZone = new Temporal.TimeZone("Etc/GMT")
 const defaultTimeZone = gmtTimeZone
 
 export function determineReleaseDate(unixSec: number): ReleaseDate {
-	const unixNano = secondsToNano(unixSec as unknown as bigint)
-	const abs = new Temporal.Absolute(unixNano)
+	const abs = Temporal.Absolute.fromEpochSeconds(unixSec)
 
 	for (const tz of timeZones) {
 		const t = abs.toDateTime(tz)

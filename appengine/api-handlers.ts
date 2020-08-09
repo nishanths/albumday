@@ -131,12 +131,6 @@ Enter this code to log in.
 `
 
 export const accountHandler = (redis: RedisClient): RequestHandler => async (req, res) => {
-	const wantAccount = req.query["account"]
-	if (wantAccount === undefined || typeof wantAccount !== "string" || wantAccount === "") {
-		res.status(400).end()
-		return
-	}
-
 	const email = currentEmail(req)
 	if (email === null) {
 		// TODO: also support API key header
@@ -144,20 +138,15 @@ export const accountHandler = (redis: RedisClient): RequestHandler => async (req
 		return
 	}
 
-	if (email !== wantAccount) {
-		res.status(403).end()
-		return
-	}
-
-	redis.GET(accountKey(wantAccount), (err, reply) => {
+	redis.GET(accountKey(email), (err, reply) => {
 		if (err) {
-			logRedisError(err, "get account: " + wantAccount)
+			logRedisError(err, "get account: " + email)
 			res.status(500).end()
 			return
 		}
 		if (reply === null) {
 			// should never happen
-			console.error("unexpected null reply for account: " + wantAccount)
+			console.error("unexpected null reply for account: " + email)
 			res.status(500).end()
 			return
 		}
@@ -166,7 +155,7 @@ export const accountHandler = (redis: RedisClient): RequestHandler => async (req
 		try {
 			account = JSON.parse(reply) as Account
 		} catch {
-			console.error("failed to JSON-parse account reply: " + wantAccount)
+			console.error("failed to JSON-parse account reply: " + email)
 			res.status(500).end()
 			return
 		}

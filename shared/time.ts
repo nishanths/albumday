@@ -1,3 +1,3 @@
-const nano = Math.pow(10, 9) as unknown as bigint
+// const nano = BigInt(Math.pow(10, 9))
 
-export const secondsToNano = (s: bigint) => s * nano
+// export const secondsToNano = (s: bigint) => s * nano
