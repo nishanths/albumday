@@ -101,6 +101,10 @@ body.StartBody {
 			p {
 				margin-top: 0;
 			}
+			.submitted-email {
+				color: $color-instruction;
+				text-decoration: underline;
+			}
 		}
 
 		.step {
