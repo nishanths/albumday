@@ -20,9 +20,9 @@ type State = {
 
 const defaultError = "Something unexpectedly went wrong. Please try again."
 const invalidEmailError = "Please enter a valid email."
-const invalidPassphraseError = "That passphrase is expired, has been used already, or is incorrect. Click to start over."
+const invalidPassphraseError = "Login code is incorrect or has expired."
 const emptyEmailError = "Please enter an email."
-const emptyPassphraseError = "Please enter passphrase."
+const emptyPassphraseError = "Please enter login code."
 
 type StartProps = RouteComponentProps & {
 	nProgress: NProgressType
@@ -260,7 +260,7 @@ class StartComponent extends React.Component<StartProps, State> {
 								{<>
 									<p>A login code was sent to <span className="submitted-email">{submittedEmail}</span>. Enter the code to continue.</p>
 									{/* <p><a href="" onClick={e => { e.preventDefault(); this.onPassphraseSubmit() }}>Submit</a></p> */}
-									<p><a href="" onClick={e => { e.preventDefault(); this.onDifferentEmail() }}>Use a different email</a></p>
+									<p><a href="" onClick={e => { e.preventDefault(); this.onDifferentEmail() }}>Start over</a></p>
 								</>}
 							</div>
 						</>}
