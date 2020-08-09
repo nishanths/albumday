@@ -163,16 +163,25 @@ class StartComponent extends React.Component<StartProps, State> {
 
 	private onStartOver() {
 		this.setState({ error: undefined, submittedEmail: "", passphrase: "" }, () => {
-			this.emailRef!.setSelectionRange(0, this.emailRef!.value.length)
+			this.setSelectionRangeEmail(this.emailRef!, 0, this.emailRef!.value.length)
 			this.emailRef!.focus()
 		})
 	}
 
 	private onDifferentEmail() {
 		this.setState({ error: undefined, submittedEmail: "", passphrase: "" }, () => {
-			this.emailRef!.setSelectionRange(0, this.emailRef!.value.length)
+			this.setSelectionRangeEmail(this.emailRef!, 0, this.emailRef!.value.length)
 			this.emailRef!.focus()
 		})
+	}
+
+	// Uncaught DOMException: Failed to execute 'setSelectionRange' on 'HTMLInputElement':
+	// The input element's type ('email') does not support selection.
+	// https://stackoverflow.com/questions/26658474
+	private setSelectionRangeEmail(input: HTMLInputElement, start: number, end: number): void {
+		input.setAttribute("type", "text")
+		input.setSelectionRange(0, input.value.length)
+		input.setAttribute("type", "email")
 	}
 
 	render() {
@@ -230,7 +239,7 @@ class StartComponent extends React.Component<StartProps, State> {
 							<div className={"instruction"}>
 								{<>
 									<p>Enter your email address.</p>
-									<p><a href="" onClick={e => { e.preventDefault(); this.onEmailSubmit() }}>Continue</a></p>
+									{/* <p><a href="" onClick={e => { e.preventDefault(); this.onEmailSubmit() }}>Continue</a></p> */}
 									<p><Link to="/">Return to home page</Link></p>
 								</>}
 							</div>
@@ -241,6 +250,7 @@ class StartComponent extends React.Component<StartProps, State> {
 								<input
 									value={passphrase} onChange={e => { this.setState({ passphrase: e.target.value, error: undefined }) }}
 									type="password"
+									placeholder="*****-***-*****"
 									disabled={submitting}
 									autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false"
 									ref={r => { this.passphraseRef = r }}
@@ -249,7 +259,7 @@ class StartComponent extends React.Component<StartProps, State> {
 							<div className={"instruction"}>
 								{<>
 									<p>A login code was sent to {submittedEmail}. Enter the code to continue.</p>
-									<p><a href="" onClick={e => { e.preventDefault(); this.onPassphraseSubmit() }}>Submit</a></p>
+									{/* <p><a href="" onClick={e => { e.preventDefault(); this.onPassphraseSubmit() }}>Submit</a></p> */}
 									<p><a href="" onClick={e => { e.preventDefault(); this.onDifferentEmail() }}>Use a different email</a></p>
 								</>}
 							</div>
