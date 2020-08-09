@@ -3,7 +3,7 @@ import { defaultFromEmail, EmailClient } from "./email"
 import {
 	okStatus, connectionComplete, KnownConnection, isConnectionError,
 	assertExhaustive, CacheParam, services, assertType, TypeEq,
-	BirthayResponse as APIBirthayResponse
+	BirthdayResponse as APIBirthdayResponse
 } from "shared"
 import { env } from "./env"
 import { RedisClient, logRedisError, updateEntity } from "./redis"
@@ -405,12 +405,12 @@ export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (r
 	})
 }
 
-type BirthayResponse = { [t: number]: BirthdayItem[] }
+type BirthdayResponse = { [t: number]: BirthdayItem[] }
 
-assertType<TypeEq<BirthayResponse, APIBirthayResponse>>()
+assertType<TypeEq<BirthdayResponse, APIBirthdayResponse>>()
 
-function computeBirthdaysForTimestamps(timestamps: number[], timeZoneName: string, songs: Song[]): BirthayResponse {
-	const ret: BirthayResponse = {}
+function computeBirthdaysForTimestamps(timestamps: number[], timeZoneName: string, songs: Song[]): BirthdayResponse {
+	const ret: BirthdayResponse = {}
 
 	for (const t of timestamps) {
 		ret[t] = computeBirthdays(t, timeZoneName, songs)

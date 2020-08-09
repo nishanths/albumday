@@ -93,4 +93,4 @@ export type BirthdayItem = {
 	}[]
 }
 
-export type BirthayResponse = { [t: number]: BirthdayItem[] }
+export type BirthdayResponse = { [t: number]: BirthdayItem[] }
