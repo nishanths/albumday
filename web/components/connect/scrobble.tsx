@@ -166,7 +166,7 @@ export class Scrobble extends React.Component<ScrobbleProps, State> {
 				</form>
 				<div className="back-button">
 					<p><a href="" onClick={e => { e.preventDefault(); this.onUsernameSubmit() }}>Continue</a></p>
-					<p><a href="" onClick={e => { e.preventDefault(); this.props.onBack() }}>Return to service select</a></p>
+					<p><a href="" onClick={e => { e.preventDefault(); this.props.onBack() }}>Return to service selection</a></p>
 				</div>
 			</div>
 		</div>

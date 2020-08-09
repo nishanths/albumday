@@ -27,8 +27,13 @@ a {
 }
 
 .toastify-custom.toastify-custom-higher-precedence.toastify-custom-higher-precedence-2 {
-	// Original CSS uses "max-width: fit-content", which is an invalid value on Firefox.
+	// Original CSS uses "max-width: fit-content", which is an invalid value on latest Firefox.
 	// Bug reveals itself on Firefox.
 	max-width: -moz-fit-content;
+	max-width: -webkit-fit-content;
 	max-width: fit-content;
+
+	// max-width: fit-content does not work correctly on Safari macOS and iPadOS.
+	// https://stackoverflow.com/a/7875637/3309046 fixes.
+	display: table;
 }

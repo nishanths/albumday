@@ -240,7 +240,7 @@ class StartComponent extends React.Component<StartProps, State> {
 								{<>
 									<p>Enter your email address.</p>
 									{/* <p><a href="" onClick={e => { e.preventDefault(); this.onEmailSubmit() }}>Continue</a></p> */}
-									<p><Link to="/">Return to home page</Link></p>
+									{/*<p><Link to="/">Return to home page</Link></p> */}
 								</>}
 							</div>
 						</> :
