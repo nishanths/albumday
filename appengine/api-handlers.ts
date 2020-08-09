@@ -121,8 +121,9 @@ const passphraseEmailSubject = "Login code for album birthdays"
 
 const passphraseEmailText = ({ email, passphrase }: { email: string, passphrase: string }) => `Hi,
 
-Someone has requested a login code for ${email} to log in to album birthdays
-(https://album.casa). The code is below.
+Someone has requested a login code for ${email} to log in to the album birthdays app (https://album.casa).
+
+The code is below:
 
 ${passphrase}
 
