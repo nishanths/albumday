@@ -1,6 +1,10 @@
 import { RequestHandler } from "express"
 import { defaultFromEmail, EmailClient } from "./email"
-import { okStatus, connectionComplete, KnownConnection, isConnectionError, assertExhaustive, CacheParam, services } from "shared"
+import {
+	okStatus, connectionComplete, KnownConnection, isConnectionError,
+	assertExhaustive, CacheParam, services, assertType, TypeEq,
+	BirthayResponse as APIBirthayResponse
+} from "shared"
 import { env } from "./env"
 import { RedisClient, logRedisError, updateEntity } from "./redis"
 import { validate as validateEmail } from "email-validator"
@@ -11,7 +15,7 @@ import { rawQuery, isCacheParam } from "./util"
 import { URLSearchParams } from "url"
 import { fetchSongs, Song } from "./music-service"
 import { libraryCacheKey, getSongsFromCache, putSongsToCache } from "./library-cache"
-import { computeBirthdays } from "./birthday"
+import { computeBirthdays, BirthdayItem } from "./birthday"
 
 export const passphraseHandler = (redis: RedisClient, emailc: EmailClient): RequestHandler => async (req, res) => {
 	const email = req.query["email"]
@@ -305,6 +309,7 @@ export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (r
 		res.status(400).send("bad cache").end()
 		return
 	}
+	assertType<TypeEq<typeof cache, CacheParam>>()
 
 	const email = currentEmail(req)
 	if (email === null) {
@@ -341,9 +346,8 @@ export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (r
 				const songs = await getSongsFromCache(redis, cacheKey)
 				if (songs !== null) {
 					// done!
-					// TODO: respond
-					computeBirthdays(timestamps[0], timeZone, songs)
-					res.status(200).send("done").end()
+					const result = computeBirthdaysForTimestamps(timestamps, timeZone, songs)
+					res.status(200).json(result).end()
 					return
 				}
 				// no songs in cache: fall through
@@ -383,10 +387,20 @@ export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (r
 			console.error("failed to cache songs", e) // only log
 		}
 
-		// TODO: compute birthdays
-		// TODO: respond
-		computeBirthdays(timestamps[0], timeZone, songs)
-		res.status(200).send("done").end()
+		const result = computeBirthdaysForTimestamps(timestamps, timeZone, songs)
+		res.status(200).json(result).end()
 	})
 }
 
+type BirthayResponse = { [t: number]: BirthdayItem[] }
+
+assertType<TypeEq<BirthayResponse, APIBirthayResponse>>()
+
+function computeBirthdaysForTimestamps(timestamps: number[], timeZoneName: string, songs: Song[]): BirthayResponse {
+	const ret: BirthayResponse = {}
+
+	for (const t of timestamps) {
+		ret[t] = computeBirthdays(t, timeZoneName, songs)
+	}
+	return ret
+}

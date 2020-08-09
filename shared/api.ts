@@ -70,3 +70,27 @@ export type Bootstrap = {
 }
 
 export type CacheParam = "off" | "on"
+
+export type SuccessReleaseMatch = "day" | "month"
+
+export type ReleaseDate = {
+	year: number
+	month: number
+	day: number | undefined
+}
+
+export type BirthdayItem = {
+	artist: string
+	album: string
+	release: ReleaseDate
+	link: string | undefined
+	releaseMatch: SuccessReleaseMatch
+
+	artworkURL: string | undefined
+	songs: {
+		title: string
+		link: string | undefined
+	}[]
+}
+
+export type BirthayResponse = { [t: number]: BirthdayItem[] }

@@ -12,3 +12,12 @@ export function assert(cond: boolean, message = "assertion failed"): asserts con
 }
 
 export type OmitStrict<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+
+// https://github.com/microsoft/TypeScript/issues/27024
+export type TypeEq<T, S> =
+	[T] extends [S] ? (
+		[S] extends [T] ? true : false
+	) : false
+
+export function assertType<_T extends true>() { }
+export function assertNotType<_T extends false>() { }

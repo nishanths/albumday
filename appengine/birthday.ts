@@ -1,12 +1,23 @@
 import { Song, ReleaseDate, equalReleaseDate } from "./music-service"
 import { Temporal } from "proposal-temporal"
-import { secondsToNano, MapDefault, assertExhaustive, OmitStrict } from "shared"
+import {
+	secondsToNano, MapDefault, assertExhaustive, OmitStrict,
+	BirthdayItem as APIBirthdayItem, assertType, TypeEq,
+} from "shared"
 
-type BirthdayItem = {}
+export type BirthdayItem = Album & {
+	artworkURL: string | undefined
+	songs: {
+		title: string
+		link: string | undefined
+	}[]
+}
+
+assertType<TypeEq<BirthdayItem, APIBirthdayItem>>() // keep API type and internal type in sync
 
 type FullDate = {
-	year: number,
-	month: number,
+	year: number
+	month: number
 	day: number
 }
 
@@ -32,7 +43,7 @@ type Album = {
 	artist: string
 	album: string
 	release: ReleaseDate
-	albumLink: string | undefined
+	link: string | undefined
 	releaseMatch: SuccessReleaseMatch
 }
 
@@ -52,7 +63,6 @@ export function computeBirthdays(timestamp: number, timeZoneName: string, songs:
 		month: d.month,
 		day: d.day,
 	}
-	console.log(targetDate)
 
 	const m = new MapDefault<string, Song[], Album>(() => [])
 
@@ -65,7 +75,7 @@ export function computeBirthdays(timestamp: number, timeZoneName: string, songs:
 					artist: s.artist,
 					album: s.album,
 					release: s.release,
-					albumLink: s.album,
+					link: s.albumLink,
 					releaseMatch: rm,
 				}
 				const k = albumHash(album)
@@ -79,22 +89,57 @@ export function computeBirthdays(timestamp: number, timeZoneName: string, songs:
 		}
 	}
 
-	console.log(m)
-
 	const as = new AlbumExceptMultipleArtists_Set()
 	for (const [key, album] of m.backingStoreEntries()) {
 		const songs = m.getOrDefault(key)
 		as.add(album, songs)
 	}
 
-	for (const a of as.albums()) {
-		console.log(a)
-	}
+	const albums = withCounts(as.albums())
 
-	// sort by play count and year
+	albums.sort((a, b) => {
+		if (a.playCount > b.playCount) {
+			return -1
+		}
+		if (b.playCount > a.playCount) {
+			return 1
+		}
+		if (a.loved > b.loved) {
+			return -1
+		}
+		if (b.loved > a.loved) {
+			return 1
+		}
+		if (a.album.release.year > b.album.release.year) {
+			return -1
+		}
+		if (b.album.release.year > a.album.release.year) {
+			return 1
+		}
+		if (a.album.releaseMatch === "day") {
+			return -1
+		}
+		if (b.album.releaseMatch === "day") {
+			return 1
+		}
+		return a.album.album.localeCompare(b.album.album)
+	})
 
-	const result: BirthdayItem[] = []
-	return result
+	return albums.map((a): BirthdayItem => ({
+		...a.album,
+		artworkURL: a.songs[0].artworkURL,
+		songs: a.songs.map(s => ({ title: s.title, link: s.link })),
+	}))
+}
+
+function withCounts(a: readonly AlbumAndSongs[]): (AlbumAndSongs & { playCount: number, loved: number })[] {
+	return a.map(album => {
+		return {
+			...album,
+			playCount: album.songs.reduce<number>((prev, s) => prev + (s.playCount || 0), 0),
+			loved: album.songs.reduce<number>((prev, s) => prev + (s.loved === true ? 1 : 0), 0),
+		}
+	})
 }
 
 type AlbumAndSongs = {
@@ -118,7 +163,7 @@ class AlbumExceptMultipleArtists_Set {
 		this.arr.push({ album: newAlbum, songs: newSongs })
 	}
 
-	albums(): Readonly<AlbumAndSongs[]> {
+	albums(): readonly AlbumAndSongs[] {
 		return this.arr
 	}
 }
@@ -140,7 +185,7 @@ export function equalExceptMultipleArtists(a: Album, b: Album): [boolean, Album 
 	const result = smaller !== undefined &&
 		a.album === b.album &&
 		equalReleaseDate(a.release, b.release) &&
-		a.albumLink === b.albumLink
+		a.link === b.link
 
 	return [result, smaller]
 }
