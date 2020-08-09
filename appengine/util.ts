@@ -1,5 +1,6 @@
 import { Request } from "express"
 import { CacheParam } from "shared"
+import { Temporal } from "proposal-temporal"
 
 export function rawQuery(req: Request): string {
 	const startIdx = req.originalUrl.indexOf("?")
@@ -15,4 +16,13 @@ export function rawQuery(req: Request): string {
 
 export function isCacheParam(s: string): s is CacheParam {
 	return s === "on" || s === "off"
+}
+
+export function validateTimeZone(tzName: string): boolean {
+	try {
+		const _ = new Temporal.TimeZone(tzName)
+		return true
+	} catch {
+		return false
+	}
 }

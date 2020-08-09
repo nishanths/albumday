@@ -21,3 +21,27 @@ export type TypeEq<T, S> =
 
 export function assertType<_T extends true>() { }
 export function assertNotType<_T extends false>() { }
+
+export function pick<T, K extends keyof T>(obj: T, ...keys: K[]): Pick<T, K> {
+	const ret = {} as Pick<T, K>
+	keys.forEach(k => {
+		ret[k] = obj[k]
+	})
+	return ret
+}
+
+export function omit<T, K extends keyof T>(obj: T, ...keys: K[]): Omit<T, K> {
+	const ret = {} as Omit<T, K>
+	const omitKeys = new Set(keys)
+
+	for (const k in obj) {
+		const key = k as unknown as K
+		if (omitKeys.has(key)) {
+			continue
+		}
+		const presentKey = key as unknown as Exclude<keyof T, K>
+		ret[presentKey] = obj[presentKey]
+	}
+
+	return ret
+}

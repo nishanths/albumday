@@ -11,7 +11,7 @@ import { validate as validateEmail } from "email-validator"
 import { cookieNameIdentity, IdentityCookie, cookieValidityIdentityMs, currentEmail } from "./cookie"
 import { Account, accountKey, zeroAccount } from "./account"
 import { passphraseExpirySeconds, passphraseKey, generatePassphrase } from "./passphrase"
-import { rawQuery, isCacheParam } from "./util"
+import { rawQuery, isCacheParam, validateTimeZone } from "./util"
 import { URLSearchParams } from "url"
 import { fetchSongs, Song } from "./music-service"
 import { libraryCacheKey, getSongsFromCache, putSongsToCache } from "./library-cache"
@@ -69,6 +69,10 @@ export const loginHandler = (redis: RedisClient): RequestHandler => async (req, 
 	const timeZone = req.query["timeZone"]
 	if (timeZone === undefined || typeof timeZone !== "string" || timeZone === "") {
 		res.status(400).end()
+		return
+	}
+	if (!validateTimeZone(timeZone)) {
+		res.status(400).send("bad timeZone").end()
 		return
 	}
 
@@ -293,6 +297,10 @@ export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (r
 		res.status(400).send("bad timestamp").end()
 		return
 	}
+	if (timestamps.length === 0) {
+		res.status(400).send("timestamp is required").end()
+		return
+	}
 	if (timestamps.length > 2) {
 		res.status(400).send("too many timestamps").end()
 		return
@@ -300,6 +308,10 @@ export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (r
 
 	const timeZone = params.get("timeZone")
 	if (timeZone === null || timeZone === "") {
+		res.status(400).send("bad timeZone").end()
+		return
+	}
+	if (!validateTimeZone(timeZone)) {
 		res.status(400).send("bad timeZone").end()
 		return
 	}
@@ -350,7 +362,7 @@ export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (r
 					res.status(200).json(result).end()
 					return
 				}
-				// no songs in cache: fall through
+				// fall through
 			} catch (e) {
 				console.error("failed to get songs from cache", e)
 				// error getting from cache: fall through

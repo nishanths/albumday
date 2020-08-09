@@ -102,6 +102,7 @@ const transformSong = (s: ScrobbleSong): Song | undefined => {
 		artworkURL: `${scrobbleAPIBaseURL}/artwork?hash=${encodeURIComponent(s.artworkHash)}`,
 		playCount: s.playCount,
 		loved: s.loved,
+		trackNumber: undefined,
 	}
 }
 

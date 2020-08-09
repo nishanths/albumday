@@ -16,6 +16,7 @@ export type Song = {
 
 	playCount: number | undefined
 	loved: boolean | undefined
+	trackNumber: number | undefined
 }
 
 export type ReleaseDate = {

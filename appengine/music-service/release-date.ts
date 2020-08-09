@@ -14,18 +14,15 @@ const timeZoneNames = [
 	"America/Los_Angeles",
 	"America/New_York",
 	"America/Phoenix",
-	// "America/Cancun", // EST without daylight saving time
-
+	// "America/Cancun",
 	"Asia/Calcutta",
 	// "Asia/Hong_Kong",
-
 	"Etc/GMT",
-	"Etc/UTC",
+	// "Etc/UTC",
 	// "Europe/Paris",
 	// "Europe/Berlin",
 	// "Europe/Minsk",
 	// "Europe/Madrid",
-
 	// "Australia/Adelaide",
 	// "Australia/Brisbane",
 	// "Australia/Canberra",
@@ -33,10 +30,8 @@ const timeZoneNames = [
 	// "Australia/Hobart",
 	// "Australia/Perth",
 	// "Australia/Sydney",
-
 	// "Pacific/Auckland",
 	// "Pacific/Chatham",
-
 	// "Asia/Tokyo",
 ]
 

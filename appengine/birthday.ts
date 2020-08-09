@@ -2,7 +2,7 @@ import { Song, ReleaseDate, equalReleaseDate } from "./music-service"
 import { Temporal } from "proposal-temporal"
 import {
 	secondsToNano, MapDefault, assertExhaustive, OmitStrict,
-	BirthdayItem as APIBirthdayItem, assertType, TypeEq,
+	BirthdayItem as APIBirthdayItem, assertType, TypeEq, pick,
 } from "shared"
 
 export type BirthdayItem = Album & {
@@ -96,48 +96,71 @@ export function computeBirthdays(timestamp: number, timeZoneName: string, songs:
 	}
 
 	const albums = withCounts(as.albums())
-
-	albums.sort((a, b) => {
-		if (a.playCount > b.playCount) {
-			return -1
-		}
-		if (b.playCount > a.playCount) {
-			return 1
-		}
-		if (a.loved > b.loved) {
-			return -1
-		}
-		if (b.loved > a.loved) {
-			return 1
-		}
-		if (a.album.release.year > b.album.release.year) {
-			return -1
-		}
-		if (b.album.release.year > a.album.release.year) {
-			return 1
-		}
-		if (a.album.releaseMatch === "day") {
-			return -1
-		}
-		if (b.album.releaseMatch === "day") {
-			return 1
-		}
-		return a.album.album.localeCompare(b.album.album)
-	})
+	albums.sort(compareAlbumWithCounts)
 
 	return albums.map((a): BirthdayItem => ({
 		...a.album,
 		artworkURL: a.songs[0].artworkURL,
-		songs: a.songs.map(s => ({ title: s.title, link: s.link })),
+		songs: a.songs.sort(compareSongs).map(s => pick(s, "title", "link")),
 	}))
 }
 
-function withCounts(a: readonly AlbumAndSongs[]): (AlbumAndSongs & { playCount: number, loved: number })[] {
+function compareSongs(a: Song, b: Song): number {
+	if (a.loved && !b.loved) {
+		return -1
+	}
+	if (b.loved && !a.loved) {
+		return 1
+	}
+	if ((a.playCount || 0) > (b.playCount || 0)) {
+		return -1
+	}
+	if ((b.playCount || 0) > (a.playCount || 0)) {
+		return 1
+	}
+	if ((a.trackNumber || 0) > (b.trackNumber || 0)) {
+		return -1
+	}
+	if ((b.trackNumber || 0) > (a.trackNumber || 0)) {
+		return 1
+	}
+	return a.title.localeCompare(b.title)
+}
+
+function compareAlbumWithCounts(a: AlbumAndSongsWithCounts, b: AlbumAndSongsWithCounts): number {
+	if (a.playCount > b.playCount) {
+		return -1
+	}
+	if (b.playCount > a.playCount) {
+		return 1
+	}
+	if (a.loved > b.loved) {
+		return -1
+	}
+	if (b.loved > a.loved) {
+		return 1
+	}
+	if (a.album.release.year > b.album.release.year) {
+		return -1
+	}
+	if (b.album.release.year > a.album.release.year) {
+		return 1
+	}
+	if (a.album.releaseMatch === "day") {
+		return -1
+	}
+	if (b.album.releaseMatch === "day") {
+		return 1
+	}
+	return a.album.album.localeCompare(b.album.album)
+}
+
+function withCounts(a: readonly AlbumAndSongs[]): AlbumAndSongsWithCounts[] {
 	return a.map(album => {
 		return {
 			...album,
 			playCount: album.songs.reduce<number>((prev, s) => prev + (s.playCount || 0), 0),
-			loved: album.songs.reduce<number>((prev, s) => prev + (s.loved === true ? 1 : 0), 0),
+			loved: album.songs.reduce<number>((prev, s) => prev + (s.loved || false ? 1 : 0), 0),
 		}
 	})
 }
@@ -145,6 +168,11 @@ function withCounts(a: readonly AlbumAndSongs[]): (AlbumAndSongs & { playCount: 
 type AlbumAndSongs = {
 	album: Album
 	songs: Song[]
+}
+
+type AlbumAndSongsWithCounts = AlbumAndSongs & {
+	playCount: number
+	loved: number
 }
 
 class AlbumExceptMultipleArtists_Set {
@@ -169,11 +197,11 @@ class AlbumExceptMultipleArtists_Set {
 }
 
 // Returns whether the songs are the same, but for the artists, where there are
-// multiple artists with a shared primary artist. Returns the artist with the
+// multiple artists with a shared primary artist. Returns the album with the
 // smaller artist name.
 //
 // For an example, see block comment at end of file.
-export function equalExceptMultipleArtists(a: Album, b: Album): [boolean, Album | undefined] {
+export function equalExceptMultipleArtists(a: Album, b: Album): [false, undefined] | [true, Album] {
 	let smaller: Album | undefined = undefined
 	if (a.artist.startsWith(b.artist)) {
 		smaller = b
@@ -182,12 +210,18 @@ export function equalExceptMultipleArtists(a: Album, b: Album): [boolean, Album 
 		smaller = a
 	}
 
-	const result = smaller !== undefined &&
-		a.album === b.album &&
+	if (smaller === undefined) {
+		return [false, undefined]
+	}
+
+	const eq = a.album === b.album &&
 		equalReleaseDate(a.release, b.release) &&
 		a.link === b.link
 
-	return [result, smaller]
+	if (!eq) {
+		return [false, undefined]
+	}
+	return [true, smaller]
 }
 
 /*

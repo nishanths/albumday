@@ -85,8 +85,8 @@ export type BirthdayItem = {
 	release: ReleaseDate
 	link: string | undefined
 	releaseMatch: SuccessReleaseMatch
-
 	artworkURL: string | undefined
+
 	songs: {
 		title: string
 		link: string | undefined
