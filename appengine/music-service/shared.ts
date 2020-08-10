@@ -68,7 +68,8 @@ export async function fetchSongs(conn: KnownConnection, retryOptions: RetryOptio
 		}
 	}
 
-	const fetched = await retry(f, retryOptions)
+	let fetched = await retry(f, retryOptions)
 	const songs = svc.transform(fetched)
+	fetched = null
 	return songs
 }

@@ -347,11 +347,12 @@ export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (r
 		if (cache === "on") {
 			// try to use cached value
 			try {
-				const songs = await getSongsFromCache(redis, cacheKey)
+				let songs = await getSongsFromCache(redis, cacheKey)
 				if (songs !== null) {
 					// done!
 					const result = computeBirthdaysForTimestamps(timestamps, timeZone, songs)
 					res.status(200).json(result).end()
+					songs = null
 					return
 				}
 				// fall through
@@ -362,7 +363,7 @@ export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (r
 		}
 
 		// compute afresh
-		let songs: Song[]
+		let songs: Song[] | null
 		try {
 			songs = await fetchSongs(conn)
 		} catch (e) {
@@ -393,6 +394,7 @@ export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (r
 
 		const result = computeBirthdaysForTimestamps(timestamps, timeZone, songs)
 		res.status(200).json(result).end()
+		songs = null
 	})
 }
 
