@@ -89,20 +89,23 @@ export function computeBirthdays(timestamp: number, timeZoneName: string, songs:
 		}
 	}
 
-	const as = new AlbumExceptMultipleArtists_Set()
+	let as: AlbumExceptMultipleArtists_Set | null = new AlbumExceptMultipleArtists_Set()
 	for (const [key, album] of m.backingStoreEntries()) {
 		const songs = m.getOrDefault(key)
 		as.add(album, songs)
 	}
 
-	const albums = withCounts(as.albums())
+	let albums: AlbumAndSongsWithCounts[] | null = withCounts(as.albums())
+	as = null
 	albums.sort(compareAlbumWithCounts)
 
-	return albums.map((a): BirthdayItem => ({
+	const ret = albums.map((a): BirthdayItem => ({
 		...a.album,
 		artworkURL: a.songs[0].artworkURL,
 		songs: a.songs.sort(compareSongs).map(s => pick(s, "title", "link")),
 	}))
+	albums = null
+	return ret
 }
 
 function compareSongs(a: Song, b: Song): number {
