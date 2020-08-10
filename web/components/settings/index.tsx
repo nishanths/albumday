@@ -11,6 +11,7 @@ export type SettingsProps = {
 	onAccountChange: (a: Account) => void
 	onLogout: () => void
 	nProgress: NProgressType
+	invalidateBirthdayData: () => void
 }
 
 function displayService(s: Service): string {
@@ -174,6 +175,7 @@ export class Settings extends React.Component<SettingsProps> {
 						...defaultToastOptions,
 						text: "Unlinked music service.",
 					}).showToast()
+					this.props.invalidateBirthdayData()
 					this.props.onAccountChange({
 						...this.props.account,
 						connection: null,
@@ -223,12 +225,6 @@ export class Settings extends React.Component<SettingsProps> {
 	}
 
 	private requestEnd() {
-		this.props.nProgress.done()
-	}
-
-	componentWillMount() {
-		// to show an indicator of change
-		this.props.nProgress.start()
 		this.props.nProgress.done()
 	}
 

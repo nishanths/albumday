@@ -11,7 +11,7 @@ declare const bootstrap: Bootstrap
 declare const NProgress: NProgressType
 
 // configure NProgress globally
-NProgress.configure({ showSpinner: true, minimum: 0.1, trickleSpeed: 100, trickleRate: 0.005, speed: 500 })
+NProgress.configure({ showSpinner: true, minimum: 0.1, trickleSpeed: 150, trickleRate: 0.01, speed: 500 })
 
 type MountProps = {
 	bootstrap: Bootstrap

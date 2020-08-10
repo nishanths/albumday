@@ -320,6 +320,8 @@ export const birthdaysHandler = (redis: RedisClient): RequestHandler => async (r
 		return
 	}
 
+	// TODO: incr and determine if email needs to be sent
+
 	redis.GET(accountKey(email), async (err, reply) => {
 		if (err) {
 			logRedisError(err, "get account")

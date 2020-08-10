@@ -1,22 +1,36 @@
 import React from "react"
-import { Account, connectionComplete, BirthdayResponse, BirthdayItem } from "shared"
+import { Account, connectionComplete, BirthdayResponse, BirthdayItem, Service, assertExhaustive } from "shared"
 import { Connect } from "../connect"
 import { NProgressType } from "../../types"
 import { RouteComponentProps } from "react-router"
 import Toastify, { ToastHandle, ToastOptions } from "toastify-js"
-import { defaultToastOptions, colors, musicServiceDisplay } from "../../shared"
+import { defaultToastOptions, colors, musicServiceDisplay, connectSuccessMessage, connectSuccessDuration } from "../../shared"
 import { Temporal } from "proposal-temporal"
+import { CSSTransition } from "react-transition-group"
+
+function firstFetchDurationDisplay(s: Service): string {
+	switch (s) {
+		case "scrobble":
+			return "about 10 seconds"
+		case "spotify":
+			return "about half a minute"
+		default:
+			assertExhaustive(s)
+	}
+}
 
 export type FeedProps = {
 	account: Account
 	email: string
+	birthdayData: BirthdayData | null
 	onAccountChange: (a: Account) => void
+	onBirthdayData: (d: BirthdayData) => void
 	nProgress: NProgressType
 	location: RouteComponentProps["location"]
 	history: RouteComponentProps["history"]
 }
 
-type BirthdayData = {
+export type BirthdayData = {
 	today: BirthdayItem[]
 	tomorrow: BirthdayItem[]
 	todayTime: Temporal.Absolute
@@ -24,7 +38,17 @@ type BirthdayData = {
 }
 
 type FeedState = {
-	birthdays: BirthdayData | null
+	birthdays: {
+		status: "success"
+		data: BirthdayData
+	} | {
+		status: "loading"
+		long: boolean
+	} | {
+		status: "initial"
+	} | {
+		status: "error"
+	}
 }
 
 export class Feed extends React.Component<FeedProps, FeedState> {
@@ -34,23 +58,23 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 	constructor(props: FeedProps) {
 		super(props)
 		this.state = {
-			birthdays: null
+			birthdays: this.props.birthdayData !== null ?
+				{ status: "success", data: this.props.birthdayData } :
+				{ status: "initial" },
 		}
 	}
 
 	componentDidMount() {
 		this.maybeShowConnectionNotification()
 
-		if (connectionComplete(this.props.account)) {
+		if (this.shouldFetchBirthdays()) {
 			this.fetchBirthdays()
 		}
 	}
 
 	componentDidUpdate(prevProps: FeedProps) {
-		console.log("receiving props", prevProps)
-
 		if (this.props.account !== prevProps.account || this.props.email !== prevProps.email) {
-			if (connectionComplete(this.props.account)) {
+			if (this.shouldFetchBirthdays()) {
 				this.fetchBirthdays()
 			}
 		}
@@ -58,6 +82,10 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 
 	componentWillUnmount() {
 		try { this.toast?.hideToast() } catch {} // gross!
+	}
+
+	private shouldFetchBirthdays(): boolean {
+		return connectionComplete(this.props.account) && this.props.birthdayData === null
 	}
 
 	private async fetchBirthdays() {
@@ -72,24 +100,33 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 		params.set("timeZone", Temporal.now.timeZone().name)
 		params.append("timestamp", "" + today.getEpochSeconds())
 		params.append("timestamp", "" + tomorrow.getEpochSeconds())
-		params.set("cache", "off") // TODO: remove
+		// params.append("cache", "off") // TODO: for debug
+
+		let longLoadingTimer: number | undefined
 
 		try {
 			this.requestStart()
+			this.setState({ birthdays: { status: "loading", long: false }})
+			longLoadingTimer = setTimeout(() => {
+				this.setState({ birthdays: { status: "loading", long: true } })
+			}, 2000)
+
 			const rsp = await fetch("/api/v1/birthdays?" + params.toString(), {
 				signal: this.abort.signal,
 			})
+
 			this.requestEnd()
 			switch (rsp.status) {
 				case 200:
 					const result = await rsp.json() as BirthdayResponse
-					const b: BirthdayData = {
+					const data: BirthdayData = {
 						today: result[today.getEpochSeconds()],
 						tomorrow: result[tomorrow.getEpochSeconds()],
 						todayTime: today,
 						tomorrowTime: tomorrow,
 					}
-					this.setState({ birthdays: b })
+					this.props.onBirthdayData(data) // also propagate up
+					this.setState({ birthdays: { status: "success", data } })
 					break
 				case 401:
 					this.showNewToast({
@@ -101,6 +138,7 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 							window.location.assign("/start")
 						},
 					})
+					this.setState({ birthdays: { status: "error"} })
 					break
 				case 412:
 					this.showNewToast({
@@ -112,6 +150,7 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 							this.props.history.push("/settings")
 						},
 					})
+					this.setState({ birthdays: { status: "error"} })
 					break
 				case 422:
 					this.showNewToast({
@@ -123,6 +162,7 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 							this.props.history.push("/settings")
 						},
 					})
+					this.setState({ birthdays: { status: "error"} })
 					break
 				default:
 					this.showNewToast({
@@ -131,10 +171,12 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 						backgroundColor: colors.brightRed,
 						duration: -1,
 					})
+					this.setState({ birthdays: { status: "error"} })
 					break
 			}
 		} catch (e) {
 			console.error(e)
+			// this.setState({ birthdays: { status: "error"} })
 			this.requestEnd()
 			this.showNewToast({
 				...defaultToastOptions,
@@ -142,6 +184,8 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 				backgroundColor: colors.brightRed,
 				duration: -1,
 			})
+		} finally {
+			clearTimeout(longLoadingTimer)
 		}
 	}
 
@@ -175,7 +219,8 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 		if (p.get("connect-success")) {
 			Toastify({
 				...defaultToastOptions,
-				text: "Successfully connected!",
+				text: connectSuccessMessage,
+				duration: connectSuccessDuration,
 			}).showToast()
 		}
 	}
@@ -189,25 +234,51 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 			</div>
 		}
 
+		if (this.state.birthdays.status === "initial") {
+			return <div className="Feed">
+			</div>
+		}
+
+
+		if (this.state.birthdays.status === "loading") {
+			const longText = <CSSTransition in={this.state.birthdays.long} timeout={750} classNames="long-text-transition">
+				<div className="long-text">It takes {firstFetchDurationDisplay(this.props.account.connection!.service)} the first time.</div>
+			</CSSTransition>
+
+			return <div className="Feed">
+				<div className="loading-container">
+					<div className="text-container">
+						{this.state.birthdays.long && <div className="main-text">Finding album birthdays</div>}
+						{longText}
+					</div>
+					{this.state.birthdays.long && loader}
+				</div>
+			</div>
+		}
+
+		if (this.state.birthdays.status === "error") {
+			return <div className="Feed">
+			</div>
+		}
+
 		return <div className="Feed">
-			{loader}
-			{this.state.birthdays === null ? loader : JSON.stringify(this.state.birthdays, undefined, 4)}
+			{JSON.stringify(this.state.birthdays.data, undefined, 4)}
 		</div>
 	}
 }
 
 // https://github.com/SamHerbert/SVG-Loaders
-const loader = <>
+const loader = <div className="loader">
 	{/* <!-- By Sam Herbert (@sherb), for everyone. More @ http://goo.gl/7AJzbL --> */}
 	<svg width="140" height="64" viewBox="0 0 140 64" xmlns="http://www.w3.org/2000/svg" fill="#d6156d">
-	    <path d="M30.262 57.02L7.195 40.723c-5.84-3.976-7.56-12.06-3.842-18.063 3.715-6 11.467-7.65 17.306-3.68l4.52 3.76 2.6-5.274c3.717-6.002 11.47-7.65 17.305-3.68 5.84 3.97 7.56 12.054 3.842 18.062L34.49 56.118c-.897 1.512-2.793 1.915-4.228.9z" fill-opacity=".5">
+	    <path d="M30.262 57.02L7.195 40.723c-5.84-3.976-7.56-12.06-3.842-18.063 3.715-6 11.467-7.65 17.306-3.68l4.52 3.76 2.6-5.274c3.717-6.002 11.47-7.65 17.305-3.68 5.84 3.97 7.56 12.054 3.842 18.062L34.49 56.118c-.897 1.512-2.793 1.915-4.228.9z" fillOpacity=".5">
 	        <animate attributeName="fill-opacity"
 	             begin="0s" dur="1.4s"
 	             values="0.5;1;0.5"
 	             calcMode="linear"
 	             repeatCount="indefinite" />
 	    </path>
-	    <path d="M105.512 56.12l-14.44-24.272c-3.716-6.008-1.996-14.093 3.843-18.062 5.835-3.97 13.588-2.322 17.306 3.68l2.6 5.274 4.52-3.76c5.84-3.97 13.592-2.32 17.307 3.68 3.718 6.003 1.998 14.088-3.842 18.064L109.74 57.02c-1.434 1.014-3.33.61-4.228-.9z" fill-opacity=".5">
+	    <path d="M105.512 56.12l-14.44-24.272c-3.716-6.008-1.996-14.093 3.843-18.062 5.835-3.97 13.588-2.322 17.306 3.68l2.6 5.274 4.52-3.76c5.84-3.97 13.592-2.32 17.307 3.68 3.718 6.003 1.998 14.088-3.842 18.064L109.74 57.02c-1.434 1.014-3.33.61-4.228-.9z" fillOpacity=".5">
 	        <animate attributeName="fill-opacity"
 	             begin="0.7s" dur="1.4s"
 	             values="0.5;1;0.5"
@@ -216,4 +287,4 @@ const loader = <>
 	    </path>
 	    <path d="M67.408 57.834l-23.01-24.98c-5.864-6.15-5.864-16.108 0-22.248 5.86-6.14 15.37-6.14 21.234 0L70 16.168l4.368-5.562c5.863-6.14 15.375-6.14 21.235 0 5.863 6.14 5.863 16.098 0 22.247l-23.007 24.98c-1.43 1.556-3.757 1.556-5.188 0z" />
 	</svg>
-</>
+</div>

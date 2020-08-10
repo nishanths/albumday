@@ -27,3 +27,6 @@ export function musicServiceDisplay(s: Service): string {
 			assertExhaustive(s)
 	}
 }
+
+export const connectSuccessMessage = "You're all set up to receive birthday email notifications!"
+export const connectSuccessDuration = 7000

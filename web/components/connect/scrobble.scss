@@ -48,9 +48,12 @@
 			}
 		}
 
-		.back-button {
+		.buttons {
 			font-size: 15px;
 			margin-top: 30px;
+			.continue {
+				// color: $green;
+			}
 		}
 	}
 

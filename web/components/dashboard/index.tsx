@@ -3,7 +3,7 @@ import { RouteComponentProps } from "react-router"
 import { withRouter, Link } from "react-router-dom"
 import { Helmet } from "react-helmet"
 import classNames from "classnames"
-import { Feed } from "../feed"
+import { Feed, BirthdayData } from "../feed"
 import { Settings } from "../settings"
 import { assertExhaustive, Account, connectionComplete } from "shared"
 import { NProgressType } from "../../types"
@@ -20,6 +20,7 @@ type Pane = "birthdays" | "settings"
 
 type State = {
 	account: Account | null
+	birthdayData: BirthdayData | null
 }
 
 const paneToTitle = (p: Pane): string => {
@@ -40,6 +41,7 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 		super(props)
 		this.state = {
 			account: null,
+			birthdayData: null,
 		}
 	}
 
@@ -151,6 +153,10 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 						nProgress={this.props.nProgress}
 						location={this.props.location}
 						history={this.props.history}
+						onBirthdayData={d => {
+							this.setState({ birthdayData: d })
+						}}
+						birthdayData={this.state.birthdayData}
 					/> :
 					<Settings
 						account={this.state.account}
@@ -162,6 +168,9 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 							this.props.onLogout?.()
 						}}
 						nProgress={this.props.nProgress}
+						invalidateBirthdayData={() => {
+							this.setState({ birthdayData: null })
+						}}
 					/>
 				}
 			</div>

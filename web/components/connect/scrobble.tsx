@@ -1,7 +1,7 @@
 import React from "react"
 import { scrobbleBaseURL, Connection } from "shared"
 import Toastify, { ToastHandle, ToastOptions } from "toastify-js"
-import { defaultToastOptions, colors } from "../../shared"
+import { defaultToastOptions, colors, connectSuccessMessage, connectSuccessDuration } from "../../shared"
 import { NProgressType } from "../../types"
 
 type State = {
@@ -62,7 +62,8 @@ export class Scrobble extends React.Component<ScrobbleProps, State> {
 					// after unmount
 					Toastify({
 						...defaultToastOptions,
-						text: "Successfully connected!",
+						text: connectSuccessMessage,
+						duration: connectSuccessDuration,
 					}).showToast()
 					this.props.onConnectionChange({
 						service: "scrobble",
@@ -161,11 +162,11 @@ export class Scrobble extends React.Component<ScrobbleProps, State> {
 						ref={r => { this.usernameRef = r }}
 					/>
 					<div className="instruction">
-						Connecting to Apple Music uses a <a href={scrobbleBaseURL} target="_blank">scrobble</a> profile. Enter your scrobble username.
+						Connecting to Apple Music uses a <a className="gray" href={scrobbleBaseURL} target="_blank">scrobble</a> profile. Enter your scrobble username.
 					</div>
 				</form>
-				<div className="back-button">
-					<p><a href="" onClick={e => { e.preventDefault(); this.onUsernameSubmit() }}>Continue</a></p>
+				<div className="buttons">
+					<p><a href="" className="continue" onClick={e => { e.preventDefault(); this.onUsernameSubmit() }}>Continue</a></p>
 					<p><a href="" onClick={e => { e.preventDefault(); this.props.onBack() }}>Return to service selection</a></p>
 				</div>
 			</div>

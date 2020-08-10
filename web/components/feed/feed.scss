@@ -1,0 +1,39 @@
+.Feed {
+	.loading-container {
+		.loader {}
+
+		.text-container {
+			height: 85px;
+			text-align: center;
+		}
+
+		.main-text {
+			color: $color-instruction;
+			margin-bottom: 10px;
+			font-size: 20px;
+		}
+
+		.long-text {
+			color: #aaa;
+			opacity: 0;
+			font-size: 17px;
+			margin-bottom: 30px;
+		}
+
+		.long-text-transition-enter {
+			opacity: 0;
+		}
+		.long-text-transition-enter-active {
+			opacity: 1;
+			transition: opacity 750ms ease-in;
+		}
+		.long-text-transition-enter-done {
+			opacity: 1;
+		}
+
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+		margin-top: 125px;
+	}
+}
