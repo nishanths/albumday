@@ -36,10 +36,10 @@ type Metadata struct {
 func loadConfig(ctx context.Context, ds *datastore.Client) (Config, error) {
 	switch env() {
 	case Prod:
-		key := datastore.NameKey("Metadata", "singleton")
+		key := datastore.NameKey("Metadata", "singleton", nil)
 		var m Metadata
 		if err := ds.Get(ctx, key, &m); err != nil {
-			return fmt.Errorf("failed to get metadata: %s", err)
+			return Config{}, fmt.Errorf("failed to get metadata: %s", err)
 		}
 		return Config{
 			RedisHost:           m.RedisHost,
@@ -50,7 +50,7 @@ func loadConfig(ctx context.Context, ds *datastore.Client) (Config, error) {
 			SpotifyClientSecret: m.SpotifyClientSecret,
 			CookieSecret:        m.CookieSecret,
 			TasksSecret:         m.TasksSecret,
-		}
+		}, nil
 	case Dev:
 		return Config{
 			RedisHost:           "localhost",
@@ -59,6 +59,8 @@ func loadConfig(ctx context.Context, ds *datastore.Client) (Config, error) {
 			SpotifyClientSecret: os.Getenv("SPOTIFY_CLIENT_SECRET"),
 			CookieSecret:        "foo",
 			TasksSecret:         "bar",
-		}
+		}, nil
+	default:
+		panic("unreachable")
 	}
 }

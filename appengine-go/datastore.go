@@ -8,7 +8,11 @@ import (
 
 func newDatastore(ctx context.Context) *datastore.Client {
 	if env() != Dev {
-		return datastore.NewClient(ctx, ProjectID)
+		ds, err := datastore.NewClient(ctx, ProjectID)
+		if err != nil {
+			panic(err)
+		}
+		return ds
 	}
 	return nil
 }
