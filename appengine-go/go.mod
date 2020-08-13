@@ -3,7 +3,10 @@ module github.com/nishanths/albumday/appengine-go
 go 1.14
 
 require (
+	cloud.google.com/go v0.57.0
 	cloud.google.com/go/datastore v1.2.0
+	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/nishanths/exhaustive v0.0.0-20200811152831-6cf413ae40e0 // indirect
+	github.com/onsi/ginkgo v1.14.0 // indirect
+	google.golang.org/genproto v0.0.0-20200612171551-7676ae05be11
 )

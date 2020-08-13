@@ -3,7 +3,9 @@ package main
 import (
 	"context"
 	"crypto/tls"
+	"crypto/x509"
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	"cloud.google.com/go/datastore"
@@ -36,15 +38,31 @@ type Metadata struct {
 func loadConfig(ctx context.Context, ds *datastore.Client) (Config, error) {
 	switch env() {
 	case Prod:
+		cert, err := tls.LoadX509KeyPair("redis/tls/redis.crt", "redis/tls/redis.key")
+		if err != nil {
+			return Config{}, fmt.Errorf("load cert: %s", err)
+		}
+
+		clientCert, err := ioutil.ReadFile("redis/tls/ca.crt")
+		if err != nil {
+			return Config{}, fmt.Errorf("read ca cert: %s", err)
+		}
+		pool := x509.NewCertPool()
+		pool.AppendCertsFromPEM(clientCert)
+
 		key := datastore.NameKey("Metadata", "singleton", nil)
 		var m Metadata
 		if err := ds.Get(ctx, key, &m); err != nil {
-			return Config{}, fmt.Errorf("failed to get metadata: %s", err)
+			return Config{}, fmt.Errorf("get metadata: %s", err)
 		}
+
 		return Config{
-			RedisHost:           m.RedisHost,
-			RedisPort:           6379,
-			RedisTLS:            &tls.Config{},
+			RedisHost: m.RedisHost,
+			RedisPort: 6379,
+			RedisTLS: &tls.Config{
+				Certificates: []tls.Certificate{cert},
+				ClientCAs:    pool,
+			},
 			SendgridAPIKey:      m.SendgridAPIKey,
 			SpotifyClientID:     m.SpotifyClientID,
 			SpotifyClientSecret: m.SpotifyClientSecret,
