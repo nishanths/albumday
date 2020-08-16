@@ -6,13 +6,9 @@ import (
 	"cloud.google.com/go/datastore"
 )
 
-func newDatastore(ctx context.Context) *datastore.Client {
+func newDatastore(ctx context.Context) (*datastore.Client, error) {
 	if env() != Dev {
-		ds, err := datastore.NewClient(ctx, ProjectID)
-		if err != nil {
-			panic(err)
-		}
-		return ds
+		return datastore.NewClient(ctx, ProjectID)
 	}
-	return nil
+	return nil, nil
 }

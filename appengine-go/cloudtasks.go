@@ -13,16 +13,12 @@ const DefaultQueueName = "default"
 
 const headerTasksSecret = "x-tasks-secret"
 
-func newTasks(ctx context.Context) *cloudtasks.Client {
+func newTasksClient(ctx context.Context) (*cloudtasks.Client, error) {
 	switch env() {
 	case Dev:
-		return nil
+		return nil, nil
 	case Prod:
-		c, err := cloudtasks.NewClient(ctx)
-		if err != nil {
-			panic(err)
-		}
-		return c
+		return cloudtasks.NewClient(ctx)
 	default:
 		panic("unreachable")
 	}
