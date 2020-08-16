@@ -13,7 +13,7 @@ import (
 
 type Config struct {
 	RedisHost string
-	RedisPort int
+	RedisPort string
 	RedisTLS  *tls.Config
 
 	SendgridAPIKey string
@@ -58,7 +58,7 @@ func loadConfig(ctx context.Context, ds *datastore.Client) (Config, error) {
 
 		return Config{
 			RedisHost: m.RedisHost,
-			RedisPort: 6379,
+			RedisPort: "6379",
 			RedisTLS: &tls.Config{
 				Certificates: []tls.Certificate{cert},
 				ClientCAs:    pool,
@@ -72,7 +72,7 @@ func loadConfig(ctx context.Context, ds *datastore.Client) (Config, error) {
 	case Dev:
 		return Config{
 			RedisHost:           "localhost",
-			RedisPort:           6379,
+			RedisPort:           "6379",
 			SpotifyClientID:     os.Getenv("SPOTIFY_CLIENT_ID"),
 			SpotifyClientSecret: os.Getenv("SPOTIFY_CLIENT_SECRET"),
 			CookieSecret:        "foo",

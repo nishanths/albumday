@@ -27,7 +27,7 @@ func run(ctx context.Context) error {
 		return err
 	}
 
-	ds.Close()
+	ds.Close() // no longer needed
 
 	tasks, err := newTasksClient(ctx)
 	if err != nil {
@@ -35,7 +35,7 @@ func run(ctx context.Context) error {
 	}
 	defer tasks.Close()
 
-	redisc := newRedis(net.JoinHostPort(config.RedisHost, config.RedisHost), config.RedisTLS)
+	redisc := newRedis(net.JoinHostPort(config.RedisHost, config.RedisPort), config.RedisTLS)
 	defer redisc.Close()
 
 	newEmailClient()
@@ -43,6 +43,9 @@ func run(ctx context.Context) error {
 	router := httprouter.New()
 	router.GET("/api/v1/account", AccountHandler)
 
-	PORT := os.Getenv("") // TODO
-	return http.ListenAndServe(PORT, router)
+	PORT := os.Getenv("PORT")
+	if PORT == "" {
+		PORT = "8080"
+	}
+	return http.ListenAndServe(":"+PORT, router)
 }
