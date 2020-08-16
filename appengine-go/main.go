@@ -59,6 +59,7 @@ func run(ctx context.Context) error {
 
 	router := httprouter.New()
 	router.GET("/api/v1/account", s.AccountHandler)
+	router.GET("/api/v1/passphrase", s.PassphraseHandler)
 
 	PORT := os.Getenv("PORT")
 	if PORT == "" {

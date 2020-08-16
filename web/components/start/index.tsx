@@ -163,25 +163,16 @@ class StartComponent extends React.Component<StartProps, State> {
 
 	private onStartOver() {
 		this.setState({ error: undefined, submittedEmail: "", passphrase: "" }, () => {
-			this.setSelectionRangeEmail(this.emailRef!, 0, this.emailRef!.value.length)
+			this.emailRef!.select()
 			this.emailRef!.focus()
 		})
 	}
 
 	private onDifferentEmail() {
 		this.setState({ error: undefined, submittedEmail: "", passphrase: "" }, () => {
-			this.setSelectionRangeEmail(this.emailRef!, 0, this.emailRef!.value.length)
+			this.emailRef!.select()
 			this.emailRef!.focus()
 		})
-	}
-
-	// Uncaught DOMException: Failed to execute 'setSelectionRange' on 'HTMLInputElement':
-	// The input element's type ('email') does not support selection.
-	// https://stackoverflow.com/questions/26658474
-	private setSelectionRangeEmail(input: HTMLInputElement, start: number, end: number): void {
-		input.setAttribute("type", "text")
-		input.setSelectionRange(0, input.value.length)
-		input.setAttribute("type", "email")
 	}
 
 	render() {
