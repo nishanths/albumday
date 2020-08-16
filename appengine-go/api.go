@@ -6,4 +6,4 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func AccountHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {}
+func (s *Server) AccountHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {}

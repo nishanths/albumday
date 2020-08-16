@@ -11,3 +11,6 @@ func drainAndClose(r io.ReadCloser) {
 }
 
 const ProjectID = "albumday"
+
+const AppName = "album birthdays"
+const AppDomain = "album.casa"
