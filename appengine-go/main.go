@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 
-	cloudtasks "cloud.google.com/go/cloudtasks/apiv2"
 	"github.com/go-redis/redis"
 	"github.com/julienschmidt/httprouter"
 )
@@ -16,7 +15,7 @@ import (
 type Server struct {
 	email  EmailClient
 	config Config
-	tasks  *cloudtasks.Client
+	tasks  TasksClient
 	redis  *redis.Client
 }
 
@@ -30,7 +29,7 @@ func main() {
 }
 
 func run(ctx context.Context) error {
-	ds, err := newDatastore(ctx)
+	ds, err := newDatastore(ctx) // nil in dev
 	if err != nil {
 		return err
 	}
@@ -38,9 +37,11 @@ func run(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	ds.Close() // no longer needed
+	if ds != nil {
+		ds.Close() // no longer needed
+	}
 
-	tasks, err := newTasksClient(ctx)
+	tasks, err := newTasksClient(ctx, config.TasksSecret)
 	if err != nil {
 		return err
 	}
