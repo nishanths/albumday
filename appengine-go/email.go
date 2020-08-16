@@ -39,7 +39,7 @@ func (s *SendgridClient) Send(to []string, subject string, bodyText string, body
 
 	rsp, err := s.sendgrid.Send(m)
 	if err != nil {
-		return fmt.Errorf("failed to send email: %s", err)
+		return fmt.Errorf("send email: %s", err)
 	}
 	// https://sendgrid.com/docs/API_Reference/Web_API_v3/Mail/errors.html
 	if rsp.StatusCode != 200 && rsp.StatusCode != 202 {

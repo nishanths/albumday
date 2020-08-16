@@ -67,3 +67,13 @@ func run(ctx context.Context) error {
 	log.Printf("listening on port: %s", PORT)
 	return http.ListenAndServe(":"+PORT, router)
 }
+
+func RequireCronHeader(h httprouter.Handle) httprouter.Handle {
+	return httprouter.Handle(func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		if env() == Dev || r.Header.Get("x-appengine-cron") == "true" {
+			h(w, r, p)
+			return
+		}
+		w.WriteHeader(http.StatusUnauthorized)
+	})
+}

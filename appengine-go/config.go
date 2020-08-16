@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"cloud.google.com/go/datastore"
+	"github.com/gorilla/securecookie"
 )
 
 type Config struct {
@@ -21,7 +22,7 @@ type Config struct {
 	SpotifyClientID     string
 	SpotifyClientSecret string
 
-	CookieSecret string
+	IdentityCookie *securecookie.SecureCookie
 
 	TasksSecret string
 }
@@ -66,7 +67,7 @@ func loadConfig(ctx context.Context, ds *datastore.Client) (Config, error) {
 			SendgridAPIKey:      m.SendgridAPIKey,
 			SpotifyClientID:     m.SpotifyClientID,
 			SpotifyClientSecret: m.SpotifyClientSecret,
-			CookieSecret:        m.CookieSecret,
+			IdentityCookie:      identityCookieCodec(m.CookieSecret),
 			TasksSecret:         m.TasksSecret,
 		}, nil
 	case Dev:
@@ -75,7 +76,7 @@ func loadConfig(ctx context.Context, ds *datastore.Client) (Config, error) {
 			RedisPort:           "6379",
 			SpotifyClientID:     os.Getenv("SPOTIFY_CLIENT_ID"),
 			SpotifyClientSecret: os.Getenv("SPOTIFY_CLIENT_SECRET"),
-			CookieSecret:        "foo",
+			IdentityCookie:      identityCookieCodec("foo"),
 			TasksSecret:         "bar",
 		}, nil
 	default:
