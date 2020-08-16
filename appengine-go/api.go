@@ -15,9 +15,13 @@ func accountKey(email string) string {
 
 type Account struct {
 	Service         string              `json:"service"`
-	Connection      interface{}         `json:"connection"` // SpotifyConnection | ScrobbleConnection
+	Connection      interface{}         `json:"connection"` // *SpotifyConnection | *ScrobbleConnection
 	ConnectionError ConnectionErrReason `json:"connectionError"`
 	Settings        AccountSettings     `json:"settings"`
+}
+
+func (a *Account) connectionComplete() bool {
+	return a.Service != ""
 }
 
 type AccountSettings struct {
