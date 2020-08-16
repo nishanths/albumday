@@ -87,14 +87,14 @@ func (s *Server) AccountHandler(w http.ResponseWriter, r *http.Request, _ httpro
 }
 
 func generatePassphrase() string {
-	b := make([]byte, 16)
+	b := make([]byte, 5)
 	if _, err := rand.Read(b); err != nil {
 		panic("read rand")
 	}
 	return hex.EncodeToString(b)
 }
 
-const passphraseExpiry = 5 * 24 * time.Hour
+const passphraseExpiry = 2 * 24 * time.Hour
 
 const (
 	passphraseEmailSubject = "Login code for " + AppName
@@ -105,7 +105,7 @@ Someone has requested a login code for {{.Email}} to log in to the {{.AppName}} 
 
 The code is below:
 
-{{.Passphrase}}
+  {{.Passphrase}}
 
 Enter this code to log in.
 `
