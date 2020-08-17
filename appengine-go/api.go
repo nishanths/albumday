@@ -208,7 +208,7 @@ func (s *Server) LoginHandler(w http.ResponseWriter, r *http.Request, _ httprout
 			EmailFormat:   EmailFormatHTML,
 		},
 	}
-	if err := s.redis.SetNX(accountKey(email), mustJSONMarshal(acc), 0).Err(); err != nil {
+	if err := s.redis.SetNX(accountKey(email), mustMarshalJSON(acc), 0).Err(); err != nil {
 		log.Printf("redis: SETNX account: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return

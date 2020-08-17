@@ -22,8 +22,8 @@ func UpdateEntity(c *redis.Client, key string, vType interface{}, update func(v 
 	if err != nil {
 		return fmt.Errorf("redis: GET entity: %s", err)
 	}
-	mustJSONUnmarshal(b, vType)
-	updated := mustJSONMarshal(update(vType))
+	mustUnmarshalJSON(b, vType)
+	updated := mustMarshalJSON(update(vType))
 	if err := c.Set(key, updated, 0).Err(); err != nil {
 		return fmt.Errorf("redis: SET entity: %s", err)
 	}

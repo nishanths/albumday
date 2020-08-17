@@ -13,13 +13,13 @@ func drainAndClose(r io.ReadCloser) {
 	r.Close()
 }
 
-func mustJSONUnmarshal(b []byte, v interface{}) {
+func mustUnmarshalJSON(b []byte, v interface{}) {
 	if err := json.Unmarshal(b, v); err != nil {
 		panic(err)
 	}
 }
 
-func mustJSONMarshal(v interface{}) []byte {
+func mustMarshalJSON(v interface{}) []byte {
 	b, err := json.Marshal(v)
 	if err != nil {
 		panic(err)
