@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"crypto/rand"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"text/template"
@@ -20,6 +22,10 @@ func accountKey(email string) string {
 
 func passphraseKey(email string) string {
 	return fmt.Sprintf("passphrase:%s", email)
+}
+
+func libraryCacheKey(service Service, email string) string {
+	return fmt.Sprintf("library:%s:%s", service, email)
 }
 
 type Account struct {
@@ -76,6 +82,11 @@ const (
 	Spotify  Service = "spotify"
 	Scrobble Service = "scrobble"
 )
+
+var AllServices = [...]Service{
+	Spotify,
+	Scrobble,
+}
 
 func (s *Server) AccountHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	email := s.currentIdentity(r)
@@ -204,4 +215,75 @@ func (s *Server) LoginHandler(w http.ResponseWriter, r *http.Request, _ httprout
 	}
 
 	s.setIdentityCookie(w, email)
+}
+
+func (s *Server) DeleteAccountConnectionHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	email := s.currentIdentity(r)
+	if email == "" {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	if err := UpdateEntity(s.redis, accountKey(email), &Account{}, func(v interface{}) interface{} {
+		a := v.(*Account)
+		a.Connection = nil
+		return a
+	}); err != nil {
+		log.Printf("update account: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
+func (s *Server) SetEmailsEnabledHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	email := s.currentIdentity(r)
+	if email == "" {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	var b bool
+	if err := json.NewDecoder(r.Body).Decode(&b); err != nil {
+		log.Printf("json-decode body: %s", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if err := UpdateEntity(s.redis, accountKey(email), &Account{}, func(v interface{}) interface{} {
+		a := v.(*Account)
+		a.Settings.EmailsEnabled = b
+		return a
+	}); err != nil {
+		log.Printf("update account: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
+func (s *Server) DeleteAccountHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	email := s.currentIdentity(r)
+	if email == "" {
+		http.Error(w, "bad credentials", http.StatusUnauthorized)
+		return
+	}
+
+	var delKeys []string
+	delKeys = append(delKeys, passphraseKey(email))
+	for _, s := range AllServices {
+		delKeys = append(delKeys, libraryCacheKey(s, email))
+	}
+	delKeys = append(delKeys, accountKey(email))
+
+	if err := s.redis.Del(delKeys...).Err(); err != nil {
+		log.Printf("redis: DEL keys: %s", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	log.Printf("successfully deleted account: %s", email)
+	http.SetCookie(w, &http.Cookie{
+		Name:   cookieNameIdentity,
+		MaxAge: -1, // delete cookie
+	})
+	io.WriteString(w, "deleted account\n")
 }

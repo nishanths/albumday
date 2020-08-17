@@ -60,6 +60,10 @@ func run(ctx context.Context) error {
 	router := httprouter.New()
 	router.GET("/api/v1/account", s.AccountHandler)
 	router.GET("/api/v1/passphrase", s.PassphraseHandler)
+	router.GET("/api/v1/login", s.LoginHandler)
+	router.DELETE("/api/v1/account", s.DeleteAccountHandler)
+	router.DELETE("/api/v1/account/connection", s.DeleteAccountConnectionHandler)
+	router.PUT("/api/v1/account/email-notifications", s.SetEmailsEnabledHandler)
 
 	PORT := os.Getenv("PORT")
 	if PORT == "" {
