@@ -19,13 +19,22 @@ func mustJSONUnmarshal(b []byte, v interface{}) {
 	}
 }
 
+func mustJSONMarshal(v interface{}) []byte {
+	b, err := json.Marshal(v)
+	if err != nil {
+		panic(err)
+	}
+	return b
+}
+
 const ProjectID = "albumday"
 
 const (
 	AppName   = "album birthdays"
-	AppDomain = "album.casa"
+	AppDomain = "birthdays.casa"
 )
 
+// From github.com/badoux/checkmail, and HTML5 spec doc.
 var emailRegexp = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
 func validateEmail(email string) error {

@@ -23,18 +23,15 @@ func passphraseKey(email string) string {
 }
 
 type Account struct {
-	Service         string              `json:"service"`
-	Connection      interface{}         `json:"connection"` // *SpotifyConnection | *ScrobbleConnection
-	ConnectionError ConnectionErrReason `json:"connectionError"`
-	Settings        AccountSettings     `json:"settings"`
+	Connection *Connection     `json:"connection"`
+	Settings   AccountSettings `json:"settings"`
 }
 
 func (a *Account) connectionComplete() bool {
-	return a.Service != ""
+	return a.Connection != nil
 }
 
 type AccountSettings struct {
-	TimeZone      string `json:"timeZone"`
 	EmailsEnabled bool   `json:"emailsEnabled"`
 	EmailFormat   string `json:"emailFormat"` // EmailFormatHTML | EmailFormatText
 }
@@ -52,6 +49,16 @@ const (
 	ConnectionErrNotFound   ConnectionErrReason = "not found"  // no such profile
 )
 
+type Connection struct {
+	Service Service `json:"service"`
+	Conn
+	ConnectionError ConnectionErrReason `json:"connectionError"`
+}
+
+type Conn interface {
+	isConn()
+}
+
 type SpotifyConnection struct {
 	RefreshToken string `json:"refreshToken"`
 }
@@ -59,6 +66,9 @@ type SpotifyConnection struct {
 type ScrobbleConnection struct {
 	Username string `json:"username"`
 }
+
+func (SpotifyConnection) isConn()  {}
+func (ScrobbleConnection) isConn() {}
 
 type Service string
 
@@ -94,20 +104,17 @@ func generatePassphrase() string {
 	return hex.EncodeToString(b)
 }
 
-const passphraseExpiry = 2 * 24 * time.Hour
-
 const (
-	passphraseEmailSubject = "Login code for " + AppName
+	passphraseExpiry = 2 * 24 * time.Hour
 
-	passphraseEmailText = `Hi,
+	passphraseEmailSubject = "Login code for " + AppName
+	passphraseEmailText    = `Hi,
 
 Someone has requested a login code for {{.Email}} to log in to the {{.AppName}} app (https://{{.AppDomain}}).
 
-The code is below:
+The code is below.
 
   {{.Passphrase}}
-
-Enter this code to log in.
 `
 )
 
@@ -150,4 +157,51 @@ func (s *Server) PassphraseHandler(w http.ResponseWriter, r *http.Request, _ htt
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+}
+
+func (s *Server) LoginHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	email := r.FormValue("email")
+	if email == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	passphrase := r.FormValue("passphrase")
+	if passphrase == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	want, err := s.redis.Get(passphraseKey(email)).Result()
+	if err == redis.Nil {
+		w.WriteHeader(http.StatusForbidden) // passphrase expired
+		return
+	} else if err != nil {
+		log.Printf("redis: GET passphrase: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if env() != Dev && want != passphrase {
+		w.WriteHeader(http.StatusForbidden) // bad passphrase
+		return
+	}
+
+	if err := s.redis.Del(passphraseKey(email)).Err(); err != nil {
+		log.Printf("redis: DEL passphrase: %s", err) // only log
+	}
+
+	acc := Account{
+		nil,
+		AccountSettings{
+			EmailsEnabled: true,
+			EmailFormat:   EmailFormatHTML,
+		},
+	}
+	if err := s.redis.SetNX(accountKey(email), mustJSONMarshal(acc), 0).Err(); err != nil {
+		log.Printf("redis: SETNX account: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	s.setIdentityCookie(w, email)
 }
