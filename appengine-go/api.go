@@ -287,3 +287,6 @@ func (s *Server) DeleteAccountHandler(w http.ResponseWriter, r *http.Request, _ 
 	})
 	io.WriteString(w, "deleted account\n")
 }
+
+func (s *Server) BirthdaysHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+}

@@ -1,5 +1,11 @@
 import { ToastOptions } from "toastify-js"
-import { Service, assertExhaustive } from "shared"
+import { assertExhaustive } from "./shared"
+import { Service } from "./api"
+
+export const scrobbleBaseURL = "https://scrobble.littleroot.org"
+export const scrobbleAPIBaseURL = "https://selective-scrobble.appspot.com/api/v1"
+
+export const supportEmail = "littlerootorg@gmail.com"
 
 export const colors = {
 	green: "rgba(49, 199, 67, 1)",

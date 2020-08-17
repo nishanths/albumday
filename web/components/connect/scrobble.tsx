@@ -1,7 +1,7 @@
 import React from "react"
-import { scrobbleBaseURL, Connection } from "shared"
+import { Connection } from "../../api"
 import Toastify, { ToastHandle, ToastOptions } from "toastify-js"
-import { defaultToastOptions, colors, connectSuccessMessage, connectSuccessDuration } from "../../shared"
+import { defaultToastOptions, colors, connectSuccessMessage, connectSuccessDuration, scrobbleBaseURL } from "../../util"
 import { NProgressType } from "../../types"
 
 type State = {

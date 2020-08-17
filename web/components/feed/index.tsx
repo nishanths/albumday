@@ -1,10 +1,11 @@
 import React from "react"
-import { Account, connectionComplete, BirthdayResponse, BirthdayItem, Service, assertExhaustive } from "shared"
+import { Account, connectionComplete, BirthdayResponse, BirthdayItem, Service } from "../../api"
 import { Connect } from "../connect"
 import { NProgressType } from "../../types"
 import { RouteComponentProps } from "react-router"
 import Toastify, { ToastHandle, ToastOptions } from "toastify-js"
-import { defaultToastOptions, colors, musicServiceDisplay, connectSuccessMessage, connectSuccessDuration } from "../../shared"
+import { defaultToastOptions, colors, musicServiceDisplay, connectSuccessMessage, connectSuccessDuration } from "../../util"
+import { assertExhaustive } from "../../shared"
 import { Temporal } from "proposal-temporal"
 import { CSSTransition } from "react-transition-group"
 

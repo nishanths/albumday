@@ -1,4 +1,4 @@
-import { assertExhaustive } from "./typeutil"
+import { assertExhaustive } from "./shared"
 
 export type Account = {
 	apiKey: string

@@ -11,11 +11,16 @@
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
     "noImplicitReturns": true,
-    "jsx": "react"
+    "jsx": "react",
+    "baseUrl": "./",
+    "paths": {
+      "@shared": ["shared/*"]
+    },
   },
   "include": [
     "*.ts",
     "*.tsx",
-    "components/**/*"
+    "components/**/*",
+    "shared/**/*"
   ]
 }

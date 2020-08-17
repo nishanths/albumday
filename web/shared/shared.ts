@@ -1,8 +1,3 @@
-export const scrobbleBaseURL = "https://scrobble.littleroot.org"
-export const scrobbleAPIBaseURL = "https://selective-scrobble.appspot.com/api/v1"
-
-export const supportEmail = "littlerootorg@gmail.com"
-
 export class MapDefault<K, V, B> {
 	private readonly backingStore: Map<K, B> = new Map()
 
@@ -41,3 +36,4 @@ export class MapDefault<K, V, B> {
 		return this.backingStore.entries()
 	}
 }
+

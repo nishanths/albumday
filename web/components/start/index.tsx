@@ -7,7 +7,7 @@ import { NProgressType } from "../../types"
 import { CSSTransition } from "react-transition-group"
 import { Temporal } from "proposal-temporal"
 import Toastify, { ToastHandle, ToastOptions } from "toastify-js"
-import { defaultToastOptions, colors } from "../../shared"
+import { defaultToastOptions, colors } from "../../util"
 
 type State = {
 	submitting: boolean // submitting in progress for email or for passphrase

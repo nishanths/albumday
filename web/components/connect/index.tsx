@@ -1,5 +1,6 @@
 import React from "react"
-import { Service, scrobbleBaseURL, Connection } from "shared"
+import { Service, Connection } from "../../api"
+import { scrobbleBaseURL } from "../../util"
 import { NProgressType } from "../../types"
 import { CSSTransition, SwitchTransition } from "react-transition-group"
 import { RouteComponentProps } from "react-router"

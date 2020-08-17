@@ -5,10 +5,11 @@ import { Helmet } from "react-helmet"
 import classNames from "classnames"
 import { Feed, BirthdayData } from "../feed"
 import { Settings } from "../settings"
-import { assertExhaustive, Account, connectionComplete } from "shared"
+import { assertExhaustive } from "../../shared"
+import { Account, connectionComplete } from "../../api"
 import { NProgressType } from "../../types"
 import Toastify, { ToastHandle } from "toastify-js"
-import { defaultToastOptions, colors } from "../../shared"
+import { defaultToastOptions, colors } from "../../util"
 
 export type DashboardProps = RouteComponentProps & {
 	nProgress: NProgressType

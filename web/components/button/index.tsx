@@ -1,5 +1,5 @@
 import React from "react"
-import { scrobbleBaseURL } from "shared"
+import { scrobbleBaseURL } from "../../util"
 
 type State = {}
 

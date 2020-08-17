@@ -1,7 +1,7 @@
 import React from "react"
 import * as ReactDOM from "react-dom"
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom"
-import { Bootstrap, Service } from "shared/api"
+import { Bootstrap, Service } from "./api"
 import { Root } from "./components/root"
 import { Start } from "./components/start"
 import { Dashboard } from "./components/dashboard"
