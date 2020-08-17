@@ -110,7 +110,7 @@ func (s *Server) AccountHandler(w http.ResponseWriter, r *http.Request, _ httpro
 func generatePassphrase() string {
 	b := make([]byte, 5)
 	if _, err := rand.Read(b); err != nil {
-		panic("read rand")
+		panic(err)
 	}
 	return hex.EncodeToString(b)
 }

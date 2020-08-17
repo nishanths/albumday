@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 )
 
@@ -22,10 +21,4 @@ func env() Env {
 
 func isDev() bool {
 	return env() == Dev
-}
-
-const devPort = 8080
-
-func devBaseURL() string {
-	return fmt.Sprintf("http://localhost:%d", devPort)
 }
