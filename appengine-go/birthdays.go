@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"net/http"
+	"sort"
+	"strings"
 	"time"
 )
 
@@ -10,23 +12,34 @@ type Album struct {
 	Artist       string
 	Album        string
 	Release      ReleaseDate
-	Link         *string
+	Link         string // or ""
 	ReleaseMatch ReleaseMatch
-}
-
-type FullDate struct {
-	Year  int
-	Month time.Month
-	Day   int
 }
 
 type BirthdayItem struct {
 	Album
-	ArtworkURL *string
-	Songs      []struct {
-		Title string
-		Link  *string
+	ArtworkURL string
+	Songs      []BirthdayItemSong
+}
+
+type BirthdayItemSong struct {
+	Title string
+	Link  string // or ""
+}
+
+func toBirthdayItemSong(s Song) BirthdayItemSong {
+	return BirthdayItemSong{
+		s.Title,
+		s.Link,
 	}
+}
+
+func toBirthdayItemSongs(songs []Song) []BirthdayItemSong {
+	ret := make([]BirthdayItemSong, len(songs))
+	for i, s := range songs {
+		ret[i] = toBirthdayItemSong(s)
+	}
+	return ret
 }
 
 type ReleaseMatch string
@@ -36,6 +49,12 @@ const (
 	MatchDay   ReleaseMatch = "day"
 	MatchMonth ReleaseMatch = "month"
 )
+
+type FullDate struct {
+	Year  int
+	Month time.Month
+	Day   int
+}
 
 func matchRelease(target FullDate, d ReleaseDate) ReleaseMatch {
 	if d.Day != nil {
@@ -50,6 +69,232 @@ func matchRelease(target FullDate, d ReleaseDate) ReleaseMatch {
 	return MatchNone
 }
 
-func computeBirthdays(ctx context.Context, client *http.Client, timestamp int64, loc *time.Location, songs []Song) []BirthdayItem {
-	return nil
+func computeBirthdays(ctx context.Context, client *http.Client, unix int64, loc *time.Location, songs []Song) []BirthdayItem {
+	target := time.Unix(unix, 0).In(loc)
+	targetDate := FullDate{
+		Year:  target.Year(),
+		Month: target.Month(),
+		Day:   target.Day(),
+	}
+
+	matchingAlbums := make(map[Album][]Song)
+	for _, s := range songs {
+		match := matchRelease(targetDate, s.Release)
+		switch match {
+		case MatchDay, MatchMonth:
+			a := Album{
+				Artist:       s.Artist,
+				Album:        s.Album,
+				Release:      s.Release,
+				Link:         s.AlbumLink,
+				ReleaseMatch: match,
+			}
+			matchingAlbums[a] = append(matchingAlbums[a], s)
+		case MatchNone:
+			// skip
+		default:
+			panic("unreachable")
+		}
+	}
+
+	// consolidate for shared artists
+	var consolidated ArtistsConsolidated
+	for a, songs := range matchingAlbums {
+		consolidated.Add(a, songs)
+	}
+
+	for _, a := range consolidated {
+		a.PopulateCounts()
+	}
+
+	// sort albums ...
+	sort.Slice(consolidated, func(i, j int) bool {
+		return compareAlbums(consolidated[i], consolidated[j])
+	})
+	// ... and sort the songs within each album
+	for _, a := range consolidated {
+		sort.Slice(a.Songs, func(i, j int) bool {
+			return compareSongs(a.Songs[i], a.Songs[j])
+		})
+	}
+
+	// map to return type
+	ret := make([]BirthdayItem, len(consolidated))
+	for i, a := range consolidated {
+		ret[i] = BirthdayItem{
+			Album:      a.Album,
+			ArtworkURL: a.Songs[0].ArtworkURL,
+			Songs:      toBirthdayItemSongs(a.Songs),
+		}
+	}
+	return ret
 }
+
+func compareAlbums(a, b *AlbumAndSongs) bool {
+	if a.PlayCount > b.PlayCount {
+		return true
+	}
+	if b.PlayCount > a.PlayCount {
+		return false
+	}
+	if a.Loved > b.Loved {
+		return true
+	}
+	if b.Loved > a.Loved {
+		return false
+	}
+	if a.Album.Release.Year > b.Album.Release.Year {
+		return true
+	}
+	if b.Album.Release.Year > a.Album.Release.Year {
+		return false
+	}
+	if a.Album.ReleaseMatch == MatchDay {
+		return true
+	}
+	if b.Album.ReleaseMatch == MatchDay {
+		return false
+	}
+	return a.Album.Album < b.Album.Album
+}
+
+func compareSongs(a, b Song) bool {
+	if a.Loved != nil && *a.Loved && (b.Loved == nil || !*b.Loved) {
+		return true
+	}
+	if b.Loved != nil && *b.Loved && (a.Loved == nil || !*a.Loved) {
+		return false
+	}
+	if a.PlayCount > b.PlayCount {
+		return true
+	}
+	if b.PlayCount > a.PlayCount {
+		return false
+	}
+	if a.TrackNumber > b.TrackNumber {
+		return true
+	}
+	if b.TrackNumber > a.TrackNumber {
+		return false
+	}
+	return a.Title < b.Title
+}
+
+type AlbumAndSongs struct {
+	Album Album
+	Songs []Song
+
+	PlayCount int
+	Loved     int
+}
+
+func (a *AlbumAndSongs) PopulateCounts() {
+	var p, l int
+	for _, s := range a.Songs {
+		p += s.PlayCount
+		if s.Loved != nil && *s.Loved {
+			l++
+		}
+	}
+
+	a.PlayCount = p
+	a.Loved = l
+}
+
+type ArtistsConsolidated []*AlbumAndSongs
+
+func (a *ArtistsConsolidated) Add(newAlbum Album, newSongs []Song) {
+	for i := range *a {
+		as := (*a)[i]
+		smaller, eq := equalButMultipleArtists(as.Album, newAlbum)
+		if !eq {
+			continue
+		}
+		(*a)[i] = &AlbumAndSongs{
+			Album: smaller,
+			Songs: append(as.Songs, newSongs...),
+		}
+	}
+	// nothing found; add new entry
+	*a = append(*a, &AlbumAndSongs{
+		Album: newAlbum,
+		Songs: newSongs,
+	})
+}
+
+// Returns whether the songs are the same, but for the artists, where there are
+// multiple artists with a shared primary artist. Returns the album with the
+// smaller artist name.
+//
+// For an example, see block comment at end of file.
+func equalButMultipleArtists(a, b Album) (Album, bool) {
+	hasSmaller := false
+	var result Album
+
+	if strings.HasPrefix(a.Artist, b.Artist) {
+		hasSmaller = true
+		result = b
+	}
+	if strings.HasPrefix(b.Artist, a.Artist) {
+		hasSmaller = true
+		result = a
+	}
+
+	if !hasSmaller {
+		return result, false
+	}
+
+	a.Artist = "" // clear for comparison
+	b.Artist = ""
+	if a != b {
+		return result, false
+	}
+	return result, true
+}
+
+/*
+{
+  artist: 'Max Richter, KiKi Layne, Mari Samuelsen & Robert Ziegler',
+  album: 'Voices',
+  title: 'Murmuration: Pt. 1',
+  release: { year: 2020, month: 8, day: 1 },
+  link: 'https://music.apple.com/us/album/murmuration-pt-1/1520370274?i=1520371405&uo=4',
+  albumLink: 'https://music.apple.com/us/album/murmuration-pt-1/1520370274',
+  artworkURL: 'https://selective-scrobble.appspot.com/api/v1/artwork?hash=9474552211958018425228240237176124193187112784089215',
+  playCount: 1,
+  loved: false
+}
+{
+  artist: 'Max Richter',
+  album: 'Voices',
+  title: 'Prelude 6: Pt. 2',
+  release: { year: 2020, month: 8, day: 1 },
+  link: 'https://music.apple.com/us/album/prelude-6-pt-2/1520370274?i=1520371402&uo=4',
+  albumLink: 'https://music.apple.com/us/album/prelude-6-pt-2/1520370274',
+  artworkURL: 'https://selective-scrobble.appspot.com/api/v1/artwork?hash=9474552211958018425228240237176124193187112784089215',
+  playCount: 1,
+  loved: false
+}
+{
+  artist: 'Max Richter, KiKi Layne & Robert Ziegler',
+  album: 'Voices',
+  title: 'Hypocognition: Pt. 1',
+  release: { year: 2020, month: 8, day: 1 },
+  link: 'https://music.apple.com/us/album/hypocognition-pt-1/1520370274?i=1520371395&uo=4',
+  albumLink: 'https://music.apple.com/us/album/hypocognition-pt-1/1520370274',
+  artworkURL: 'https://selective-scrobble.appspot.com/api/v1/artwork?hash=9474552211958018425228240237176124193187112784089215',
+  playCount: 1,
+  loved: false
+}
+{
+  artist: 'Max Richter, Grace Davidson, Mari Samuelsen & Robert Ziegler',
+  album: 'Voices',
+  title: 'Chorale: Pt. 2',
+  release: { year: 2020, month: 8, day: 1 },
+  link: 'https://music.apple.com/us/album/chorale-pt-2/1520370274?i=1520371283&uo=4',
+  albumLink: 'https://music.apple.com/us/album/chorale-pt-2/1520370274',
+  artworkURL: 'https://selective-scrobble.appspot.com/api/v1/artwork?hash=9474552211958018425228240237176124193187112784089215',
+  playCount: 1,
+  loved: false
+}
+*/

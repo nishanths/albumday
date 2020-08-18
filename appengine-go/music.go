@@ -22,13 +22,13 @@ type Song struct {
 
 	Release ReleaseDate
 
-	Link       *string
-	AlbumLink  *string
-	ArtworkURL *string
+	Link       string // or ""
+	AlbumLink  string // or ""
+	ArtworkURL string
 
-	PlayCount   *int
+	PlayCount   int // or 0
 	Loved       *bool
-	TrackNumber *int
+	TrackNumber int // or -1
 }
 
 type ReleaseDate struct {
@@ -180,25 +180,25 @@ func transformScrobbleSong(s ScrobbleSong) (Song, bool) {
 		Album:       s.AlbumTitle,
 		Title:       s.Title,
 		Release:     determineReleaseDate(s.ReleaseDate),
-		Link:        stringOrNil(s.TrackViewURL),
+		Link:        s.TrackViewURL,
 		AlbumLink:   trackToAlbumLink(s.TrackViewURL),
-		ArtworkURL:  ptrString(fmt.Sprintf(`%s/artwork?hash=%s`, scrobbleAPIBaseURL, url.QueryEscape(s.ArtworkHash))),
-		PlayCount:   ptrInt(s.PlayCount),
+		ArtworkURL:  fmt.Sprintf(`%s/artwork?hash=%s`, scrobbleAPIBaseURL, url.QueryEscape(s.ArtworkHash)),
+		PlayCount:   s.PlayCount,
 		Loved:       ptrBool(s.Loved),
-		TrackNumber: nil,
+		TrackNumber: -1,
 	}, true
 }
 
-func trackToAlbumLink(trackViewURL string) *string {
+func trackToAlbumLink(trackViewURL string) string {
 	if trackViewURL == "" {
-		return nil
+		return ""
 	}
 	u, err := url.Parse(trackViewURL)
 	if err != nil {
-		return nil
+		return ""
 	}
 	u.RawQuery = ""
-	return ptrString(u.String())
+	return u.String()
 }
 
 func FetchSongs(ctx context.Context, c *http.Client, conn Connection) ([]Song, error) {
