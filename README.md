@@ -17,12 +17,7 @@ Start a redis server at `localhost:6379`.
 Build & watch code. In separate terminals run the following.
 
 ```
-cd shared
-make
-```
-
-```
-cd appengine
+cd appengine-go
 make
 ```
 
