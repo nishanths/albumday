@@ -201,8 +201,8 @@ func trackToAlbumLink(trackViewURL string) *string {
 	return ptrString(u.String())
 }
 
-func FetchSongs(ctx context.Context, c *http.Client, service Service, conn Connection) ([]Song, error) {
-	switch service {
+func FetchSongs(ctx context.Context, c *http.Client, conn Connection) ([]Song, error) {
+	switch conn.Service {
 	case Spotify:
 		return nil, fmt.Errorf("not implemented")
 	case Scrobble:
