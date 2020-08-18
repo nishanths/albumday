@@ -9,7 +9,7 @@ import (
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 )
 
-const fromName = AppName
+const fromEmailName = AppName
 const fromEmail = "hardworkingbot@gmail.com"
 
 type EmailClient interface {
@@ -22,7 +22,7 @@ type SendgridClient struct {
 
 func (s *SendgridClient) Send(to []string, subject string, bodyText string, bodyHTML string) error {
 	m := new(mail.SGMailV3)
-	m.SetFrom(mail.NewEmail(fromName, fromEmail))
+	m.SetFrom(mail.NewEmail(fromEmailName, fromEmail))
 
 	p := mail.NewPersonalization()
 	for i := range to {
@@ -43,7 +43,7 @@ func (s *SendgridClient) Send(to []string, subject string, bodyText string, body
 	}
 	// https://sendgrid.com/docs/API_Reference/Web_API_v3/Mail/errors.html
 	if rsp.StatusCode != 200 && rsp.StatusCode != 202 {
-		return fmt.Errorf("bad status code %d; body: %s", rsp.StatusCode, rsp.Body)
+		return fmt.Errorf("send email: bad status code %d; body: %s", rsp.StatusCode, rsp.Body)
 	}
 	return nil
 }

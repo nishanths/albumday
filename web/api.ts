@@ -47,7 +47,7 @@ export function connectionComplete(a: Account): boolean {
 
 export type Bootstrap = {
 	loggedIn: boolean
-	email: string | null
+	email: string
 }
 
 export type CacheParam = "off" | "on"
@@ -57,20 +57,20 @@ export type SuccessReleaseMatch = "day" | "month"
 export type ReleaseDate = {
 	year: number
 	month: number
-	day: number | undefined
+	day: number | null
 }
 
 export type BirthdayItem = {
 	artist: string
 	album: string
 	release: ReleaseDate
-	link: string | undefined
+	link: string // or ""
+	artworkURL: string
 	releaseMatch: SuccessReleaseMatch
-	artworkURL: string | undefined
 
 	songs: {
 		title: string
-		link: string | undefined
+		link: string // or ""
 	}[]
 }
 

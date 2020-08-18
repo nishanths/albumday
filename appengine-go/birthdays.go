@@ -13,13 +13,13 @@ type Album struct {
 	Album        string
 	Release      ReleaseDate
 	Link         string // or ""
+	ArtworkURL   string
 	ReleaseMatch ReleaseMatch
 }
 
 type BirthdayItem struct {
 	Album
-	ArtworkURL string
-	Songs      []BirthdayItemSong
+	Songs []BirthdayItemSong
 }
 
 type BirthdayItemSong struct {
@@ -87,6 +87,7 @@ func computeBirthdays(ctx context.Context, client *http.Client, unix int64, loc 
 				Album:        s.Album,
 				Release:      s.Release,
 				Link:         s.AlbumLink,
+				ArtworkURL:   s.ArtworkURL,
 				ReleaseMatch: match,
 			}
 			matchingAlbums[a] = append(matchingAlbums[a], s)
@@ -104,7 +105,7 @@ func computeBirthdays(ctx context.Context, client *http.Client, unix int64, loc 
 	}
 
 	for _, a := range consolidated {
-		a.PopulateCounts()
+		a.FillCounts()
 	}
 
 	// sort albums ...
@@ -122,9 +123,8 @@ func computeBirthdays(ctx context.Context, client *http.Client, unix int64, loc 
 	ret := make([]BirthdayItem, len(consolidated))
 	for i, a := range consolidated {
 		ret[i] = BirthdayItem{
-			Album:      a.Album,
-			ArtworkURL: a.Songs[0].ArtworkURL,
-			Songs:      toBirthdayItemSongs(a.Songs),
+			Album: a.Album,
+			Songs: toBirthdayItemSongs(a.Songs),
 		}
 	}
 	return ret
@@ -171,10 +171,10 @@ func compareSongs(a, b Song) bool {
 	if b.PlayCount > a.PlayCount {
 		return false
 	}
-	if a.TrackNumber > b.TrackNumber {
+	if a.TrackNumber < b.TrackNumber {
 		return true
 	}
-	if b.TrackNumber > a.TrackNumber {
+	if b.TrackNumber < a.TrackNumber {
 		return false
 	}
 	return a.Title < b.Title
@@ -188,7 +188,7 @@ type AlbumAndSongs struct {
 	Loved     int
 }
 
-func (a *AlbumAndSongs) PopulateCounts() {
+func (a *AlbumAndSongs) FillCounts() {
 	var p, l int
 	for _, s := range a.Songs {
 		p += s.PlayCount
@@ -207,12 +207,12 @@ func (a *ArtistsConsolidated) Add(newAlbum Album, newSongs []Song) {
 	for i := range *a {
 		as := (*a)[i]
 		smaller, eq := equalButMultipleArtists(as.Album, newAlbum)
-		if !eq {
-			continue
-		}
-		(*a)[i] = &AlbumAndSongs{
-			Album: smaller,
-			Songs: append(as.Songs, newSongs...),
+		if eq {
+			(*a)[i] = &AlbumAndSongs{
+				Album: smaller,
+				Songs: append(as.Songs, newSongs...),
+			}
+			return
 		}
 	}
 	// nothing found; add new entry

@@ -44,9 +44,9 @@ class Mount extends React.Component<MountProps, { bootstrap: Bootstrap }> {
 				</Route>
 
 				<Route exact path={["/birthdays", "/settings"]}>
-					<Dashboard nProgress={NProgress} email={this.state.bootstrap.email!} onLogout={() => {
+					<Dashboard nProgress={NProgress} email={this.state.bootstrap.email} onLogout={() => {
 						this.setState({
-							bootstrap: { loggedIn: false, email: null },
+							bootstrap: { loggedIn: false, email: "" },
 						})
 					}} />
 				</Route>
