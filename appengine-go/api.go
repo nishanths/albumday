@@ -60,6 +60,10 @@ type ConnectionError struct {
 	Timestamp int64               `json:"timestamp"`
 }
 
+func (c ConnectionError) Error() string {
+	return fmt.Sprintf("%s at %s", c.Reason, time.Unix(c.Timestamp, 0))
+}
+
 type Connection struct {
 	Service Service `json:"service"`
 	Conn
