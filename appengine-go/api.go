@@ -50,16 +50,20 @@ const (
 type ConnectionErrReason string
 
 const (
-	ConnectionErrNone       ConnectionErrReason = "(none)"
 	ConnectionErrGeneric    ConnectionErrReason = "generic"    // generic error
 	ConnectionErrPermission ConnectionErrReason = "permission" // insuffcient permissions, likely that profile is private
 	ConnectionErrNotFound   ConnectionErrReason = "not found"  // no such profile
 )
 
+type ConnectionError struct {
+	Reason    ConnectionErrReason `json:"reason"`
+	Timestamp int64               `json:"timestamp"`
+}
+
 type Connection struct {
 	Service Service `json:"service"`
 	Conn
-	ConnectionError ConnectionErrReason `json:"connectionError"`
+	ConnectionError *ConnectionError `json:"connectionError"`
 }
 
 type Conn interface {

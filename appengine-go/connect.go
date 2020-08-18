@@ -184,7 +184,7 @@ func (s *Server) AuthSpotifyHandler(w http.ResponseWriter, r *http.Request, _ ht
 			SpotifyConnection{
 				tokenRsp.RefreshToken,
 			},
-			ConnectionErrNone,
+			nil,
 		}
 		return a
 	}); err != nil {
@@ -261,7 +261,7 @@ func (s *Server) ConnectScrobbleHandler(w http.ResponseWriter, r *http.Request, 
 			ScrobbleConnection{
 				scrobbleUsername,
 			},
-			ConnectionErrNone,
+			nil,
 		}
 		return a
 	}); err != nil {

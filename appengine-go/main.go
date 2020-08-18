@@ -7,6 +7,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/go-redis/redis"
 	"github.com/julienschmidt/httprouter"
@@ -66,7 +67,7 @@ func run(ctx context.Context) error {
 	router.DELETE("/api/v1/account", s.DeleteAccountHandler)
 	router.DELETE("/api/v1/account/connection", s.DeleteAccountConnectionHandler)
 	router.PUT("/api/v1/account/email-notifications", s.SetEmailsEnabledHandler)
-	router.GET("/api/v1/birthdays", s.BirthdaysHandler)
+	// router.GET("/api/v1/birthdays", s.BirthdaysHandler)
 
 	// router.POST("/internal/cron/daily-email", RequireCronHeader(s.DailyEmailCronHandler))
 	// router.POST("/internal/task/daily-email", RequireTasksSecret(config.TasksSecret, s.DailyEmailTaskHandler))
@@ -82,6 +83,10 @@ func run(ctx context.Context) error {
 	router.GET("/birthdays", s.FeedHandler)
 	router.GET("/settings", s.FeedHandler)
 	router.GET("/logout", s.LogoutHandler)
+
+	if isDev() {
+		http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir(filepath.Join("static")))))
+	}
 
 	PORT := os.Getenv("PORT")
 	if PORT == "" {
