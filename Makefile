@@ -2,21 +2,20 @@ PROJECT_ID := albumday
 
 .PHONY: all
 all:
-	(cd appengine && make clean build)
+	(cd appengine-go && make clean build)
 	(cd web && make clean build-prod)
 
 .PHONY: deploy
 deploy:
-	(cd appengine && gcloud --quiet --project $(PROJECT_ID) app deploy)
+	(cd appengine-go && gcloud --quiet --project $(PROJECT_ID) app deploy)
 
 .PHONY: fmt
 fmt:
-	(cd appengine && make fmt)
+	(cd appengine-go && make fmt)
 	(cd web && make fmt)
 
 .PHONY: deps
 deps:
-	(cd appengine && make deps)
 	(cd web && make deps)
 
 .PHONY: redis
@@ -30,8 +29,8 @@ redisc:
 
 .PHONY: clean
 clean:
-	(cd appengine && make clean)
+	(cd appengine-go && make clean)
 	(cd web && make clean)
 
 .PHONY: deploy-cron
-	(cd appengine && gcloud --quiet --project $(PROJECT_ID) app deploy cron.yaml)
+	(cd appengine-go && gcloud --quiet --project $(PROJECT_ID) app deploy cron.yaml)
