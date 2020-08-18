@@ -1,9 +1,0 @@
-#!/usr/bin/env sh
-
-set -uo pipefail
-
-while true; do
-	find . -type f \( -name '*.ts' -o -name '*.tsx' \) ! -regex '.*/node_modules/.*' ! -regex '.*/dist/.*' ! -regex '.*/static/.*' | \
-	entr -srd 'make build && make serve'
-	sleep 1
-done
