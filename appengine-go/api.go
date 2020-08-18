@@ -128,9 +128,9 @@ const (
 
 Someone has requested a login code for {{.Email}} to log in to the {{.AppName}} app (https://{{.AppDomain}}).
 
-The code is below.
+The code is below:
 
-  {{.Passphrase}}
+{{.Passphrase}}
 `
 )
 
@@ -219,7 +219,11 @@ func (s *Server) LoginHandler(w http.ResponseWriter, r *http.Request, _ httprout
 		return
 	}
 
-	s.setIdentityCookie(w, email)
+	if err := s.setIdentityCookie(w, r, email); err != nil {
+		log.Printf("set identity cookie: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 func (s *Server) DeleteAccountConnectionHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {

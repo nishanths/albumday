@@ -82,14 +82,14 @@
 				&.spotify {
 					border-right: solid 30px transparent;
 					.service-box {
-						background-image: url(/img/spotify.svg);
+						background-image: url(/static/img/spotify.svg);
 						background-size: 100px;
 					}
 				}
 				&.scrobble {
 					border-left: solid 30px transparent;
 					.service-box {
-						background-image: url(/img/apple_music.svg);
+						background-image: url(/static/img/apple_music.svg);
 					}
 				}
 

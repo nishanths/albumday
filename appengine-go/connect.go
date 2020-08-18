@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	cookieNameState = "albumday:state"
+	cookieNameState = "albumday_state"
 	cookieAgeState  = 30 * time.Minute
 )
 

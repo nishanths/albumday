@@ -61,8 +61,10 @@ func loadConfig(ctx context.Context, ds *datastore.Client) (Config, error) {
 			RedisHost: m.RedisHost,
 			RedisPort: "6379",
 			RedisTLS: &tls.Config{
-				Certificates: []tls.Certificate{cert},
-				ClientCAs:    pool,
+				InsecureSkipVerify: true,
+				ServerName:         m.RedisHost,
+				Certificates:       []tls.Certificate{cert},
+				ClientCAs:          pool,
 			},
 			SendgridAPIKey:      m.SendgridAPIKey,
 			SpotifyClientID:     m.SpotifyClientID,
@@ -77,8 +79,8 @@ func loadConfig(ctx context.Context, ds *datastore.Client) (Config, error) {
 			RedisPort:           "6379",
 			SpotifyClientID:     os.Getenv("SPOTIFY_CLIENT_ID"),
 			SpotifyClientSecret: os.Getenv("SPOTIFY_CLIENT_SECRET"),
-			IdentityCookie:      identityCookieCodec("foo"),
-			StateCookie:         stateCookieCodec("foo"),
+			IdentityCookie:      identityCookieCodec("AVR30Z8RZrDwBRgGYwM7CpcADLGLiDxjk+lTiU01sBsuAZ3eOctoGn7pqWUnwIA3hgfsqL8elZty/2YKkZCLlg=="),
+			StateCookie:         stateCookieCodec("AVR30Z8RZrDwBRgGYwM7CpcADLGLiDxjk+lTiU01sBsuAZ3eOctoGn7pqWUnwIA3hgfsqL8elZty/2YKkZCLlg=="),
 			TasksSecret:         "bar",
 		}, nil
 	default:

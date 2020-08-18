@@ -7,7 +7,6 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"path/filepath"
 
 	"github.com/go-redis/redis"
 	"github.com/julienschmidt/httprouter"
@@ -85,7 +84,7 @@ func run(ctx context.Context) error {
 	router.GET("/logout", s.LogoutHandler)
 
 	if isDev() {
-		http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir(filepath.Join("static")))))
+		router.ServeFiles("/static/*filepath", http.Dir("static"))
 	}
 
 	PORT := os.Getenv("PORT")

@@ -241,7 +241,7 @@ class StartComponent extends React.Component<StartProps, State> {
 								<input
 									value={passphrase} onChange={e => { this.setState({ passphrase: e.target.value, error: undefined }) }}
 									type="password"
-									placeholder="*****-***-*****"
+									placeholder="*****"
 									disabled={submitting}
 									autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false"
 									ref={r => { this.passphraseRef = r }}

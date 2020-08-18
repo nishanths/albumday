@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	cookieNameIdentity = "albumday:identity"
+	cookieNameIdentity = "albumday_identity"
 	cookieAgeIdentity  = 30 * 24 * time.Hour
 )
 
@@ -22,7 +22,7 @@ type IdentityCookie struct {
 	Email string
 }
 
-func (s *Server) setIdentityCookie(w http.ResponseWriter, email string) error {
+func (s *Server) setIdentityCookie(w http.ResponseWriter, r *http.Request, email string) error {
 	encoded, err := s.config.IdentityCookie.Encode(cookieNameIdentity, IdentityCookie{
 		Email: email,
 	})
@@ -30,7 +30,6 @@ func (s *Server) setIdentityCookie(w http.ResponseWriter, email string) error {
 		return err
 	}
 	cookie := &http.Cookie{
-		// TODO: should Domain be added?
 		Name:     cookieNameIdentity,
 		Value:    encoded,
 		Expires:  time.Now().Add(cookieAgeIdentity),

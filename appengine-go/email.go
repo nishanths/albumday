@@ -53,10 +53,10 @@ type LoggingEmailClient struct {
 }
 
 func (l *LoggingEmailClient) Send(to []string, subject string, bodyText string, bodyHTML string) error {
-	fmt.Fprintf(l.w, "email: to: %v", to)
-	fmt.Fprintf(l.w, "email: subject: %s", subject)
-	fmt.Fprintf(l.w, "email: body text: %s", bodyText)
-	fmt.Fprintf(l.w, "email: body html: %s", bodyHTML)
+	fmt.Fprintf(l.w, "email: to: %v\n", to)
+	fmt.Fprintf(l.w, "email: subject: %s\n", subject)
+	fmt.Fprintf(l.w, "email: body text: %s\n", bodyText)
+	fmt.Fprintf(l.w, "email: body html: %s\n", bodyHTML)
 	return nil
 }
 
