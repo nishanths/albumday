@@ -24,7 +24,7 @@ type IdentityCookie struct {
 }
 
 func (s *Server) setIdentityCookie(w http.ResponseWriter, r *http.Request, email string) error {
-	encoded, err := s.config.IdentityCookie.Encode(cookieNameIdentity, IdentityCookie{
+	encoded, err := s.identityCookie.Encode(cookieNameIdentity, IdentityCookie{
 		Email: email,
 	})
 	if err != nil {
@@ -49,7 +49,7 @@ func (s *Server) currentIdentity(r *http.Request) string {
 	}
 
 	var t IdentityCookie
-	err = s.config.IdentityCookie.Decode(cookieNameIdentity, cookie.Value, &t)
+	err = s.identityCookie.Decode(cookieNameIdentity, cookie.Value, &t)
 	if err != nil {
 		log.Printf("decode identity cookie: %s", err)
 		return ""

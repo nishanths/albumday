@@ -129,7 +129,7 @@ type ScrobbleResponse struct {
 	Songs []ScrobbleSong `json:"songs"`
 }
 
-func scrobbleFetch(ctx context.Context, c *http.Client, username string) ([]Song, error) {
+func fetchScrobble(ctx context.Context, c *http.Client, username string) ([]Song, error) {
 	v := url.Values{}
 	v.Set("username", username)
 	u := fmt.Sprintf("%s/scrobbled?%s", scrobbleAPIBaseURL, v.Encode())
@@ -163,11 +163,11 @@ func scrobbleFetch(ctx context.Context, c *http.Client, username string) ([]Song
 		return ret, nil
 
 	case 403:
-		return nil, ConnectionError{ConnectionErrPermission, time.Now().Unix()}
+		return nil, &ConnectionError{ConnectionErrPermission, time.Now().Unix()}
 	case 404:
-		return nil, ConnectionError{ConnectionErrNotFound, time.Now().Unix()}
+		return nil, &ConnectionError{ConnectionErrNotFound, time.Now().Unix()}
 	default:
-		return nil, ConnectionError{ConnectionErrGeneric, time.Now().Unix()}
+		return nil, &ConnectionError{ConnectionErrGeneric, time.Now().Unix()}
 	}
 }
 
@@ -202,5 +202,12 @@ func trackToAlbumLink(trackViewURL string) *string {
 }
 
 func FetchSongs(ctx context.Context, c *http.Client, service Service, conn Connection) ([]Song, error) {
-	return nil, fmt.Errorf("not implemented")
+	switch service {
+	case Spotify:
+		return nil, fmt.Errorf("not implemented")
+	case Scrobble:
+		return fetchScrobble(ctx, c, conn.Username)
+	default:
+		panic("unreachable")
+	}
 }

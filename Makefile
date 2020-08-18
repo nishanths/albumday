@@ -36,6 +36,10 @@ clean:
 deploy-cron:
 	(cd appengine-go && gcloud --quiet --project $(PROJECT_ID) app deploy cron.yaml)
 
+.PHONY: deploy-queue
+deploy-queue:
+	(cd appengine-go && gcloud --quiet --project $(PROJECT_ID) app deploy queue.yaml)
+
 .PHONY: ssh
 ssh:
 	gcloud beta compute ssh --zone "us-central1-a" "quantum" --project "albumday"

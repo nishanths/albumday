@@ -10,7 +10,7 @@ import (
 	"google.golang.org/genproto/googleapis/cloud/tasks/v2"
 )
 
-const defaultQueueName = "default"
+const queueName = "internal-default"
 
 const headerTasksSecret = "x-tasks-secret"
 
@@ -33,7 +33,7 @@ func (c *CloudTasksClient) PostJSONTask(ctx context.Context, path string, payloa
 	}
 
 	task := &tasks.CreateTaskRequest{
-		Parent: defaultQueueName,
+		Parent: queueName,
 		Task: &tasks.Task{
 			MessageType: &tasks.Task_AppEngineHttpRequest{
 				AppEngineHttpRequest: &tasks.AppEngineHttpRequest{

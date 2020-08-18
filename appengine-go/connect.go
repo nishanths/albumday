@@ -62,7 +62,7 @@ func (s *Server) ConnectSpotifyHandler(w http.ResponseWriter, r *http.Request, _
 	v.Set("scope", "user-library-read")
 	v.Set("show_dialog", "false")
 
-	encoded, err := s.config.StateCookie.Encode(cookieNameState, stateCookie)
+	encoded, err := s.stateCookie.Encode(cookieNameState, stateCookie)
 	if err != nil {
 		log.Printf("encode state cookie: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -132,7 +132,7 @@ func (s *Server) AuthSpotifyHandler(w http.ResponseWriter, r *http.Request, _ ht
 		return
 	}
 	var cookieState StateCookie
-	err = s.config.StateCookie.Decode(cookieNameState, cookie.Value, &cookieState)
+	err = s.stateCookie.Decode(cookieNameState, cookie.Value, &cookieState)
 	if err != nil {
 		log.Printf("decode state cookie: %s", err)
 		errorResponse()

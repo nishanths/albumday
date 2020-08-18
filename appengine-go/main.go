@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/go-redis/redis"
+	"github.com/gorilla/securecookie"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -18,6 +19,8 @@ type Server struct {
 	tasks  TasksClient
 	redis  *redis.Client
 	http   *http.Client
+
+	identityCookie, stateCookie *securecookie.SecureCookie
 }
 
 func main() {
@@ -57,6 +60,9 @@ func run(ctx context.Context) error {
 		tasks:  tasks,
 		redis:  redisc,
 		http:   http.DefaultClient,
+
+		identityCookie: identityCookieCodec(config.CookieSecret),
+		stateCookie:    stateCookieCodec(config.CookieSecret),
 	}
 
 	router := httprouter.New()

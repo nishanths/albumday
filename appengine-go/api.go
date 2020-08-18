@@ -60,8 +60,13 @@ type ConnectionError struct {
 	Timestamp int64               `json:"timestamp"`
 }
 
-func (c ConnectionError) Error() string {
+func (c *ConnectionError) Error() string {
 	return fmt.Sprintf("%s at %s", c.Reason, time.Unix(c.Timestamp, 0))
+}
+
+func isConnectionError(e error) bool {
+	_, ok := e.(*ConnectionError)
+	return ok
 }
 
 type Connection struct {

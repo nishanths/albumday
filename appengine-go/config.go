@@ -9,7 +9,6 @@ import (
 	"os"
 
 	"cloud.google.com/go/datastore"
-	"github.com/gorilla/securecookie"
 )
 
 type Config struct {
@@ -22,9 +21,8 @@ type Config struct {
 	SpotifyClientID     string
 	SpotifyClientSecret string
 
-	IdentityCookie, StateCookie *securecookie.SecureCookie
-
-	TasksSecret string
+	CookieSecret string
+	TasksSecret  string
 }
 
 type Metadata struct {
@@ -69,8 +67,7 @@ func loadConfig(ctx context.Context, ds *datastore.Client) (Config, error) {
 			SendgridAPIKey:      m.SendgridAPIKey,
 			SpotifyClientID:     m.SpotifyClientID,
 			SpotifyClientSecret: m.SpotifyClientSecret,
-			IdentityCookie:      identityCookieCodec(m.CookieSecret),
-			StateCookie:         stateCookieCodec(m.CookieSecret),
+			CookieSecret:        m.CookieSecret,
 			TasksSecret:         m.TasksSecret,
 		}, nil
 	case Dev:
@@ -79,8 +76,7 @@ func loadConfig(ctx context.Context, ds *datastore.Client) (Config, error) {
 			RedisPort:           "6379",
 			SpotifyClientID:     os.Getenv("SPOTIFY_CLIENT_ID"),
 			SpotifyClientSecret: os.Getenv("SPOTIFY_CLIENT_SECRET"),
-			IdentityCookie:      identityCookieCodec("AVR30Z8RZrDwBRgGYwM7CpcADLGLiDxjk+lTiU01sBsuAZ3eOctoGn7pqWUnwIA3hgfsqL8elZty/2YKkZCLlg=="),
-			StateCookie:         stateCookieCodec("AVR30Z8RZrDwBRgGYwM7CpcADLGLiDxjk+lTiU01sBsuAZ3eOctoGn7pqWUnwIA3hgfsqL8elZty/2YKkZCLlg=="),
+			CookieSecret:        "AVR30Z8RZrDwBRgGYwM7CpcADLGLiDxjk+lTiU01sBsuAZ3eOctoGn7pqWUnwIA3hgfsqL8elZty/2YKkZCLlg==",
 			TasksSecret:         "bar",
 		}, nil
 	default:
