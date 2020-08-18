@@ -1,7 +1,6 @@
 import { assertExhaustive } from "./shared"
 
 export type Account = {
-	apiKey: string
 	connection: Connection | null
 	settings: Settings
 }
@@ -17,16 +16,9 @@ export type Connection = KnownConnection & {
 	error: ConnectionError | null
 }
 
-const connectionErrorID = "connection error" as const
-
 export type ConnectionError = {
-	type: typeof connectionErrorID,
 	reason: ConnectionErrReason
 	timestamp: number
-}
-
-export function isConnectionError(e: any): e is ConnectionError {
-	return e["type"] === connectionErrorID
 }
 
 type ConnectionErrReason =
@@ -45,23 +37,12 @@ export type SpotifyConnection = {
 }
 
 export type Settings = {
-	timeZone: string
 	emailsEnabled: boolean
 	emailFormat: "html" | "plain text"
 }
 
 export function connectionComplete(a: Account): boolean {
-	if (a.connection === null) {
-		return false
-	}
-	switch (a.connection.service) {
-		case "spotify":
-			return a.connection.refreshToken !== ""
-		case "scrobble":
-			return a.connection.username !== ""
-		default:
-			assertExhaustive(a.connection)
-	}
+	return a.connection !== null
 }
 
 export type Bootstrap = {

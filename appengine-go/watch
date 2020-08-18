@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+set -uo pipefail
+
+while true; do
+	find . -type f \( -name '*.go' -o -name '*.html' \) ! -regex '.*/static/.*' | \
+	entr -srd 'make build && make serve'
+	sleep 1
+done
