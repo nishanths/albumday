@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -64,7 +65,27 @@ type DevTasksClient struct {
 }
 
 func (c *DevTasksClient) PostJSONTask(ctx context.Context, path string, payload interface{}) error {
-	return fmt.Errorf("not implemented")
+	p, err := json.Marshal(payload)
+	if err != nil {
+		return fmt.Errorf("json-marshal payload: %s", err)
+	}
+
+	req, err := http.NewRequest("POST", devBaseURL()+path, bytes.NewReader(p))
+	if err != nil {
+		return err
+	}
+	req = req.WithContext(ctx)
+	req.Header.Set("content-type", "application/json")
+	req.Header.Set(headerTasksSecret, c.tasksSecret())
+
+	rsp, err := c.http.Do(req)
+	if err != nil {
+		return fmt.Errorf("POST task: %s", err)
+	}
+	if !successStatus(rsp.StatusCode) {
+		return fmt.Errorf("bad status: %d", rsp.StatusCode)
+	}
+	return nil
 }
 
 func (c *DevTasksClient) Close() error {

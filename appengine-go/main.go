@@ -96,9 +96,9 @@ func run(ctx context.Context) error {
 
 	PORT := os.Getenv("PORT")
 	if PORT == "" {
-		PORT = "8080"
+		PORT = devPort
 	}
-	log.Printf("listening on port: %s", PORT)
+	log.Printf("listening on port %s", PORT)
 	return http.ListenAndServe(":"+PORT, router)
 }
 

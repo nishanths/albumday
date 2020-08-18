@@ -76,8 +76,8 @@ type Connection struct {
 }
 
 type Conn struct {
-	RefreshToken string `json:"refreshToken"`
-	Username     string `json:"username"`
+	RefreshToken string `json:"refreshToken,omitempty"`
+	Username     string `json:"username,omitempty"`
 }
 
 type Service string
