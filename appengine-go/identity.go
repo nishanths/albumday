@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"time"
 
@@ -11,6 +12,17 @@ const (
 	cookieNameIdentity = "albumday_identity"
 	cookieAgeIdentity  = 30 * 24 * time.Hour
 )
+
+func cookieDomain() string {
+	switch env() {
+	case Prod:
+		return AppDomain
+	case Dev:
+		return "localhost"
+	default:
+		panic("unreachable")
+	}
+}
 
 func identityCookieCodec(secret string) *securecookie.SecureCookie {
 	return securecookie.New([]byte(secret), nil).
@@ -34,6 +46,7 @@ func (s *Server) setIdentityCookie(w http.ResponseWriter, r *http.Request, email
 		Value:    encoded,
 		Expires:  time.Now().Add(cookieAgeIdentity),
 		HttpOnly: true,
+		Path:     "/",
 	}
 	http.SetCookie(w, cookie)
 	return nil
@@ -42,12 +55,14 @@ func (s *Server) setIdentityCookie(w http.ResponseWriter, r *http.Request, email
 func (s *Server) currentIdentity(r *http.Request) string {
 	cookie, err := r.Cookie(cookieNameIdentity)
 	if err != nil {
+		log.Printf("get identity cookie: %s", err)
 		return ""
 	}
 
 	var t IdentityCookie
 	err = s.config.IdentityCookie.Decode(cookieNameIdentity, cookie.Value, &t)
 	if err != nil {
+		log.Printf("decode identity cookie: %s", err)
 		return ""
 	}
 	return t.Email

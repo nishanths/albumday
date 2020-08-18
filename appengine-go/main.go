@@ -75,7 +75,7 @@ func run(ctx context.Context) error {
 
 	router.GET("/connect/spotify", s.ConnectSpotifyHandler)
 	router.GET("/auth/spotify", s.AuthSpotifyHandler)
-	router.GET("/connect/scrobble", s.ConnectScrobbleHandler)
+	router.POST("/connect/scrobble", s.ConnectScrobbleHandler)
 
 	router.GET("/", s.IndexHandler)
 	router.GET("/start", s.StartHandler)

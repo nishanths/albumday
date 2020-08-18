@@ -63,23 +63,13 @@ type ConnectionError struct {
 type Connection struct {
 	Service Service `json:"service"`
 	Conn
-	ConnectionError *ConnectionError `json:"connectionError"`
+	Error *ConnectionError `json:"error"`
 }
 
-type Conn interface {
-	isConn()
-}
-
-type SpotifyConnection struct {
+type Conn struct {
 	RefreshToken string `json:"refreshToken"`
+	Username     string `json:"username"`
 }
-
-type ScrobbleConnection struct {
-	Username string `json:"username"`
-}
-
-func (SpotifyConnection) isConn()  {}
-func (ScrobbleConnection) isConn() {}
 
 type Service string
 

@@ -73,6 +73,7 @@ func (s *Server) ConnectSpotifyHandler(w http.ResponseWriter, r *http.Request, _
 		Value:    encoded,
 		Expires:  time.Now().Add(cookieAgeState),
 		HttpOnly: true,
+		Path:     "/",
 	})
 
 	http.Redirect(w, r, "https://accounts.spotify.com/authorize?"+v.Encode(), http.StatusFound)
@@ -180,11 +181,9 @@ func (s *Server) AuthSpotifyHandler(w http.ResponseWriter, r *http.Request, _ ht
 	if err := UpdateEntity(s.redis, accountKey(accountEmail), &Account{}, func(v interface{}) interface{} {
 		a := v.(*Account)
 		a.Connection = &Connection{
-			Spotify,
-			SpotifyConnection{
-				tokenRsp.RefreshToken,
-			},
-			nil,
+			Service: Spotify,
+			Conn:    Conn{RefreshToken: tokenRsp.RefreshToken},
+			Error:   nil,
 		}
 		return a
 	}); err != nil {
@@ -257,11 +256,9 @@ func (s *Server) ConnectScrobbleHandler(w http.ResponseWriter, r *http.Request, 
 	if err := UpdateEntity(s.redis, accountKey(email), &Account{}, func(v interface{}) interface{} {
 		a := v.(*Account)
 		a.Connection = &Connection{
-			Scrobble,
-			ScrobbleConnection{
-				scrobbleUsername,
-			},
-			nil,
+			Service: Scrobble,
+			Conn:    Conn{Username: scrobbleUsername},
+			Error:   nil,
 		}
 		return a
 	}); err != nil {
