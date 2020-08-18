@@ -62,7 +62,7 @@ func (s *Server) ConnectSpotifyHandler(w http.ResponseWriter, r *http.Request, _
 	v.Set("scope", "user-library-read")
 	v.Set("show_dialog", "false")
 
-	encoded, err := s.config.StateCookie.Encode(cookieNameIdentity, stateCookie)
+	encoded, err := s.config.StateCookie.Encode(cookieNameState, stateCookie)
 	if err != nil {
 		log.Printf("encode state cookie: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -80,7 +80,13 @@ func (s *Server) ConnectSpotifyHandler(w http.ResponseWriter, r *http.Request, _
 }
 
 func spotifyRedirectURL(userReq *http.Request) string {
-	return fmt.Sprintf("%s://%s/auth/spotify", userReq.URL.Scheme, userReq.Host)
+	// https://github.com/golang/go/issues/28940
+	scheme := "http"
+	if userReq.TLS != nil {
+		scheme = "https"
+	}
+
+	return fmt.Sprintf("%s://%s/auth/spotify", scheme, userReq.Host)
 }
 
 func (s *Server) AuthSpotifyHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -121,7 +127,7 @@ func (s *Server) AuthSpotifyHandler(w http.ResponseWriter, r *http.Request, _ ht
 	// extract state from cookie
 	cookie, err := r.Cookie(cookieNameState)
 	if err != nil {
-		log.Printf("get cookie %s: %s", cookieNameState, err)
+		log.Printf("get state cookie %s: %s", cookieNameState, err)
 		errorResponse()
 		return
 	}

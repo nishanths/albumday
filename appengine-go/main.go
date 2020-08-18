@@ -60,6 +60,7 @@ func run(ctx context.Context) error {
 	}
 
 	router := httprouter.New()
+
 	router.GET("/api/v1/account", s.AccountHandler)
 	router.POST("/api/v1/passphrase", s.PassphraseHandler)
 	router.POST("/api/v1/login", s.LoginHandler)
