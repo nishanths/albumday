@@ -50,6 +50,7 @@ const (
 type ConnectionErrReason string
 
 const (
+	ConnectionErrNone       ConnectionErrReason = "(none)"
 	ConnectionErrGeneric    ConnectionErrReason = "generic"    // generic error
 	ConnectionErrPermission ConnectionErrReason = "permission" // insuffcient permissions, likely that profile is private
 	ConnectionErrNotFound   ConnectionErrReason = "not found"  // no such profile

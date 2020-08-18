@@ -8,6 +8,10 @@ import (
 	"regexp"
 )
 
+func successStatus(code int) bool {
+	return code >= 200 && code < 300
+}
+
 func drainAndClose(r io.ReadCloser) {
 	io.Copy(ioutil.Discard, r)
 	r.Close()
@@ -43,3 +47,7 @@ func validateEmail(email string) error {
 	}
 	return nil
 }
+
+const (
+	scrobbleAPIBaseURL = "https://selective-scrobble.appspot.com/api/v1"
+)
