@@ -2,7 +2,7 @@
 # https://stackoverflow.com/questions/33558076/cannot-use-ip-in-node-js-for-self-signed-certificate
 
 FQDN ?= 127.0.0.1
-OUTDIR ?= ../appengine/redis/tls
+OUTDIR ?= tls
 
 .PHONY: default
 default:

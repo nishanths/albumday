@@ -73,7 +73,7 @@ func run(ctx context.Context) error {
 	router.DELETE("/api/v1/account", s.DeleteAccountHandler)
 	router.DELETE("/api/v1/account/connection", s.DeleteAccountConnectionHandler)
 	router.PUT("/api/v1/account/email-notifications", s.SetEmailsEnabledHandler)
-	// router.GET("/api/v1/birthdays", s.BirthdaysHandler)
+	router.GET("/api/v1/birthdays", s.BirthdaysHandler)
 
 	// router.POST("/internal/cron/daily-email", RequireCronHeader(s.DailyEmailCronHandler))
 	// router.POST("/internal/task/daily-email", RequireTasksSecret(config.TasksSecret, s.DailyEmailTaskHandler))

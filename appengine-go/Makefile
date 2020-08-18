@@ -14,6 +14,9 @@ build:
 	(cd static/dist && ln -sfn ../../../web/dist/js js)
 	(cd static/dist && ln -sfn ../../../web/dist/css css)
 
+	(rm -rf redis && mkdir redis)
+	(cd redis && ln -sfn ../../redis/tls tls)
+
 .PHONY: fmt
 fmt:
 	goimports -w ./

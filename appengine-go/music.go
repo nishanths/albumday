@@ -87,26 +87,8 @@ func ptrInt(i int) *int {
 	return &i
 }
 
-func ptrString(s string) *string {
-	return &s
-}
-
 func ptrBool(b bool) *bool {
 	return &b
-}
-
-func intOrNil(i int) *int {
-	if i == 0 {
-		return nil
-	}
-	return &i
-}
-
-func stringOrNil(s string) *string {
-	if s == "" {
-		return nil
-	}
-	return &s
 }
 
 type ScrobbleSong struct {
@@ -148,12 +130,12 @@ func fetchScrobble(ctx context.Context, c *http.Client, username string) ([]Song
 
 	switch rsp.StatusCode {
 	case 200:
-		var songs []ScrobbleSong
-		if err := json.NewDecoder(rsp.Body).Decode(songs); err != nil {
+		var scrobbleRsp ScrobbleResponse
+		if err := json.NewDecoder(rsp.Body).Decode(&scrobbleRsp); err != nil {
 			return nil, fmt.Errorf("json-decode songs: %s", err)
 		}
 		var ret []Song
-		for _, s := range songs {
+		for _, s := range scrobbleRsp.Songs {
 			t, ok := transformScrobbleSong(s)
 			if !ok {
 				continue

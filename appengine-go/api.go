@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
@@ -9,6 +10,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 	"text/template"
 	"time"
 
@@ -297,4 +299,107 @@ func (s *Server) DeleteAccountHandler(w http.ResponseWriter, r *http.Request, _ 
 }
 
 func (s *Server) BirthdaysHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	ts := r.URL.Query()["timestamp"]
+	if len(ts) == 0 {
+		http.Error(w, "timestamp required", http.StatusBadRequest)
+		return
+	}
+	if len(ts) > 2 {
+		http.Error(w, "too many timestamps", http.StatusBadRequest)
+		return
+	}
+	var timestamps []int64
+	for _, t := range ts {
+		i, err := strconv.ParseInt(t, 10, 64)
+		if err != nil {
+			http.Error(w, "bad timestamp", http.StatusBadRequest)
+			return
+		}
+		timestamps = append(timestamps, i)
+	}
+
+	timeZoneName := r.FormValue("timeZone")
+	loc := defaultLocation
+	if timeZoneName != "" {
+		var err error
+		loc, err = time.LoadLocation(timeZoneName)
+		if err != nil {
+			log.Printf("load location %s: %s", timeZoneName, err)
+			http.Error(w, "bad timezone", http.StatusBadRequest)
+			return
+		}
+	}
+
+	cache := r.FormValue("cache")
+	if cache == "" {
+		cache = "on"
+	}
+	if cache != "on" && cache != "off" {
+		http.Error(w, "bad cache", http.StatusBadRequest)
+		return
+	}
+
+	email := s.currentIdentity(r)
+	if email == "" {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	// TODO: INCR and determine if email needs to be sent
+
+	accJSON, err := s.redis.Get(accountKey(email)).Bytes()
+	if err != nil {
+		log.Printf("redis: GET account: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	var acc Account
+	mustUnmarshalJSON(accJSON, &acc)
+
+	if !acc.connectionComplete() {
+		w.WriteHeader(412)
+		return
+	}
+
+	conn := *acc.Connection
+	ctx := context.Background() // intentional
+
+	// TODO: cache
+
+	songs, err := FetchSongs(ctx, s.http, conn)
+	if isConnectionError(err) {
+		log.Printf("fetch songs connection error: %s", err)
+
+		connErr := err.(*ConnectionError)
+		switch connErr.Reason {
+		case ConnectionErrPermission, ConnectionErrNotFound:
+			w.WriteHeader(422)
+		case ConnectionErrGeneric:
+			w.WriteHeader(http.StatusInternalServerError)
+		default:
+			panic("unreachable")
+		}
+		return
+	}
+	if err != nil {
+		log.Printf("fetch songs: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	result := s.computeBirthdaysForTimestamps(ctx, timestamps, loc, songs)
+	if err := json.NewEncoder(w).Encode(result); err != nil {
+		log.Printf("write response: %s", err)
+	}
+}
+
+type BirthdayResponse map[int64][]BirthdayItem
+
+func (s *Server) computeBirthdaysForTimestamps(ctx context.Context, timestamps []int64, loc *time.Location, songs []Song) BirthdayResponse {
+	m := make(BirthdayResponse)
+	for _, t := range timestamps {
+		m[t] = computeBirthdays(ctx, s.http, t, loc, songs)
+	}
+	return m
 }
