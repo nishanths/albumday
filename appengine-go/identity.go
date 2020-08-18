@@ -13,17 +13,6 @@ const (
 	cookieAgeIdentity  = 30 * 24 * time.Hour
 )
 
-func cookieDomain() string {
-	switch env() {
-	case Prod:
-		return AppDomain
-	case Dev:
-		return "localhost"
-	default:
-		panic("unreachable")
-	}
-}
-
 func identityCookieCodec(secret string) *securecookie.SecureCookie {
 	return securecookie.New([]byte(secret), nil).
 		MaxAge(int(cookieAgeIdentity / time.Second)).
