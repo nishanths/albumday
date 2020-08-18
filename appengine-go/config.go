@@ -22,7 +22,7 @@ type Config struct {
 	SpotifyClientID     string
 	SpotifyClientSecret string
 
-	IdentityCookie *securecookie.SecureCookie
+	IdentityCookie, StateCookie *securecookie.SecureCookie
 
 	TasksSecret string
 }
@@ -68,6 +68,7 @@ func loadConfig(ctx context.Context, ds *datastore.Client) (Config, error) {
 			SpotifyClientID:     m.SpotifyClientID,
 			SpotifyClientSecret: m.SpotifyClientSecret,
 			IdentityCookie:      identityCookieCodec(m.CookieSecret),
+			StateCookie:         stateCookieCodec(m.CookieSecret),
 			TasksSecret:         m.TasksSecret,
 		}, nil
 	case Dev:
@@ -77,6 +78,7 @@ func loadConfig(ctx context.Context, ds *datastore.Client) (Config, error) {
 			SpotifyClientID:     os.Getenv("SPOTIFY_CLIENT_ID"),
 			SpotifyClientSecret: os.Getenv("SPOTIFY_CLIENT_SECRET"),
 			IdentityCookie:      identityCookieCodec("foo"),
+			StateCookie:         stateCookieCodec("foo"),
 			TasksSecret:         "bar",
 		}, nil
 	default:

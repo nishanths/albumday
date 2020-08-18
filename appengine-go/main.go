@@ -17,6 +17,7 @@ type Server struct {
 	config Config
 	tasks  TasksClient
 	redis  *redis.Client
+	http   *http.Client
 }
 
 func main() {
@@ -55,6 +56,7 @@ func run(ctx context.Context) error {
 		config: config,
 		tasks:  tasks,
 		redis:  redisc,
+		http:   http.DefaultClient,
 	}
 
 	router := httprouter.New()
@@ -66,6 +68,21 @@ func run(ctx context.Context) error {
 	router.PUT("/api/v1/account/email-notifications", s.SetEmailsEnabledHandler)
 	router.GET("/api/v1/birthdays", s.BirthdaysHandler)
 
+	router.POST("/internal/cron/daily-email", RequireCronHeader(s.DailyEmailCronHandler))
+	router.POST("/internal/task/daily-email", RequireTasksSecret(config.TasksSecret, s.DailyEmailTaskHandler))
+	router.POST("/internal/cron/refresh-library", RequireCronHeader(s.RefreshLibraryCronHandler))
+	router.POST("/internal/task/refresh-library", RequireTasksSecret(config.TasksSecret, s.RefreshLibraryTaskHandler))
+
+	router.GET("/connect/spotify", s.ConnectSpotifyHandler)
+	router.GET("/auth/spotify", s.AuthSpotifyHandler)
+	router.GET("/connect/scrobble", s.ConnectScrobbleHandler)
+
+	router.GET("/", s.IndexHandler)
+	router.GET("/start", s.StartHandler)
+	router.GET("/birthdays", s.FeedHandler)
+	router.GET("/settings", s.FeedHandler)
+	router.GET("/logout", s.LogoutHandler)
+
 	PORT := os.Getenv("PORT")
 	if PORT == "" {
 		PORT = "8080"
@@ -76,7 +93,17 @@ func run(ctx context.Context) error {
 
 func RequireCronHeader(h httprouter.Handle) httprouter.Handle {
 	return httprouter.Handle(func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-		if env() == Dev || r.Header.Get("x-appengine-cron") == "true" {
+		if r.Header.Get("x-appengine-cron") == "true" {
+			h(w, r, p)
+			return
+		}
+		w.WriteHeader(http.StatusUnauthorized)
+	})
+}
+
+func RequireTasksSecret(wantSecret string, h httprouter.Handle) httprouter.Handle {
+	return httprouter.Handle(func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		if r.Header.Get(headerTasksSecret) == wantSecret {
 			h(w, r, p)
 			return
 		}
