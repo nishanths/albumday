@@ -33,4 +33,9 @@ clean:
 	(cd web && make clean)
 
 .PHONY: deploy-cron
+deploy-cron:
 	(cd appengine-go && gcloud --quiet --project $(PROJECT_ID) app deploy cron.yaml)
+
+.PHONY: ssh
+ssh:
+	gcloud beta compute ssh --zone "us-central1-a" "quantum" --project "albumday"
