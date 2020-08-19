@@ -137,7 +137,7 @@ func (s *Server) DailyEmailTaskHandler(w http.ResponseWriter, r *http.Request, _
 	// send email
 	if err := s.email.Send(
 		[]string{email},
-		fmt.Sprintf("Birthdays: %d %s", t.Day(), t.Month()),
+		fmt.Sprintf("Album Birthdays: %d %s", t.Day(), t.Month()),
 		"",
 		buf.String(),
 	); err != nil {
