@@ -108,7 +108,7 @@
 				transition: $transition-enter-duration $transition-enter-func color;
 			}
 		}
-		a .album {
+		a .album, a .song {
 			color: $color-instruction;
 			&:hover {
 				color: $color-default;
@@ -126,13 +126,6 @@
 		}
 		.songs {
 			font-size: 16px;
-			color: $light-gray;
-		}
-		a .song {
-			color: $light-gray;
-			&:hover {
-				color: $color-instruction;
-			}
 		}
 	}
 
