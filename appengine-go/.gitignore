@@ -1,2 +1,5 @@
 # binary
 main
+
+# service account
+credentials/albumday-*.json
