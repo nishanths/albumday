@@ -116,7 +116,7 @@ func (s *Server) DailyEmailTaskHandler(w http.ResponseWriter, r *http.Request, _
 	}
 
 	// make unsub link
-	var v url.Values
+	v := url.Values{}
 	v.Set("email", email)
 	v.Set("token", unsubToken)
 
