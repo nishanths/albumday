@@ -34,7 +34,7 @@ class Mount extends React.Component<MountProps, { bootstrap: Bootstrap }> {
 
 				<Route exact path="/start">
 					{this.state.bootstrap.loggedIn ?
-						<Redirect to="/birthdays" /> :
+						<Redirect to="/feed" /> :
 						<Start nProgress={NProgress} onLogin={email => {
 							this.setState({
 								bootstrap: { loggedIn: true, email },
@@ -43,7 +43,7 @@ class Mount extends React.Component<MountProps, { bootstrap: Bootstrap }> {
 					}
 				</Route>
 
-				<Route exact path={["/birthdays", "/settings"]}>
+				<Route exact path={["/feed", "/settings"]}>
 					<Dashboard nProgress={NProgress} email={this.state.bootstrap.email} onLogout={() => {
 						this.setState({
 							bootstrap: { loggedIn: false, email: "" },

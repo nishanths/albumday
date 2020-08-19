@@ -1,8 +1,8 @@
 package main
 
 import (
-	"context"
-	"net/http"
+	"fmt"
+	"log"
 	"sort"
 	"strings"
 	"time"
@@ -15,6 +15,22 @@ type Album struct {
 	Link         string       `json:"link"` // or ""
 	ArtworkURL   string       `json:"artworkURL"`
 	ReleaseMatch ReleaseMatch `json:"releaseMatch"`
+}
+
+func (a Album) Equal(b Album) bool {
+	return a.Artist == b.Artist &&
+		a.Album == b.Album &&
+		a.Release == b.Release &&
+		// Reason that the Link field is ignored: As an example, the links in the same album
+		// are of the form:
+		//   - https://music.apple.com/us/album/ikaria/1474078530?i=1474078537&uo=4
+		//   - https://music.apple.com/us/album/dreaming-of/1474078530?i=1474078536&uo=4
+		// a.Link == b.Link &&
+		a.ArtworkURL == b.ArtworkURL
+}
+
+func (a Album) Hash() string {
+	return fmt.Sprintf("%s:%s:%s:%s", a.Artist, a.Album, a.Release.Hash(), a.ArtworkURL)
 }
 
 type BirthdayItem struct {
@@ -57,8 +73,8 @@ type FullDate struct {
 }
 
 func matchRelease(target FullDate, d ReleaseDate) ReleaseMatch {
-	if d.Day != nil {
-		if target.Day == *d.Day && target.Month == d.Month {
+	if d.Day != 0 {
+		if target.Day == d.Day && target.Month == d.Month {
 			return MatchDay
 		}
 		return MatchNone
@@ -69,7 +85,7 @@ func matchRelease(target FullDate, d ReleaseDate) ReleaseMatch {
 	return MatchNone
 }
 
-func computeBirthdays(ctx context.Context, client *http.Client, unix int64, loc *time.Location, songs []Song) []BirthdayItem {
+func computeBirthdays(unix int64, loc *time.Location, songs []Song) []BirthdayItem {
 	target := time.Unix(unix, 0).In(loc)
 	targetDate := FullDate{
 		Year:  target.Year(),
@@ -77,7 +93,9 @@ func computeBirthdays(ctx context.Context, client *http.Client, unix int64, loc 
 		Day:   target.Day(),
 	}
 
-	matchingAlbums := make(map[Album][]Song)
+	matchingAlbums := make(map[string][]Song)
+	hashToAlbums := make(map[string]Album)
+
 	for _, s := range songs {
 		match := matchRelease(targetDate, s.Release)
 		switch match {
@@ -90,7 +108,8 @@ func computeBirthdays(ctx context.Context, client *http.Client, unix int64, loc 
 				ArtworkURL:   s.ArtworkURL,
 				ReleaseMatch: match,
 			}
-			matchingAlbums[a] = append(matchingAlbums[a], s)
+			matchingAlbums[a.Hash()] = append(matchingAlbums[a.Hash()], s)
+			hashToAlbums[a.Hash()] = a
 		case MatchNone:
 			// skip
 		default:
@@ -99,9 +118,16 @@ func computeBirthdays(ctx context.Context, client *http.Client, unix int64, loc 
 	}
 
 	// consolidate for shared artists
-	var consolidated ArtistsConsolidated
-	for a, songs := range matchingAlbums {
-		consolidated.Add(a, songs)
+	// TODO: implement
+	//
+	// var consolidated ArtistsConsolidated
+	// for a, songs := range matchingAlbums {
+	// 	consolidated.Add(a, songs)
+	// }
+	//
+	var consolidated []*AlbumAndSongs
+	for hash, songs := range matchingAlbums {
+		consolidated = append(consolidated, &AlbumAndSongs{hashToAlbums[hash], songs, 0, 0})
 	}
 
 	for _, a := range consolidated {
@@ -149,12 +175,25 @@ func compareAlbums(a, b *AlbumAndSongs) bool {
 	if b.Album.Release.Year > a.Album.Release.Year {
 		return false
 	}
-	if a.Album.ReleaseMatch == MatchDay {
+	if a.Album.ReleaseMatch == MatchDay && b.Album.ReleaseMatch != MatchDay {
 		return true
 	}
-	if b.Album.ReleaseMatch == MatchDay {
+	if b.Album.ReleaseMatch == MatchDay && a.Album.ReleaseMatch != MatchDay {
 		return false
 	}
+	if a.Album.Artist < b.Album.Artist {
+		return true
+	}
+	if b.Album.Artist < a.Album.Artist {
+		return false
+	}
+	if a.Songs[0].Title < b.Songs[0].Title {
+		return true
+	}
+	if b.Songs[0].Title < a.Songs[0].Title {
+		return false
+	}
+
 	return a.Album.Album < b.Album.Album
 }
 
@@ -204,22 +243,7 @@ func (a *AlbumAndSongs) FillCounts() {
 type ArtistsConsolidated []*AlbumAndSongs
 
 func (a *ArtistsConsolidated) Add(newAlbum Album, newSongs []Song) {
-	for i := range *a {
-		as := (*a)[i]
-		smaller, eq := equalButMultipleArtists(as.Album, newAlbum)
-		if eq {
-			(*a)[i] = &AlbumAndSongs{
-				Album: smaller,
-				Songs: append(as.Songs, newSongs...),
-			}
-			return
-		}
-	}
-	// nothing found; add new entry
-	*a = append(*a, &AlbumAndSongs{
-		Album: newAlbum,
-		Songs: newSongs,
-	})
+	// TODO
 }
 
 // Returns whether the songs are the same, but for the artists, where there are
@@ -246,7 +270,9 @@ func equalButMultipleArtists(a, b Album) (Album, bool) {
 
 	a.Artist = "" // clear for comparison
 	b.Artist = ""
-	if a != b {
+
+	log.Printf("%+v %+v %v", a, b, a.Equal(b))
+	if !a.Equal(b) {
 		return result, false
 	}
 	return result, true

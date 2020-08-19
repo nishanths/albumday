@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/go-redis/redis"
 	"github.com/julienschmidt/httprouter"
@@ -15,7 +17,7 @@ type Bootstrap struct {
 	Email    string `json:"email"`
 }
 
-type IndexArgs struct {
+type IndexTmplArgs struct {
 	Title     string
 	Bootstrap Bootstrap
 }
@@ -40,7 +42,7 @@ func (s *Server) IndexHandler(w http.ResponseWriter, r *http.Request, _ httprout
 		Email:    email,
 	}
 
-	if err := indexTmpl.Execute(w, IndexArgs{
+	if err := indexTmpl.Execute(w, IndexTmplArgs{
 		"album birthdays",
 		b,
 	}); err != nil {
@@ -60,7 +62,7 @@ func (s *Server) StartHandler(w http.ResponseWriter, r *http.Request, _ httprout
 		Email:    "",
 	}
 
-	if err := indexTmpl.Execute(w, IndexArgs{
+	if err := indexTmpl.Execute(w, IndexTmplArgs{
 		"album birthdays",
 		b,
 	}); err != nil {
@@ -80,7 +82,7 @@ func (s *Server) FeedHandler(w http.ResponseWriter, r *http.Request, _ httproute
 		Email:    email,
 	}
 
-	if err := indexTmpl.Execute(w, IndexArgs{
+	if err := indexTmpl.Execute(w, IndexTmplArgs{
 		"album birthdays",
 		b,
 	}); err != nil {
@@ -131,4 +133,56 @@ func (s *Server) UnsubHandler(w http.ResponseWriter, r *http.Request, _ httprout
 	}
 
 	fmt.Fprint(w, "succesfully unsubscribed %s\n", email)
+}
+
+func (s *Server) PreviewEmail(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	var email string
+	switch env() {
+	case Prod:
+		email = "nishanth.gerrard@gmail.com"
+	case Dev:
+		email = "foo@gmail.com"
+	default:
+		panic("unreachable")
+	}
+
+	const timestamp = 1603039105
+	t := time.Unix(timestamp, 0)
+
+	acc, err := s.getAccount(email)
+	if err != nil {
+		log.Printf("get account: %s", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	if !acc.connectionComplete() {
+		log.Printf("connection incomplete")
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	songs := s.getSongsFromCache(acc.Connection.Service, email)
+	if songs == nil {
+		var err error
+		songs, err = FetchSongs(context.Background(), s.http, *acc.Connection)
+		if err != nil {
+			log.Printf("fetch songs: %s", err)
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	items := computeBirthdays(timestamp, time.UTC, songs)
+
+	err = emailTmpl.ExecuteTemplate(w, "base", EmailTmplArgs{
+		Day:           t.Day(),
+		Month:         t.Month(),
+		AppVisitURL:   "https://" + AppDomain + "/feed",
+		BirthdayItems: items,
+		UnsubURL:      "",
+	})
+	if err != nil {
+		log.Printf("execute email template: %s", err)
+	}
 }

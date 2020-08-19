@@ -34,7 +34,11 @@ type Song struct {
 type ReleaseDate struct {
 	Year  int        `json:"year"`
 	Month time.Month `json:"month"`
-	Day   *int       `json:"day"`
+	Day   int        `json:"day"`
+}
+
+func (r ReleaseDate) Hash() string {
+	return fmt.Sprintf("%d-%d-%d", r.Year, r.Month, r.Day)
 }
 
 func mustLoadLocation(name string) *time.Location {
@@ -70,7 +74,7 @@ func determineReleaseDate(unix int64) ReleaseDate {
 			return ReleaseDate{
 				Year:  t.Year(),
 				Month: t.Month(),
-				Day:   ptrInt(t.Day()),
+				Day:   t.Day(),
 			}
 		}
 	}
@@ -79,7 +83,7 @@ func determineReleaseDate(unix int64) ReleaseDate {
 	return ReleaseDate{
 		Year:  t.Year(),
 		Month: t.Month(),
-		Day:   ptrInt(t.Day()),
+		Day:   t.Day(),
 	}
 }
 

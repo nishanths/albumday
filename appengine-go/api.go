@@ -414,7 +414,7 @@ func (s *Server) BirthdaysHandler(w http.ResponseWriter, r *http.Request, _ http
 
 	s.putSongsToCache(conn.Service, email, songs)
 
-	result := s.computeBirthdaysForTimestamps(ctx, timestamps, loc, songs)
+	result := computeBirthdaysForTimestamps(timestamps, loc, songs)
 	if err := json.NewEncoder(w).Encode(result); err != nil {
 		log.Printf("write response: %s", err)
 	}
@@ -422,10 +422,10 @@ func (s *Server) BirthdaysHandler(w http.ResponseWriter, r *http.Request, _ http
 
 type BirthdayResponse map[int64][]BirthdayItem
 
-func (s *Server) computeBirthdaysForTimestamps(ctx context.Context, timestamps []int64, loc *time.Location, songs []Song) BirthdayResponse {
+func computeBirthdaysForTimestamps(timestamps []int64, loc *time.Location, songs []Song) BirthdayResponse {
 	m := make(BirthdayResponse)
 	for _, t := range timestamps {
-		m[t] = computeBirthdays(ctx, s.http, t, loc, songs)
+		m[t] = computeBirthdays(t, loc, songs)
 	}
 	return m
 }

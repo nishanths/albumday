@@ -57,7 +57,7 @@ export type SuccessReleaseMatch = "day" | "month"
 export type ReleaseDate = {
 	year: number
 	month: number
-	day: number | null
+	day: number // or 0
 }
 
 export type BirthdayItem = {

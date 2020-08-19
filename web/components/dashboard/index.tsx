@@ -17,7 +17,7 @@ export type DashboardProps = RouteComponentProps & {
 	onLogout?: () => void
 }
 
-type Pane = "birthdays" | "settings"
+type Pane = "feed" | "settings"
 
 type State = {
 	account: Account | null
@@ -26,7 +26,7 @@ type State = {
 
 const paneToTitle = (p: Pane): string => {
 	switch (p) {
-		case "birthdays":
+		case "feed":
 			return "birthdays"
 		case "settings":
 			return "settings"
@@ -48,15 +48,15 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 
 	private pane(): Pane {
 		switch (this.props.location.pathname) {
-			case "/birthdays":
-			case "/birthdays/":
-				return "birthdays"
+			case "/feed":
+			case "/feed/":
+				return "feed"
 			case "/settings":
 			case "/settings/":
 				return "settings"
 			default:
 				console.error("unknown path " + this.props.location.pathname + "; using fallback")
-				return "birthdays"
+				return "feed"
 		}
 	}
 
@@ -134,7 +134,7 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 		</Helmet>
 
 		const nav = <div className="nav">
-			<div className={classNames("nav-item", { "active": this.pane() === "birthdays" })} title="switch to birthdays">
+			<div className={classNames("nav-item", { "active": this.pane() === "feed" })} title="switch to birthdays">
 				<Link to="/birthdays">birthdays</Link>
 			</div>
 			<div className={classNames("nav-item", { "active": this.pane() === "settings" })} title="switch to settings">
@@ -144,7 +144,7 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 
 		const pane = this.state.account !== null &&
 			<div className="pane">
-				{this.pane() === "birthdays" ?
+				{this.pane() === "feed" ?
 					<Feed
 						account={this.state.account}
 						email={this.props.email}

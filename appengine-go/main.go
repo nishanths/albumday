@@ -87,11 +87,12 @@ func run(ctx context.Context) error {
 
 	router.GET("/", s.IndexHandler)
 	router.GET("/start", s.StartHandler)
-	router.GET("/birthdays", s.FeedHandler)
+	router.GET("/feed", s.FeedHandler)
 	router.GET("/settings", s.FeedHandler)
 	router.GET("/logout", s.LogoutHandler)
 	// https://security.stackexchange.com/questions/115964/email-unsubscribe-handling-security
 	router.GET("/unsub", s.UnsubHandler)
+	router.GET("/preview", s.PreviewEmail)
 
 	if isDev() {
 		router.ServeFiles("/static/*filepath", http.Dir("static"))
