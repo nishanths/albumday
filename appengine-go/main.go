@@ -7,6 +7,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-redis/redis"
 	"github.com/gorilla/securecookie"
@@ -59,7 +60,7 @@ func run(ctx context.Context) error {
 		config: config,
 		tasks:  tasks,
 		redis:  redisc,
-		http:   http.DefaultClient,
+		http:   &http.Client{Timeout: 30 * time.Second},
 
 		identityCookie: identityCookieCodec(config.CookieSecret),
 		stateCookie:    stateCookieCodec(config.CookieSecret),

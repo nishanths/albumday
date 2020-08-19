@@ -59,10 +59,10 @@ func loadConfig(ctx context.Context, ds *datastore.Client) (Config, error) {
 			RedisHost: m.RedisHost,
 			RedisPort: "6379",
 			RedisTLS: &tls.Config{
-				InsecureSkipVerify: true,
-				ServerName:         m.RedisHost,
-				Certificates:       []tls.Certificate{cert},
-				ClientCAs:          pool,
+				// InsecureSkipVerify: true, // TODO
+				ServerName:   m.RedisHost,
+				Certificates: []tls.Certificate{cert},
+				RootCAs:      pool,
 			},
 			SendgridAPIKey:      m.SendgridAPIKey,
 			SpotifyClientID:     m.SpotifyClientID,
