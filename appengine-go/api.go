@@ -238,6 +238,23 @@ func (s *Server) DeleteAccountConnectionHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
+	acc, err := s.getAccount(email)
+	if err != nil {
+		log.Printf("get account: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if !acc.connectionComplete() {
+		w.WriteHeader(202)
+		return
+	}
+
+	if err := s.redis.Del(libraryCacheKey(acc.Connection.Service, email)).Err(); err != nil {
+		log.Printf("DEL library cache: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	if err := UpdateEntity(s.redis, accountKey(email), &Account{}, func(v interface{}) interface{} {
 		a := v.(*Account)
 		a.Connection = nil
@@ -350,15 +367,12 @@ func (s *Server) BirthdaysHandler(w http.ResponseWriter, r *http.Request, _ http
 		return
 	}
 
-	accJSON, err := s.redis.Get(accountKey(email)).Bytes()
+	acc, err := s.getAccount(email)
 	if err != nil {
-		log.Printf("GET account: %s", err)
+		log.Printf("get account: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
-	var acc Account
-	mustUnmarshalJSON(accJSON, &acc)
 
 	if !acc.connectionComplete() {
 		w.WriteHeader(412)
@@ -414,4 +428,15 @@ func (s *Server) computeBirthdaysForTimestamps(ctx context.Context, timestamps [
 		m[t] = computeBirthdays(ctx, s.http, t, loc, songs)
 	}
 	return m
+}
+
+func (s *Server) getAccount(email string) (Account, error) {
+	accJSON, err := s.redis.Get(accountKey(email)).Bytes()
+	if err != nil {
+		return Account{}, err
+	}
+
+	var acc Account
+	mustUnmarshalJSON(accJSON, &acc)
+	return acc, nil
 }

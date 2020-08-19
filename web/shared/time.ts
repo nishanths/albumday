@@ -6,5 +6,5 @@ const shortMonthNames = [
 ]
 
 export function shortMonth(d: Temporal.DateTime) {
-	return shortMonthNames[d.month-1]
+	return shortMonthNames[d.month - 1]
 }

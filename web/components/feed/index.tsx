@@ -178,7 +178,7 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 			}
 		} catch (e) {
 			console.error(e)
-			this.setState({ birthdays: { status: "error"} })
+			this.setState({ birthdays: { status: "error" } })
 			this.requestEnd()
 			this.showNewToast({
 				...defaultToastOptions,
@@ -331,7 +331,7 @@ export class BirthdayItemComponent extends React.Component<BirthdayItem> {
 
 	render() {
 		const item = this.props
-		const art = <div className="art" style={{backgroundImage: "url(" + item.artworkURL + ")"}}></div>
+		const art = <div className="art" style={{ backgroundImage: "url(" + item.artworkURL + ")" }}></div>
 		const album = <span className="album">{item.album}</span>
 
 		return <div className="BirthdayItem">
