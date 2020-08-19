@@ -7,7 +7,7 @@ all:
 
 .PHONY: deploy
 deploy:
-	(cd appengine-go && gcloud --quiet --project $(PROJECT_ID) app deploy)
+	(cd appengine-go && gcloud --quiet --project $(PROJECT_ID) app deploy --version v1)
 
 .PHONY: fmt
 fmt:

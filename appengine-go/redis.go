@@ -20,12 +20,12 @@ func UpdateEntity(c *redis.Client, key string, vType interface{}, update func(v 
 	// TODO: needs transaction
 	b, err := c.Get(key).Bytes()
 	if err != nil {
-		return fmt.Errorf("redis: GET entity: %s", err)
+		return fmt.Errorf("update entity: GET entity: %s", err)
 	}
 	mustUnmarshalJSON(b, vType)
 	updated := mustMarshalJSON(update(vType))
 	if err := c.Set(key, updated, 0).Err(); err != nil {
-		return fmt.Errorf("redis: SET entity: %s", err)
+		return fmt.Errorf("update entity: SET entity: %s", err)
 	}
 	return nil
 }

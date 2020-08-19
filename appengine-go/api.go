@@ -151,7 +151,7 @@ func (s *Server) PassphraseHandler(w http.ResponseWriter, r *http.Request, _ htt
 
 	pass := generatePassphrase()
 	if err := s.redis.Set(passphraseKey(email), pass, passphraseExpiry).Err(); err != nil {
-		log.Printf("redis: SET passhrase: %s", err)
+		log.Printf("SET passhrase: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -194,7 +194,7 @@ func (s *Server) LoginHandler(w http.ResponseWriter, r *http.Request, _ httprout
 		w.WriteHeader(http.StatusForbidden) // passphrase expired
 		return
 	} else if err != nil {
-		log.Printf("redis: GET passphrase: %s", err)
+		log.Printf("GET passphrase: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -204,7 +204,7 @@ func (s *Server) LoginHandler(w http.ResponseWriter, r *http.Request, _ httprout
 	}
 
 	if err := s.redis.Del(passphraseKey(email)).Err(); err != nil {
-		log.Printf("redis: DEL passphrase: %s", err) // only log
+		log.Printf("DEL passphrase: %s", err) // only log
 	}
 
 	acc := Account{
@@ -215,7 +215,7 @@ func (s *Server) LoginHandler(w http.ResponseWriter, r *http.Request, _ httprout
 		},
 	}
 	if err := s.redis.SetNX(accountKey(email), mustMarshalJSON(acc), 0).Err(); err != nil {
-		log.Printf("redis: SETNX account: %s", err)
+		log.Printf("SETNX account: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -285,7 +285,7 @@ func (s *Server) DeleteAccountHandler(w http.ResponseWriter, r *http.Request, _ 
 	delKeys = append(delKeys, accountKey(email))
 
 	if err := s.redis.Del(delKeys...).Err(); err != nil {
-		log.Printf("redis: DEL keys: %s", err)
+		log.Printf("DEL keys: %s", err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
@@ -347,7 +347,7 @@ func (s *Server) BirthdaysHandler(w http.ResponseWriter, r *http.Request, _ http
 
 	accJSON, err := s.redis.Get(accountKey(email)).Bytes()
 	if err != nil {
-		log.Printf("redis: GET account: %s", err)
+		log.Printf("GET account: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

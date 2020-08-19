@@ -42,12 +42,12 @@ func loadConfig(ctx context.Context, ds *datastore.Client) (Config, error) {
 			return Config{}, fmt.Errorf("load cert: %s", err)
 		}
 
-		clientCert, err := ioutil.ReadFile("redis/tls/ca.crt")
+		caCert, err := ioutil.ReadFile("redis/tls/ca.crt")
 		if err != nil {
 			return Config{}, fmt.Errorf("read ca cert: %s", err)
 		}
 		pool := x509.NewCertPool()
-		pool.AppendCertsFromPEM(clientCert)
+		pool.AppendCertsFromPEM(caCert)
 
 		key := datastore.NameKey("Metadata", "singleton", nil)
 		var m Metadata
@@ -59,7 +59,6 @@ func loadConfig(ctx context.Context, ds *datastore.Client) (Config, error) {
 			RedisHost: m.RedisHost,
 			RedisPort: "6379",
 			RedisTLS: &tls.Config{
-				// InsecureSkipVerify: true, // TODO
 				ServerName:   m.RedisHost,
 				Certificates: []tls.Certificate{cert},
 				RootCAs:      pool,
@@ -76,7 +75,7 @@ func loadConfig(ctx context.Context, ds *datastore.Client) (Config, error) {
 			RedisPort:           "6379",
 			SpotifyClientID:     os.Getenv("SPOTIFY_CLIENT_ID"),
 			SpotifyClientSecret: os.Getenv("SPOTIFY_CLIENT_SECRET"),
-			CookieSecret:        "AVR30Z8RZrDwBRgGYwM7CpcADLGLiDxjk+lTiU01sBsuAZ3eOctoGn7pqWUnwIA3hgfsqL8elZty/2YKkZCLlg==",
+			CookieSecret:        "foo",
 			TasksSecret:         "bar",
 		}, nil
 	default:

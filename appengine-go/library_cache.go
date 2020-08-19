@@ -4,12 +4,17 @@ import (
 	"encoding/json"
 	"log"
 	"time"
+
+	"github.com/go-redis/redis"
 )
 
 func (s *Server) getSongsFromCache(service Service, email string) []Song {
 	b, err := s.redis.Get(libraryCacheKey(service, email)).Bytes()
+	if err == redis.Nil {
+		return nil
+	}
 	if err != nil {
-		log.Printf("redis: GET library cache: %s", err)
+		log.Printf("GET library cache: %s", err)
 		return nil
 	}
 
@@ -27,7 +32,7 @@ func (s *Server) putSongsToCache(service Service, email string, songs []Song) {
 
 	err := s.redis.Set(libraryCacheKey(service, email), string(b), 48*time.Hour).Err()
 	if err != nil {
-		log.Printf("redis: SET library cache: %s", err)
+		log.Printf("SET library cache: %s", err)
 		return
 	}
 }
