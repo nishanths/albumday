@@ -274,7 +274,7 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 					<span>Today,&nbsp;</span>
 					<span className="secondary">{data.todayTime.day} {shortMonth(data.todayTime)}</span>
 				</div>
-				{this.noItems(data.todayItems) && <div className="no-items">No birthdays today.</div>}
+				{this.noItems(data.todayItems) && <div className="no-items">No birthdays in your library today.</div>}
 				{data.todayItems.map(item => {
 					return <div key={item.link} className="item"><BirthdayItemComponent {...item} /></div>
 				})}
@@ -285,7 +285,7 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 					<span>Tomorrow,&nbsp;</span>
 					<span className="secondary">{data.tomorrowTime.day} {shortMonth(data.tomorrowTime)}</span>
 				</div>
-				{this.noItems(data.tomorrowItems) && <div className="no-items">No birthdays tomorrow.</div>}
+				{this.noItems(data.tomorrowItems) && <div className="no-items">No birthdays in your library tomorrow.</div>}
 				{data.tomorrowItems.map(item => {
 					return <div key={item.link} className="item"><BirthdayItemComponent {...item} /></div>
 				})}

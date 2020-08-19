@@ -255,7 +255,7 @@ export class Settings extends React.Component<SettingsProps> {
 		</li>
 
 		const emailNotifications = this.props.account.settings.emailsEnabled ?
-			<li><strong>Birthday email notifications</strong>: Enabled. A daily email will be sent with album birthday info — <a href="" onClick={e => { e.preventDefault(); this.setEmailNotifications(false) }}>turn off.</a></li> :
+			<li><strong>Birthday email notifications</strong>: Enabled. An email will be sent daily if there are album birthdays — <a href="" onClick={e => { e.preventDefault(); this.setEmailNotifications(false) }}>turn off.</a></li> :
 			<li><strong>Birthday email notifications</strong>: Disabled — <a href="" onClick={e => { e.preventDefault(); this.setEmailNotifications(true) }}>turn on.</a></li>
 
 		const musicService = connectionComplete(this.props.account) ?
