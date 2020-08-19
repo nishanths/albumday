@@ -11,7 +11,7 @@ import (
 	"google.golang.org/genproto/googleapis/cloud/tasks/v2"
 )
 
-const queueName = "projects/albumday/locations/us-central1/queues/internal-default"
+const queueName = "projects/albumday/locations/us-central1/queues/internal"
 
 const headerTasksSecret = "x-tasks-secret"
 
