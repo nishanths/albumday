@@ -75,7 +75,7 @@ func loadConfig(ctx context.Context, ds *datastore.Client) (Config, error) {
 			RedisPort:           "6379",
 			SpotifyClientID:     os.Getenv("SPOTIFY_CLIENT_ID"),
 			SpotifyClientSecret: os.Getenv("SPOTIFY_CLIENT_SECRET"),
-			CookieSecret:        "foo",
+			CookieSecret:        "AVR30Z8RZrDwBRgGYwM7CpcADLGLiDxjk+lTiU01sBsuAZ3eOctoGn7pqWUnwIA3hgfsqL8elZty/2YKkZCLlg==",
 			TasksSecret:         "bar",
 		}, nil
 	default:
