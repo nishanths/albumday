@@ -27,7 +27,7 @@ type State = {
 const paneToTitle = (p: Pane): string => {
 	switch (p) {
 		case "feed":
-			return "birthdays"
+			return "birthday feed"
 		case "settings":
 			return "settings"
 		default:
@@ -134,10 +134,10 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 		</Helmet>
 
 		const nav = <div className="nav">
-			<div className={classNames("nav-item", { "active": this.pane() === "feed" })} title="switch to birthdays">
+			<div className={classNames("nav-item", { "active": this.pane() === "feed" })} title={"switch to " + paneToTitle("feed")}>
 				<Link to="/feed">birthdays</Link>
 			</div>
-			<div className={classNames("nav-item", { "active": this.pane() === "settings" })} title="switch to settings">
+			<div className={classNames("nav-item", { "active": this.pane() === "settings" })} title={"switch to " + paneToTitle("settings")}>
 				<Link to="/settings">settings</Link>
 			</div>
 		</div>
