@@ -2,7 +2,7 @@ cron:
 - description: "daily email notification"
   url: /internal/cron/daily-email
   timezone: Asia/Calcutta
-  schedule: every day 05:30
+  schedule: every day 05:00
 
 # cron:
 # - description: "refresh library"
