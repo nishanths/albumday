@@ -70,11 +70,6 @@ func (c *ConnectionError) Error() string {
 	return fmt.Sprintf("%s at %s", c.Reason, time.Unix(c.Timestamp, 0))
 }
 
-func isConnectionError(e error) bool {
-	_, ok := e.(*ConnectionError)
-	return ok
-}
-
 type Connection struct {
 	Service Service `json:"service"`
 	Conn
@@ -391,7 +386,7 @@ func (s *Server) BirthdaysHandler(w http.ResponseWriter, r *http.Request, _ http
 	if songs == nil { // need to do a live fetch?
 		var err error
 		songs, err = FetchSongs(ctx, s.http, conn)
-		if isConnectionError(err) {
+		if _, ok := err.(*ConnectionError); ok {
 			log.Printf("fetch songs connection error: %s", err)
 
 			connErr := err.(*ConnectionError)
