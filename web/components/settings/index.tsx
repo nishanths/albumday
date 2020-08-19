@@ -260,7 +260,7 @@ export class Settings extends React.Component<SettingsProps> {
 
 		const musicService = connectionComplete(this.props.account) ?
 			<li><strong>Music service</strong>: {this.linkedWithText()} — <a href="" onClick={e => { e.preventDefault(); this.onConnectionUnlink() }}>unlink.</a></li> :
-			<li><strong>Music service</strong>: Not linked — <Link to="/birthdays">set up.</Link></li>
+			<li><strong>Music service</strong>: Not linked — <Link to="/feed">set up.</Link></li>
 
 		return <div className="Settings">
 			<ul>

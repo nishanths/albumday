@@ -125,6 +125,7 @@ func computeBirthdays(unix int64, loc *time.Location, songs []Song) []BirthdayIt
 	// 	consolidated.Add(a, songs)
 	// }
 	//
+
 	var consolidated []*AlbumAndSongs
 	for hash, songs := range matchingAlbums {
 		consolidated = append(consolidated, &AlbumAndSongs{hashToAlbums[hash], songs, 0, 0})
@@ -244,6 +245,7 @@ type ArtistsConsolidated []*AlbumAndSongs
 
 func (a *ArtistsConsolidated) Add(newAlbum Album, newSongs []Song) {
 	// TODO
+	panic("not implemented")
 }
 
 // Returns whether the songs are the same, but for the artists, where there are

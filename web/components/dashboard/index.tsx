@@ -135,7 +135,7 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 
 		const nav = <div className="nav">
 			<div className={classNames("nav-item", { "active": this.pane() === "feed" })} title="switch to birthdays">
-				<Link to="/birthdays">birthdays</Link>
+				<Link to="/feed">birthdays</Link>
 			</div>
 			<div className={classNames("nav-item", { "active": this.pane() === "settings" })} title="switch to settings">
 				<Link to="/settings">settings</Link>

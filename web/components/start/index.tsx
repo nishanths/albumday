@@ -121,7 +121,7 @@ class StartComponent extends React.Component<StartProps, State> {
 				case 200:
 					this.submittingDone()
 					this.props.onLogin?.(this.state.submittedEmail)
-					this.props.history.push("/birthdays")
+					this.props.history.push("/feed")
 					break
 				case 403:
 					this.submittingDone()
