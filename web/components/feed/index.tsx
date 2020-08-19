@@ -321,7 +321,7 @@ export class BirthdayItemComponent extends React.Component<BirthdayItem> {
 	private songList(item: BirthdayItem) {
 		const songs = item.songs.slice(0, 5)
 		return songs.map((s, i) => {
-			const punct = i === songs.length - 1 ? "." : <>,&nbsp;</>
+			const punct = i === songs.length - 1 ? "" : <>,&nbsp;</>
 			const song = <span className="song">{s.title}</span>
 			return s.link ?
 				<span key={s.link}><a href={s.link} target="_blank">{song}</a>{punct}</span> :

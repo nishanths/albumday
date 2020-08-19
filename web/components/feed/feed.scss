@@ -108,7 +108,10 @@
 				transition: $transition-enter-duration $transition-enter-func color;
 			}
 		}
-		a .album, a .song {
+		a .album {
+			color: $http-pink;
+		}
+		a .song {
 			color: $color-instruction;
 			&:hover {
 				color: $color-default;
@@ -131,8 +134,8 @@
 
 	@media (min-width: 600px) {
 		.art {
-			width: 165px;
-			height: 165px;
+			width: 150px;
+			height: 150px;
 		}
 		.info {
 			margin-left: 30px;
@@ -157,6 +160,13 @@
 			.r2 {
 				margin-top: 5px;
 			}
+		}
+	}
+
+	@media (min-width: 1000px) {
+		.art {
+			width: 165px;
+			height: 165px;
 		}
 	}
 }

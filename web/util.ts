@@ -2,7 +2,7 @@ import { ToastOptions } from "toastify-js"
 import { assertExhaustive } from "./shared"
 import { Service } from "./api"
 
-export const scrobbleBaseURL = "https://scrobble.littleroot.org"
+export const scrobbleBaseURL = "https://scrobbl.es"
 export const scrobbleAPIBaseURL = "https://selective-scrobble.appspot.com/api/v1"
 
 export const supportEmail = "littlerootorg@gmail.com"
