@@ -81,6 +81,7 @@ func (s *Server) ConnectSpotifyHandler(w http.ResponseWriter, r *http.Request, _
 
 func spotifyRedirectURL(userReq *http.Request) string {
 	// https://github.com/golang/go/issues/28940
+	// App Engine always returns "http" though as of Aug 2020
 	scheme := "http"
 	if userReq.TLS != nil {
 		scheme = "https"

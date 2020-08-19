@@ -172,10 +172,13 @@ export class Settings extends React.Component<SettingsProps> {
 			this.requestEnd()
 			switch (r.status) {
 				case 200:
-					Toastify({
-						...defaultToastOptions,
-						text: "Unlinked music service.",
-					}).showToast()
+					// no toast here -- it's too noisy with other toasts at the same
+					// time.
+					//
+					// Toastify({
+					// 	...defaultToastOptions,
+					// 	text: "Unlinked music service.",
+					// }).showToast()
 					this.props.invalidateBirthdayData()
 					this.props.onAccountChange({
 						...this.props.account,
