@@ -141,7 +141,7 @@ func (s *Server) PreviewEmailHandler(w http.ResponseWriter, r *http.Request, _ h
 
 	email := s.config.PreviewEmail
 
-	acc, err := getAccount(email, s.redis)
+	acc, err := getAccount(accountKey(email), s.redis)
 	if err != nil {
 		log.Printf("get account: %s", err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -155,6 +155,7 @@ func (s *Server) PreviewEmailHandler(w http.ResponseWriter, r *http.Request, _ h
 	}
 
 	conn := *acc.Connection
+
 	songs := s.getSongsFromCache(conn.Service, email)
 	if songs == nil {
 		var err error
@@ -165,6 +166,7 @@ func (s *Server) PreviewEmailHandler(w http.ResponseWriter, r *http.Request, _ h
 			return
 		}
 	}
+	s.putSongsToCache(conn.Service, email, songs)
 
 	items := computeBirthdays(timestamp, time.UTC, songs)
 

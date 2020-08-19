@@ -76,8 +76,8 @@ func run(ctx context.Context) error {
 	router.PUT("/api/v1/account/email-notifications", s.SetEmailsEnabledHandler)
 	router.GET("/api/v1/birthdays", s.BirthdaysHandler)
 
-	// router.POST("/internal/cron/daily-email", RequireCronHeader(s.DailyEmailCronHandler))
-	// router.POST("/internal/task/daily-email", RequireTasksSecret(config.TasksSecret, s.DailyEmailTaskHandler))
+	router.POST("/internal/cron/daily-email", RequireCronHeader(s.DailyEmailCronHandler))
+	router.POST("/internal/task/daily-email", RequireTasksSecret(config.TasksSecret, s.DailyEmailTaskHandler))
 	// router.POST("/internal/cron/refresh-library", RequireCronHeader(s.RefreshLibraryCronHandler))
 	// router.POST("/internal/task/refresh-library", RequireTasksSecret(config.TasksSecret, s.RefreshLibraryTaskHandler))
 

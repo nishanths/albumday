@@ -31,7 +31,7 @@ func (s *Server) getSongsFromCache(service Service, email string) []Song {
 func (s *Server) putSongsToCache(service Service, email string, songs []Song) {
 	b := mustMarshalJSON(songs)
 
-	err := s.redis.Set(libraryCacheKey(service, email), string(b), 48*time.Hour).Err()
+	err := s.redis.Set(libraryCacheKey(service, email), string(b), 6*24*time.Hour).Err()
 	if err != nil {
 		log.Printf("SET library cache: %s", err)
 		return

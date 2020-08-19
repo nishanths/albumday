@@ -11,6 +11,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"text/template"
 	"time"
 
@@ -20,6 +21,10 @@ import (
 
 func accountKey(email string) string {
 	return fmt.Sprintf("account:%s", email)
+}
+
+func emailFromAccountKey(key string) string {
+	return strings.TrimPrefix(key, "account:")
 }
 
 func passphraseKey(email string) string {
@@ -32,6 +37,14 @@ func libraryCacheKey(service Service, email string) string {
 
 func unsubTokenKey(email string) string {
 	return fmt.Sprintf("unsub_token:%s", email)
+}
+
+func generateUnsubToken() string {
+	p := make([]byte, 16)
+	if _, err := rand.Read(p); err != nil {
+		panic(err)
+	}
+	return hex.EncodeToString(p)
 }
 
 type Account struct {
@@ -206,6 +219,7 @@ func (s *Server) LoginHandler(w http.ResponseWriter, r *http.Request, _ httprout
 		log.Printf("DEL passphrase: %s", err) // only log
 	}
 
+	// ensure Account
 	acc := Account{
 		nil,
 		AccountSettings{
@@ -215,6 +229,13 @@ func (s *Server) LoginHandler(w http.ResponseWriter, r *http.Request, _ httprout
 	}
 	if err := s.redis.SetNX(accountKey(email), mustMarshalJSON(acc), 0).Err(); err != nil {
 		log.Printf("SETNX account: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// ensure unsub token
+	if err := s.redis.SetNX(unsubTokenKey(email), generateUnsubToken(), 0); err != nil {
+		log.Printf("SETNX unsub token: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -233,14 +254,14 @@ func (s *Server) DeleteAccountConnectionHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	acc, err := getAccount(email, s.redis)
+	acc, err := getAccount(accountKey(email), s.redis)
 	if err != nil {
 		log.Printf("get account: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	if !acc.connectionComplete() {
-		w.WriteHeader(202)
+		w.WriteHeader(http.StatusNoContent)
 		return
 	}
 
@@ -362,7 +383,7 @@ func (s *Server) BirthdaysHandler(w http.ResponseWriter, r *http.Request, _ http
 		return
 	}
 
-	acc, err := getAccount(email, s.redis)
+	acc, err := getAccount(accountKey(email), s.redis)
 	if err != nil {
 		log.Printf("get account: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -386,10 +407,8 @@ func (s *Server) BirthdaysHandler(w http.ResponseWriter, r *http.Request, _ http
 	if songs == nil { // need to do a live fetch?
 		var err error
 		songs, err = FetchSongs(ctx, s.http, conn)
-		if _, ok := err.(*ConnectionError); ok {
+		if connErr, ok := err.(*ConnectionError); ok {
 			log.Printf("fetch songs connection error: %s", err)
-
-			connErr := err.(*ConnectionError)
 			switch connErr.Reason {
 			case ConnectionErrPermission, ConnectionErrNotFound:
 				w.WriteHeader(422)
@@ -425,8 +444,8 @@ func computeBirthdaysForTimestamps(timestamps []int64, loc *time.Location, songs
 	return m
 }
 
-func getAccount(email string, redis *redis.Client) (Account, error) {
-	accJSON, err := redis.Get(accountKey(email)).Bytes()
+func getAccount(key string, redis *redis.Client) (Account, error) {
+	accJSON, err := redis.Get(key).Bytes()
 	if err != nil {
 		return Account{}, err
 	}
