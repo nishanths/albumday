@@ -345,8 +345,6 @@ func (s *Server) BirthdaysHandler(w http.ResponseWriter, r *http.Request, _ http
 		return
 	}
 
-	// TODO: INCR and determine if email needs to be sent
-
 	accJSON, err := s.redis.Get(accountKey(email)).Bytes()
 	if err != nil {
 		log.Printf("redis: GET account: %s", err)
@@ -365,28 +363,37 @@ func (s *Server) BirthdaysHandler(w http.ResponseWriter, r *http.Request, _ http
 	conn := *acc.Connection
 	ctx := context.Background() // intentional
 
-	// TODO: cache
+	var songs []Song
 
-	songs, err := FetchSongs(ctx, s.http, conn)
-	if isConnectionError(err) {
-		log.Printf("fetch songs connection error: %s", err)
+	if cache == "on" {
+		songs = s.getSongsFromCache(conn.Service, email)
+	}
 
-		connErr := err.(*ConnectionError)
-		switch connErr.Reason {
-		case ConnectionErrPermission, ConnectionErrNotFound:
-			w.WriteHeader(422)
-		case ConnectionErrGeneric:
-			w.WriteHeader(http.StatusInternalServerError)
-		default:
-			panic("unreachable")
+	if songs == nil { // need to do a live fetch?
+		var err error
+		songs, err = FetchSongs(ctx, s.http, conn)
+		if isConnectionError(err) {
+			log.Printf("fetch songs connection error: %s", err)
+
+			connErr := err.(*ConnectionError)
+			switch connErr.Reason {
+			case ConnectionErrPermission, ConnectionErrNotFound:
+				w.WriteHeader(422)
+			case ConnectionErrGeneric:
+				w.WriteHeader(http.StatusInternalServerError)
+			default:
+				panic("unreachable")
+			}
+			return
 		}
-		return
+		if err != nil {
+			log.Printf("fetch songs: %s", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 	}
-	if err != nil {
-		log.Printf("fetch songs: %s", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+
+	s.putSongsToCache(conn.Service, email, songs)
 
 	result := s.computeBirthdaysForTimestamps(ctx, timestamps, loc, songs)
 	if err := json.NewEncoder(w).Encode(result); err != nil {
