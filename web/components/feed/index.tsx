@@ -12,7 +12,7 @@ import { CSSTransition } from "react-transition-group"
 function firstFetchDurationDisplay(s: Service): string {
 	switch (s) {
 		case "scrobble":
-			return "about 10 seconds"
+			return "a few seconds"
 		case "spotify":
 			return "about half a minute"
 		default:
