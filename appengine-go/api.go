@@ -30,6 +30,10 @@ func libraryCacheKey(service Service, email string) string {
 	return fmt.Sprintf("library:%s:%s", service, email)
 }
 
+func unsubTokenKey(email string) string {
+	return fmt.Sprintf("unsub_token:%s", email)
+}
+
 type Account struct {
 	Connection *Connection     `json:"connection"`
 	Settings   AccountSettings `json:"settings"`
@@ -283,6 +287,7 @@ func (s *Server) DeleteAccountHandler(w http.ResponseWriter, r *http.Request, _ 
 		delKeys = append(delKeys, libraryCacheKey(s, email))
 	}
 	delKeys = append(delKeys, accountKey(email))
+	// NOTE: don't delete unsub token
 
 	if err := s.redis.Del(delKeys...).Err(); err != nil {
 		log.Printf("DEL keys: %s", err)

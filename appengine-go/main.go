@@ -90,6 +90,7 @@ func run(ctx context.Context) error {
 	router.GET("/birthdays", s.FeedHandler)
 	router.GET("/settings", s.FeedHandler)
 	router.GET("/logout", s.LogoutHandler)
+	router.GET("/unsub", s.UnsubHandler)
 
 	if isDev() {
 		router.ServeFiles("/static/*filepath", http.Dir("static"))

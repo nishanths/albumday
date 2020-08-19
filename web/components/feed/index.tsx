@@ -101,7 +101,7 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 		params.set("timeZone", Temporal.now.timeZone().name)
 		params.append("timestamp", "" + today.getEpochSeconds())
 		params.append("timestamp", "" + tomorrow.getEpochSeconds())
-		// params.append("cache", "off") // TODO: for debug
+		// params.append("cache", "off") // for debug
 
 		let longLoadingTimer: number | undefined
 

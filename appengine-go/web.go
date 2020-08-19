@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 
+	"github.com/go-redis/redis"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -84,4 +86,49 @@ func (s *Server) FeedHandler(w http.ResponseWriter, r *http.Request, _ httproute
 	}); err != nil {
 		log.Printf("execute index template: %s", err)
 	}
+}
+
+func (s *Server) UnsubHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	email := r.FormValue("email")
+	if email == "" {
+		http.Error(w, "missing email", http.StatusBadRequest)
+		return
+	}
+
+	token := r.FormValue("token")
+	if token == "" {
+		http.Error(w, "missing token", http.StatusBadRequest)
+		return
+	}
+
+	wantToken, err := s.redis.Get(unsubTokenKey(email)).Result()
+	if err != nil {
+		log.Printf("GET unsub token: %s", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	if token != wantToken {
+		log.Printf("unsub token mismatch")
+		http.Error(w, "token mismatch", http.StatusForbidden)
+		return
+	}
+
+	err = UpdateEntity(s.redis, accountKey(email), &Account{}, func(v interface{}) interface{} {
+		a := v.(*Account)
+		a.Settings.EmailsEnabled = false
+		return a
+	})
+	if err == redis.Nil {
+		log.Printf("unsub: no such account %s", email)
+		http.Error(w, "no such account", http.StatusNotFound)
+		return
+	}
+	if err != nil {
+		log.Printf("update account: %s", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Fprint(w, "succesfully unsubscribed %s\n", email)
 }
