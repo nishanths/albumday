@@ -8,4 +8,4 @@ cron:
 - description: "refresh library"
   url: /internal/cron/refresh-library
   timezone: Asia/Calcutta
-  schedule: every day 15:00
+  schedule: every wednesday 03:00
