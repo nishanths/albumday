@@ -132,7 +132,7 @@ func fetchScrobble(ctx context.Context, c *http.Client, username string) ([]Song
 	case 200:
 		var scrobbleRsp ScrobbleResponse
 		if err := json.NewDecoder(rsp.Body).Decode(&scrobbleRsp); err != nil {
-			return nil, fmt.Errorf("json-decode songs: %s", err)
+			return nil, fmt.Errorf("json-decode scrobble response: %s", err)
 		}
 		var ret []Song
 		for _, s := range scrobbleRsp.Songs {
