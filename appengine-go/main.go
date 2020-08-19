@@ -90,6 +90,7 @@ func run(ctx context.Context) error {
 	router.GET("/birthdays", s.FeedHandler)
 	router.GET("/settings", s.FeedHandler)
 	router.GET("/logout", s.LogoutHandler)
+	// https://security.stackexchange.com/questions/115964/email-unsubscribe-handling-security
 	router.GET("/unsub", s.UnsubHandler)
 
 	if isDev() {

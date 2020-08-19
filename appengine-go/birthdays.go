@@ -9,22 +9,22 @@ import (
 )
 
 type Album struct {
-	Artist       string
-	Album        string
-	Release      ReleaseDate
-	Link         string // or ""
-	ArtworkURL   string
-	ReleaseMatch ReleaseMatch
+	Artist       string       `json:"artist"`
+	Album        string       `json:"album"`
+	Release      ReleaseDate  `json:"release"`
+	Link         string       `json:"link"` // or ""
+	ArtworkURL   string       `json:"artworkURL"`
+	ReleaseMatch ReleaseMatch `json:"releaseMatch"`
 }
 
 type BirthdayItem struct {
 	Album
-	Songs []BirthdayItemSong
+	Songs []BirthdayItemSong `json:"songs"`
 }
 
 type BirthdayItemSong struct {
-	Title string
-	Link  string // or ""
+	Title string `json:"title"`
+	Link  string `json:"link"` // or ""
 }
 
 func toBirthdayItemSong(s Song) BirthdayItemSong {

@@ -36,4 +36,134 @@
 		flex-direction: column;
 		margin-top: 125px;
 	}
+
+	.day-container {
+		margin-bottom: 45px;
+	}
+
+	.date-head {
+		font-size: 24px;
+		font-weight: bold;
+		color: $color-default;
+		margin-bottom: 40px;
+		.secondary {
+			color: $color-instruction;
+		}
+	}
+	.no-items {
+		font-style: italic;
+		color: $color-instruction;
+	}
+	.item {
+		margin-bottom: 40px;
+	}
+
+	@media (min-width: 600px) {
+		.day-container {
+			margin-bottom: 65px;
+		}
+
+		.date-head {
+			font-size: 28px;
+		}
+	}
+}
+
+.BirthdayItem {
+	$transition-enter-duration: 180ms;
+	$transition-exit-duration: 300ms;
+
+	display: flex;
+
+	.art {
+		width: 130px;
+		height: 130px;
+		background-size: contain;
+		border-radius: 4px;
+		border: 2px solid #e5e5e5;
+		transition: $transition-exit-duration $transition-exit-func transform, $transition-exit-duration $transition-exit-func box-shadow;
+		box-shadow: 2px 2px 10px 1px rgba(0, 0, 0, 0.1), -1px 1px 10px 1px rgba(0, 0, 0, 0.1);
+		&:hover {
+			transform: scale(1.10);
+			transition: $transition-enter-duration $transition-enter-func transform, $transition-enter-duration $transition-enter-func box-shadow;
+			box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.1), -1px 1px 10px 3px rgba(0, 0, 0, 0.1);
+		}
+	}
+	.pointer {
+		.art {
+			cursor: pointer;
+		}
+	}
+
+	.info {
+		color: $color-instruction;
+		margin-left: 20px;
+		line-height: 1.5;
+
+		a {
+			text-decoration: none;
+			transition: $transition-exit-duration $transition-exit-func color;
+
+			&:hover {
+				transition: $transition-enter-duration $transition-enter-func color;
+			}
+		}
+		a .album {
+			color: $color-instruction;
+			&:hover {
+				color: $color-default;
+			}
+		}
+		.album {
+			font-size: 16px;
+			font-weight: bold;
+		}
+		.year {
+			font-size: 15px;
+		}
+		.artist {
+			font-size: 16px;
+		}
+		.songs {
+			font-size: 16px;
+			color: $light-gray;
+		}
+		a .song {
+			color: $light-gray;
+			&:hover {
+				color: $color-instruction;
+			}
+		}
+	}
+
+	@media (min-width: 600px) {
+		.art {
+			width: 165px;
+			height: 165px;
+		}
+		.info {
+			margin-left: 30px;
+			margin-top: 10px;
+
+			.album {
+				font-size: 18px;
+			}
+			.year {
+				font-size: 16px;
+			}
+			.artist {
+				font-size: 17px;
+			}
+			.songs {
+				font-size: 16px;
+			}
+
+			.r1 {
+				margin-top: 1px;
+			}
+			.r2 {
+				margin-top: 5px;
+			}
+		}
+	}
 }

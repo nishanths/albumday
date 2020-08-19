@@ -105,7 +105,7 @@ func (s *Server) AuthSpotifyHandler(w http.ResponseWriter, r *http.Request, _ ht
 			Name:   cookieNameState,
 			MaxAge: -1,
 		})
-		http.Redirect(w, r, "/birthdays?connect-error=1", http.StatusFound)
+		http.Redirect(w, r, "/birthdays?connect-error=1&service=spotify", http.StatusFound)
 	}
 
 	if error := r.FormValue("error"); error != "" {

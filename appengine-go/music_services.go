@@ -32,9 +32,9 @@ type Song struct {
 }
 
 type ReleaseDate struct {
-	Year  int
-	Month time.Month
-	Day   *int
+	Year  int        `json:"year"`
+	Month time.Month `json:"month"`
+	Day   *int       `json:"day"`
 }
 
 func mustLoadLocation(name string) *time.Location {

@@ -5,7 +5,7 @@ import { NProgressType } from "../../types"
 import { RouteComponentProps } from "react-router"
 import Toastify, { ToastHandle, ToastOptions } from "toastify-js"
 import { defaultToastOptions, colors, musicServiceDisplay, connectSuccessMessage, connectSuccessDuration } from "../../util"
-import { assertExhaustive } from "../../shared"
+import { assertExhaustive, shortMonth } from "../../shared"
 import { Temporal } from "proposal-temporal"
 import { CSSTransition } from "react-transition-group"
 
@@ -32,10 +32,10 @@ export type FeedProps = {
 }
 
 export type BirthdayData = {
-	today: BirthdayItem[]
-	tomorrow: BirthdayItem[]
-	todayTime: Temporal.Absolute
-	tomorrowTime: Temporal.Absolute
+	todayItems: BirthdayItem[]
+	tomorrowItems: BirthdayItem[]
+	todayTime: Temporal.DateTime
+	tomorrowTime: Temporal.DateTime
 }
 
 type FeedState = {
@@ -98,7 +98,8 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 		const tomorrow = today.plus({ days: 1 })
 
 		const params = new URLSearchParams()
-		params.set("timeZone", Temporal.now.timeZone().name)
+		const tzName = Temporal.now.timeZone().name
+		params.set("timeZone", tzName)
 		params.append("timestamp", "" + today.getEpochSeconds())
 		params.append("timestamp", "" + tomorrow.getEpochSeconds())
 		// params.append("cache", "off") // for debug
@@ -121,10 +122,10 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 				case 200:
 					const result = await rsp.json() as BirthdayResponse
 					const data: BirthdayData = {
-						today: result[today.getEpochSeconds()],
-						tomorrow: result[tomorrow.getEpochSeconds()],
-						todayTime: today,
-						tomorrowTime: tomorrow,
+						todayItems: result[today.getEpochSeconds()] || [],
+						tomorrowItems: result[tomorrow.getEpochSeconds()] || [],
+						todayTime: today.toDateTime(tzName),
+						tomorrowTime: tomorrow.toDateTime(tzName),
 					}
 					this.props.onBirthdayData(data) // also propagate up
 					this.setState({ birthdays: { status: "success", data } })
@@ -144,7 +145,7 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 				case 412:
 					this.showNewToast({
 						...defaultToastOptions,
-						text: `${musicServiceDisplay(this.props.account.connection!.service)} appears to be configured incorrectly. Please set up again.`,
+						text: `${musicServiceDisplay(this.props.account.connection!.service)} appears to be configured incorrectly. Please set it up again.`,
 						backgroundColor: colors.yellow,
 						duration: -1,
 						onClick: () => {
@@ -156,7 +157,7 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 				case 422:
 					this.showNewToast({
 						...defaultToastOptions,
-						text: `${musicServiceDisplay(this.props.account.connection!.service)} connection is not working. Please set up again.`,
+						text: `${musicServiceDisplay(this.props.account.connection!.service)} connection failed. Please set it up again.`,
 						backgroundColor: colors.yellow,
 						duration: -1,
 						onClick: () => {
@@ -177,7 +178,7 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 			}
 		} catch (e) {
 			console.error(e)
-			// this.setState({ birthdays: { status: "error"} })
+			this.setState({ birthdays: { status: "error"} })
 			this.requestEnd()
 			this.showNewToast({
 				...defaultToastOptions,
@@ -212,7 +213,7 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 		if (p.get("connect-error")) {
 			Toastify({
 				...defaultToastOptions,
-				text: "Failed to connect with Spotify. Please try again.",
+				text: `Failed to connect with ${musicServiceDisplay(p.get("service") as Service)}. Please try again.`,
 				backgroundColor: colors.brightRed,
 			}).showToast()
 		}
@@ -224,6 +225,10 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 				duration: connectSuccessDuration,
 			}).showToast()
 		}
+	}
+
+	private noItems(items: BirthdayItem[]) {
+		return items.length === 0
 	}
 
 	render() {
@@ -239,7 +244,6 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 			return <div className="Feed">
 			</div>
 		}
-
 
 		if (this.state.birthdays.status === "loading") {
 			const longText = <CSSTransition in={this.state.birthdays.long} timeout={750} classNames="long-text-transition">
@@ -262,8 +266,30 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 			</div>
 		}
 
+		const { data } = this.state.birthdays
+
 		return <div className="Feed">
-			{JSON.stringify(this.state.birthdays.data, undefined, 4)}
+			<div className="day-container">
+				<div className="today date-head">
+					<span>Today,&nbsp;</span>
+					<span className="secondary">{data.todayTime.day} {shortMonth(data.todayTime)}</span>
+				</div>
+				{this.noItems(data.todayItems) && <div className="no-items">No birthdays today.</div>}
+				{data.todayItems.map(item => {
+					return <div key={item.link} className="item"><BirthdayItemComponent {...item} /></div>
+				})}
+			</div>
+
+			<div className="day-container">
+				<div className="tomorrow date-head">
+					<span>Tomorrow,&nbsp;</span>
+					<span className="secondary">{data.tomorrowTime.day} {shortMonth(data.tomorrowTime)}</span>
+				</div>
+				{this.noItems(data.tomorrowItems) && <div className="no-items">No birthdays tomorrow.</div>}
+				{data.tomorrowItems.map(item => {
+					return <div key={item.link} className="item"><BirthdayItemComponent {...item} /></div>
+				})}
+			</div>
 		</div>
 	}
 }
@@ -289,3 +315,40 @@ const loader = <div className="loader">
 		<path d="M67.408 57.834l-23.01-24.98c-5.864-6.15-5.864-16.108 0-22.248 5.86-6.14 15.37-6.14 21.234 0L70 16.168l4.368-5.562c5.863-6.14 15.375-6.14 21.235 0 5.863 6.14 5.863 16.098 0 22.247l-23.007 24.98c-1.43 1.556-3.757 1.556-5.188 0z" />
 	</svg>
 </div>
+
+
+export class BirthdayItemComponent extends React.Component<BirthdayItem> {
+	private songList(item: BirthdayItem) {
+		const songs = item.songs.slice(0, 5)
+		return songs.map((s, i) => {
+			const punct = i === songs.length - 1 ? "." : <>,&nbsp;</>
+			const song = <span className="song">{s.title}</span>
+			return s.link ?
+				<span key={s.link}><a href={s.link} target="_blank">{song}</a>{punct}</span> :
+				<span key={s.link}>{song}{punct}</span>
+		})
+	}
+
+	render() {
+		const item = this.props
+		const art = <div className="art" style={{backgroundImage: "url(" + item.artworkURL + ")"}}></div>
+		const album = <span className="album">{item.album}</span>
+
+		return <div className="BirthdayItem">
+			{item.link ? <a href={item.link} target="_blank" className="pointer">{art}</a> : art}
+			<div className="info">
+				<div className="r0">
+					{item.link ? <a href={item.link} target="_blank" className="pointer">{album}</a> : album}
+				</div>
+				<div className="r1">
+					<span className="artist">{item.artist}</span>
+					<span className="year">&nbsp;— {item.release.year}</span>
+				</div>
+				<div className="r2">
+					<span className="songs"><span className="emph">Songs: {this.songList(item)}</span></span>
+				</div>
+			</div>
+
+		</div>
+	}
+}
