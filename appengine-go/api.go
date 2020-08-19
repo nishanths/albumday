@@ -233,7 +233,7 @@ func (s *Server) DeleteAccountConnectionHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	acc, err := s.getAccount(email)
+	acc, err := getAccount(email, s.redis)
 	if err != nil {
 		log.Printf("get account: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -362,7 +362,7 @@ func (s *Server) BirthdaysHandler(w http.ResponseWriter, r *http.Request, _ http
 		return
 	}
 
-	acc, err := s.getAccount(email)
+	acc, err := getAccount(email, s.redis)
 	if err != nil {
 		log.Printf("get account: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -425,8 +425,8 @@ func computeBirthdaysForTimestamps(timestamps []int64, loc *time.Location, songs
 	return m
 }
 
-func (s *Server) getAccount(email string) (Account, error) {
-	accJSON, err := s.redis.Get(accountKey(email)).Bytes()
+func getAccount(email string, redis *redis.Client) (Account, error) {
+	accJSON, err := redis.Get(accountKey(email)).Bytes()
 	if err != nil {
 		return Account{}, err
 	}

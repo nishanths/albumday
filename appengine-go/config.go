@@ -23,6 +23,8 @@ type Config struct {
 
 	CookieSecret string
 	TasksSecret  string
+
+	PreviewEmail string
 }
 
 type Metadata struct {
@@ -32,6 +34,7 @@ type Metadata struct {
 	SpotifyClientSecret string
 	CookieSecret        string
 	TasksSecret         string
+	PreviewEmail        string
 }
 
 func loadConfig(ctx context.Context, ds *datastore.Client) (Config, error) {
@@ -68,6 +71,7 @@ func loadConfig(ctx context.Context, ds *datastore.Client) (Config, error) {
 			SpotifyClientSecret: m.SpotifyClientSecret,
 			CookieSecret:        m.CookieSecret,
 			TasksSecret:         m.TasksSecret,
+			PreviewEmail:        m.PreviewEmail,
 		}, nil
 	case Dev:
 		return Config{
@@ -77,6 +81,7 @@ func loadConfig(ctx context.Context, ds *datastore.Client) (Config, error) {
 			SpotifyClientSecret: os.Getenv("SPOTIFY_CLIENT_SECRET"),
 			CookieSecret:        "AVR30Z8RZrDwBRgGYwM7CpcADLGLiDxjk+lTiU01sBsuAZ3eOctoGn7pqWUnwIA3hgfsqL8elZty/2YKkZCLlg==",
 			TasksSecret:         "bar",
+			PreviewEmail:        "foo@gmail.com",
 		}, nil
 	default:
 		panic("unreachable")

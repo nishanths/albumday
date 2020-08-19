@@ -92,7 +92,7 @@ func run(ctx context.Context) error {
 	router.GET("/logout", s.LogoutHandler)
 	// https://security.stackexchange.com/questions/115964/email-unsubscribe-handling-security
 	router.GET("/unsub", s.UnsubHandler)
-	router.GET("/preview", s.PreviewEmail)
+	router.GET("/preview", s.PreviewEmailHandler)
 
 	if isDev() {
 		router.ServeFiles("/static/*filepath", http.Dir("static"))

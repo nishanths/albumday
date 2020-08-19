@@ -135,21 +135,13 @@ func (s *Server) UnsubHandler(w http.ResponseWriter, r *http.Request, _ httprout
 	fmt.Fprint(w, "succesfully unsubscribed %s\n", email)
 }
 
-func (s *Server) PreviewEmail(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	var email string
-	switch env() {
-	case Prod:
-		email = "nishanth.gerrard@gmail.com"
-	case Dev:
-		email = "foo@gmail.com"
-	default:
-		panic("unreachable")
-	}
-
+func (s *Server) PreviewEmailHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	const timestamp = 1603039105
 	t := time.Unix(timestamp, 0)
 
-	acc, err := s.getAccount(email)
+	email := s.config.PreviewEmail
+
+	acc, err := getAccount(email, s.redis)
 	if err != nil {
 		log.Printf("get account: %s", err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
