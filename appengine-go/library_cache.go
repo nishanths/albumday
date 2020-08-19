@@ -8,6 +8,7 @@ import (
 	"github.com/go-redis/redis"
 )
 
+// Get songs from cache. Returns nil if no cached data is available or on error.
 func (s *Server) getSongsFromCache(service Service, email string) []Song {
 	b, err := s.redis.Get(libraryCacheKey(service, email)).Bytes()
 	if err == redis.Nil {
