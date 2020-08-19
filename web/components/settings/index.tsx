@@ -74,7 +74,7 @@ export class Settings extends React.Component<SettingsProps> {
 				case 200:
 					Toastify({
 						...defaultToastOptions,
-						text: "Successfully deleted account. Logging out.",
+						text: "Successfully deleted account. Logging you out…",
 						duration: -1,
 					}).showToast()
 					setTimeout(() => {

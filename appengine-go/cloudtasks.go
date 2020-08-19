@@ -8,11 +8,10 @@ import (
 	"net/http"
 
 	cloudtasks "cloud.google.com/go/cloudtasks/apiv2"
-	"google.golang.org/api/option"
 	"google.golang.org/genproto/googleapis/cloud/tasks/v2"
 )
 
-const queueName = "internal-default"
+const queueName = "projects/albumday/locations/us-central1/queues/internal-default"
 
 const headerTasksSecret = "x-tasks-secret"
 
@@ -108,7 +107,7 @@ func newTasksClient(ctx context.Context, tasksSecret string) (TasksClient, error
 			secret: tasksSecret,
 		}, nil
 	case Prod:
-		tasks, err := cloudtasks.NewClient(ctx, option.WithCredentialsFile("credentials/albumday-d1e186d3a34f.json"))
+		tasks, err := cloudtasks.NewClient(ctx)
 		return &CloudTasksClient{
 			tasks:  tasks,
 			secret: tasksSecret,

@@ -215,10 +215,6 @@ func (s *Server) LoginHandler(w http.ResponseWriter, r *http.Request, _ httprout
 		return
 	}
 
-	if err := s.redis.Del(passphraseKey(email)).Err(); err != nil {
-		log.Printf("DEL passphrase: %s", err) // only log
-	}
-
 	// ensure Account
 	acc := Account{
 		nil,
@@ -234,10 +230,14 @@ func (s *Server) LoginHandler(w http.ResponseWriter, r *http.Request, _ httprout
 	}
 
 	// ensure unsub token
-	if err := s.redis.SetNX(unsubTokenKey(email), generateUnsubToken(), 0); err != nil {
+	if err := s.redis.SetNX(unsubTokenKey(email), generateUnsubToken(), 0).Err(); err != nil {
 		log.Printf("SETNX unsub token: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
+	}
+
+	if err := s.redis.Del(passphraseKey(email)).Err(); err != nil {
+		log.Printf("DEL passphrase: %s", err) // only log
 	}
 
 	if err := s.setIdentityCookie(w, r, email); err != nil {
