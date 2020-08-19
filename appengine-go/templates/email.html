@@ -5,6 +5,8 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 	<title>Birthdays: {{.Day}} {{.Month.String}}</title>
+</head>
+<body>
 	<style type="text/css">
 		html {
 		}
@@ -37,8 +39,7 @@
 			color: #333;
 		}
 	</style>
-</head>
-<body>
+
 	<section class="header">
 		<h2>Birthdays on {{.Day}} {{.Month.String}}</h2>
 		<a href="{{.AppVisitURL}}">{{.AppVisitURL}}</a>
