@@ -43,3 +43,11 @@ deploy-queue:
 .PHONY: ssh
 ssh:
 	gcloud beta compute ssh --zone "us-central1-a" "quantum" --project "albumday"
+
+.PHONY: watchgo
+watchgo:
+	(cd appengine-go && make watch)
+
+.PHONY: watchweb
+watchweb:
+	(cd web && make watch)

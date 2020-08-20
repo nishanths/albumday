@@ -316,12 +316,6 @@ const loader = <div className="loader" role="img" alt="Loading animation">
 	</svg>
 </div>
 
-declare module "react" {
-	interface HTMLAttributes<T> extends React.AriaAttributes, React.DOMAttributes<T> {
-		alt?: string
-	}
-}
-
 export class BirthdayItemComponent extends React.Component<BirthdayItem> {
 	private songList(item: BirthdayItem) {
 		const songs = item.songs.slice(0, 5)

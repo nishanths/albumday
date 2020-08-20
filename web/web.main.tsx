@@ -7,6 +7,12 @@ import { Start } from "./components/start"
 import { Dashboard } from "./components/dashboard"
 import type { NProgressType } from "./types"
 
+declare module "react" {
+	interface HTMLAttributes<T> extends React.AriaAttributes, React.DOMAttributes<T> {
+		alt?: string
+	}
+}
+
 declare const bootstrap: Bootstrap
 declare const NProgress: NProgressType
 
