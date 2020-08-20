@@ -250,7 +250,7 @@ func fetchSpotify(ctx context.Context, c *http.Client, refreshToken, clientID, c
 	}
 
 	var allSongs []Song
-	fetchURL := "https://api.spotify.com/v1/me/tracks"
+	fetchURL := "https://api.spotify.com/v1/me/tracks?limit=50"
 
 	for fetchURL != "" {
 		songs, nextURL, err := fetchSpotifyOnePage(ctx, c, fetchURL, tok.AccessToken)
@@ -371,7 +371,7 @@ func transformSpotifyTrack(t SpotifyTrack) (Song, bool) {
 		PlayCount:   0,
 		Loved:       nil,
 		TrackNumber: t.TrackNumber,
-	}, false
+	}, true
 }
 
 func spotifyArtworkURL(images []SpotifyImage) string {
