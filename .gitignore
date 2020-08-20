@@ -2,3 +2,5 @@
 
 # any local dev redis snapshots
 dump.rdb
+
+deployed-hash.txt
