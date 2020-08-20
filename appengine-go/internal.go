@@ -87,7 +87,7 @@ func (s *Server) DailyEmailTaskHandler(w http.ResponseWriter, r *http.Request, _
 
 	if songs == nil {
 		var err error
-		songs, err = FetchSongs(ctx, s.http, conn)
+		songs, err = FetchSongs(ctx, s.http, conn, s.config)
 		if connErr, ok := err.(*ConnectionError); ok {
 			log.Printf("fetch songs connection error: %s", err)
 			switch connErr.Reason {

@@ -406,7 +406,7 @@ func (s *Server) BirthdaysHandler(w http.ResponseWriter, r *http.Request, _ http
 
 	if songs == nil { // need to do a live fetch?
 		var err error
-		songs, err = FetchSongs(ctx, s.http, conn)
+		songs, err = FetchSongs(ctx, s.http, conn, s.config)
 		if connErr, ok := err.(*ConnectionError); ok {
 			log.Printf("fetch songs connection error: %s", err)
 			switch connErr.Reason {

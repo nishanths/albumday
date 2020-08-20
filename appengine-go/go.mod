@@ -11,6 +11,6 @@ require (
 	github.com/onsi/ginkgo v1.14.0 // indirect
 	github.com/sendgrid/rest v2.6.0+incompatible // indirect
 	github.com/sendgrid/sendgrid-go v3.6.1+incompatible
-	google.golang.org/api v0.26.0
+	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	google.golang.org/genproto v0.0.0-20200612171551-7676ae05be11
 )

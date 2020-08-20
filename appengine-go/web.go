@@ -159,7 +159,7 @@ func (s *Server) PreviewEmailHandler(w http.ResponseWriter, r *http.Request, _ h
 	songs := s.getSongsFromCache(conn.Service, email)
 	if songs == nil {
 		var err error
-		songs, err = FetchSongs(context.Background(), s.http, conn)
+		songs, err = FetchSongs(context.Background(), s.http, conn, s.config)
 		if err != nil {
 			log.Printf("fetch songs: %s", err)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
