@@ -15,7 +15,7 @@ build:
 .PHONY: build-prod
 build-prod:
 	$(SCSS) --style=compressed
-	$(ESBUILD) --target=es6 --define:process.env.NODE_ENV='"production"'
+	$(ESBUILD) --target=es6 --strict --define:process.env.NODE_ENV='"production"'
 	npx tsc # typecheck
 
 .PHONY: clean
