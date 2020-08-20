@@ -11,6 +11,9 @@ var templateFuncs = template.FuncMap{
 		return x + y
 	},
 	"lower": strings.ToLower,
+	"releaseMatchMonth": func(r ReleaseMatch) bool {
+		return r == MatchMonth
+	},
 }
 
 var (

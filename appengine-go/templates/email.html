@@ -27,6 +27,9 @@
 			max-width: 180px;
 			box-shadow: 2px 2px 10px 1px rgba(0,0,0,.1),-2px 2px 10px 1px rgba(0,0,0,.1);
 		}
+		.item .release-match {
+			font-style: italic;
+		}
 		.item .info {
 			margin-top: 5px;
 		}
@@ -77,6 +80,7 @@
 		<div>
 			<span class="artist">{{.Artist}}, </span>
 			<span class="year">{{.Release.Year}}</span>
+			{{ if releaseMatchMonth .ReleaseMatch }}<span class="relese-match" style="font-style: italic;">— this month</span>{{ end }}
 		</div>
 		<div>
 			<span>Songs:&nbsp;</span>
