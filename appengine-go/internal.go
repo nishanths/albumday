@@ -20,6 +20,11 @@ type DailyEmailTask struct {
 func (s *Server) DailyEmailCronHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	ctx := r.Context()
 
+	// https://redis.io/commands/keys:
+	//
+	// While the time complexity for this operation is O(N), the constant times
+	// are fairly low. For example, Redis running on an entry level laptop can
+	// scan a 1 million key database in 40 milliseconds.
 	accountKeys, err := s.redis.Keys("account:*").Result()
 	if err != nil {
 		log.Printf("KEYS account:*", err)
@@ -108,6 +113,7 @@ func (s *Server) DailyEmailTaskHandler(w http.ResponseWriter, r *http.Request, _
 	t := time.Now()
 	items := computeBirthdays(t.Unix(), calcuttaLoc, songs)
 
+	// make unsub link
 	unsubToken, err := s.redis.Get(unsubTokenKey(email)).Result()
 	if err != nil {
 		log.Printf("GET unsub token: %s", err)
@@ -115,7 +121,6 @@ func (s *Server) DailyEmailTaskHandler(w http.ResponseWriter, r *http.Request, _
 		return
 	}
 
-	// make unsub link
 	v := url.Values{}
 	v.Set("email", email)
 	v.Set("token", unsubToken)
