@@ -342,7 +342,7 @@ func (s *Server) BirthdaysHandler(w http.ResponseWriter, r *http.Request, _ http
 		http.Error(w, "timestamp required", http.StatusBadRequest)
 		return
 	}
-	if len(ts) > 2 {
+	if len(ts) > 10 {
 		http.Error(w, "too many timestamps", http.StatusBadRequest)
 		return
 	}

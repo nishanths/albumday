@@ -34,8 +34,11 @@ export type FeedProps = {
 export type BirthdayData = {
 	todayItems: BirthdayItem[]
 	tomorrowItems: BirthdayItem[]
+	overmorrowItems: BirthdayItem[]
+
 	todayTime: Temporal.DateTime
 	tomorrowTime: Temporal.DateTime
+	overmorrowTime: Temporal.DateTime
 }
 
 type FeedState = {
@@ -96,12 +99,14 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 
 		const today = Temporal.now.absolute()
 		const tomorrow = today.plus({ days: 1 })
+		const overmorrow = today.plus({ days: 2 })
 
 		const params = new URLSearchParams()
 		const tzName = Temporal.now.timeZone().name
 		params.set("timeZone", tzName)
 		params.append("timestamp", "" + today.getEpochSeconds())
 		params.append("timestamp", "" + tomorrow.getEpochSeconds())
+		params.append("timestamp", "" + overmorrow.getEpochSeconds())
 		// params.append("cache", "off") // for debug
 
 		let longLoadingTimer: number | undefined
@@ -124,8 +129,10 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 					const data: BirthdayData = {
 						todayItems: result[today.getEpochSeconds()] || [],
 						tomorrowItems: result[tomorrow.getEpochSeconds()] || [],
+						overmorrowItems: result[overmorrow.getEpochSeconds()] || [],
 						todayTime: today.toDateTime(tzName),
 						tomorrowTime: tomorrow.toDateTime(tzName),
+						overmorrowTime: overmorrow.toDateTime(tzName),
 					}
 					this.props.onBirthdayData(data) // also propagate up
 					this.setState({ birthdays: { status: "success", data } })
@@ -287,6 +294,17 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 				</div>
 				{this.noItems(data.tomorrowItems) && <div className="no-items">No birthdays in your library tomorrow.</div>}
 				{data.tomorrowItems.map(item => {
+					return <div key={item.link} className="item"><BirthdayItemComponent {...item} /></div>
+				})}
+			</section>
+
+			<section className="day-container">
+				<div className="overmorrow date-head">
+					<span>Day after tomorrow,&nbsp;</span>
+					<span className="secondary">{data.overmorrowTime.day} {shortMonth(data.overmorrowTime)}</span>
+				</div>
+				{this.noItems(data.overmorrowItems) && <div className="no-items">No birthdays in your library overmorrow.</div>}
+				{data.overmorrowItems.map(item => {
 					return <div key={item.link} className="item"><BirthdayItemComponent {...item} /></div>
 				})}
 			</section>
