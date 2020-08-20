@@ -147,7 +147,7 @@ export class Scrobble extends React.Component<ScrobbleProps, State> {
 
 	render() {
 		return <div className="Scrobble">
-			<div className="logo"></div>
+			<div role="img" alt="Apple Music logo" className="logo"></div>
 			<div className="input-container">
 				<form onSubmit={e => { e.preventDefault(); this.onUsernameSubmit() }}>
 					<input
@@ -166,7 +166,7 @@ export class Scrobble extends React.Component<ScrobbleProps, State> {
 					</div>
 				</form>
 				<div className="buttons">
-					<p><a href="" className="continue" onClick={e => { e.preventDefault(); this.onUsernameSubmit() }}>Continue</a></p>
+					<p><a href="" className="continue" role="button" onClick={e => { e.preventDefault(); this.onUsernameSubmit() }}>Continue</a></p>
 					<p><a href="" onClick={e => { e.preventDefault(); this.props.onBack() }}>Return to service selection</a></p>
 				</div>
 			</div>

@@ -210,7 +210,8 @@ class StartComponent extends React.Component<StartProps, State> {
 
 			<div className="heading">
 				<div className="name"><Link to="/">album <span className="bold">birthdays</span></Link></div>
-				<Link to="/" title="Back to home page (https://album.casa)"><div className="logo"></div></Link>
+				<Link to="/" title="Visit home page
+[Icon: Birthday by Flatart from the Noun Project]"><div alt="App logo" role="img" className="logo"></div></Link>
 			</div>
 
 			<CSSTransition in={this.state.formTransition} addEndListener={(node, done) => { node.addEventListener("transitionend", done, false) }} timeout={750} classNames="form-transition">

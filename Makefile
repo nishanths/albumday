@@ -26,7 +26,6 @@ redis:
 redisc:
 	${HOME}/src/redis-6.0.5/src/redis-cli
 
-
 .PHONY: clean
 clean:
 	(cd appengine-go && make clean)

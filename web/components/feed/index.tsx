@@ -269,7 +269,7 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 		const { data } = this.state.birthdays
 
 		return <div className="Feed">
-			<div className="day-container">
+			<section className="day-container">
 				<div className="today date-head">
 					<span>Today,&nbsp;</span>
 					<span className="secondary">{data.todayTime.day} {shortMonth(data.todayTime)}</span>
@@ -278,9 +278,9 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 				{data.todayItems.map(item => {
 					return <div key={item.link} className="item"><BirthdayItemComponent {...item} /></div>
 				})}
-			</div>
+			</section>
 
-			<div className="day-container">
+			<section className="day-container">
 				<div className="tomorrow date-head">
 					<span>Tomorrow,&nbsp;</span>
 					<span className="secondary">{data.tomorrowTime.day} {shortMonth(data.tomorrowTime)}</span>
@@ -289,13 +289,13 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 				{data.tomorrowItems.map(item => {
 					return <div key={item.link} className="item"><BirthdayItemComponent {...item} /></div>
 				})}
-			</div>
+			</section>
 		</div>
 	}
 }
 
 // https://github.com/SamHerbert/SVG-Loaders
-const loader = <div className="loader">
+const loader = <div className="loader" role="img" alt="Loading animation">
 	{/* <!-- By Sam Herbert (@sherb), for everyone. More @ http://goo.gl/7AJzbL --> */}
 	<svg width="140" height="64" viewBox="0 0 140 64" xmlns="http://www.w3.org/2000/svg" fill="#d6156d">
 		<path d="M30.262 57.02L7.195 40.723c-5.84-3.976-7.56-12.06-3.842-18.063 3.715-6 11.467-7.65 17.306-3.68l4.52 3.76 2.6-5.274c3.717-6.002 11.47-7.65 17.305-3.68 5.84 3.97 7.56 12.054 3.842 18.062L34.49 56.118c-.897 1.512-2.793 1.915-4.228.9z" fillOpacity=".5">
@@ -316,6 +316,11 @@ const loader = <div className="loader">
 	</svg>
 </div>
 
+declare module "react" {
+	interface HTMLAttributes<T> extends React.AriaAttributes, React.DOMAttributes<T> {
+		alt?: string
+	}
+}
 
 export class BirthdayItemComponent extends React.Component<BirthdayItem> {
 	private songList(item: BirthdayItem) {
@@ -331,7 +336,7 @@ export class BirthdayItemComponent extends React.Component<BirthdayItem> {
 
 	render() {
 		const item = this.props
-		const art = <div className="art" style={{ backgroundImage: "url(" + item.artworkURL + ")" }}></div>
+		const art = <div role="img" alt={"Artwork for album + '" + item.album + "'"} className="art" style={{ backgroundImage: "url(" + item.artworkURL + ")" }}></div>
 		const album = <span className="album">{item.album}</span>
 
 		return <div className="BirthdayItem">

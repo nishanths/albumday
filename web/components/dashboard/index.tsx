@@ -133,14 +133,14 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 			<body className="DashboardBody" />
 		</Helmet>
 
-		const nav = <div className="nav">
+		const nav = <nav className="nav">
 			<div className={classNames("nav-item", { "active": this.pane() === "feed" })} title={"switch to " + paneToTitle("feed")}>
 				<Link to="/feed">birthdays</Link>
 			</div>
 			<div className={classNames("nav-item", { "active": this.pane() === "settings" })} title={"switch to " + paneToTitle("settings")}>
 				<Link to="/settings">settings</Link>
 			</div>
-		</div>
+		</nav>
 
 		const pane = this.state.account !== null &&
 			<div className="pane">

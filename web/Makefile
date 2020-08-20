@@ -10,6 +10,7 @@ build:
 	$(SCSS)
 	$(ESBUILD) --define:process.env.NODE_ENV='"development"'
 	npx tsc # typecheck
+	@echo "...done"
 
 .PHONY: build-prod
 build-prod:

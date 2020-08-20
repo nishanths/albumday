@@ -69,7 +69,7 @@ export class Connect extends React.Component<ConnectProps, State> {
 									<div className="service-container spotify" onClick={() => {
 										window.location.pathname = "/connect/spotify"
 									}}>
-										<div className="service-box"></div>
+										<div role="img" alt={"Spotify logo"} className="service-box"></div>
 										<div className="service-label">Spotify</div>
 									</div>
 
@@ -78,7 +78,7 @@ export class Connect extends React.Component<ConnectProps, State> {
 									<div className="service-container scrobble" onClick={() => {
 										this.setState({ pickedService: "scrobble" })
 									}}>
-										<div className="service-box"></div>
+										<div role="img" alt={"Apple Music logo"} className="service-box"></div>
 										<div className="service-label">Apple Music</div>
 									</div>
 								</div>
