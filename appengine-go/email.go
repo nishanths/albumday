@@ -25,4 +25,5 @@ type EmailTmplArgs struct {
 	AppVisitURL   string
 	BirthdayItems []BirthdayItem
 	UnsubURL      string
+	SupportEmail  string
 }

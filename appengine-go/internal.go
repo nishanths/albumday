@@ -128,6 +128,7 @@ func (s *Server) DailyEmailTaskHandler(w http.ResponseWriter, r *http.Request, _
 		AppVisitURL:   "https://" + AppDomain + "/feed",
 		BirthdayItems: items,
 		UnsubURL:      "https://" + AppDomain + "/unsub?" + v.Encode(),
+		SupportEmail:  SupportEmail,
 	}); err != nil {
 		log.Printf("execute email template: %s", err)
 		w.WriteHeader(http.StatusNoContent)

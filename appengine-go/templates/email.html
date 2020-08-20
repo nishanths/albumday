@@ -6,16 +6,19 @@
 	<meta name="viewport" content="width=device-width">
 	<title>{{.Day}} {{.Month.String}}</title>
 </head>
-<body style="font-family: cantarell, helvetica, arial, sans-serif;padding: 10px 0;margin-left:10px;max-width: 600px;">
+<body style="font-family: helvetica, arial, sans-serif;margin-left:10px;max-width: 400px;line-height: 1.2;">
 	<style type="text/css">
 		body {
-			font-family: cantarell, helvetica, arial, sans-serif;
-			padding: 10px 0;
+			font-family: helvetica, arial, sans-serif;
 			margin-left: 10px;
-			max-width: 600px;
+			max-width: 400px;
+			line-height: 1.2;
 		}
 		section {
 			margin-bottom: 30px;
+		}
+		section.main {
+			margin-bottom: 45px;
 		}
 		.item {
 			margin-bottom: 30px;
@@ -26,7 +29,9 @@
 		}
 		.item .info {
 			margin-top: 5px;
-			line-height: 1.4rem;
+		}
+		.support {
+			margin-top: 15px;
 		}
 	</style>
 
@@ -35,14 +40,15 @@
 		<a href="{{.AppVisitURL}}">{{.AppVisitURL}}</a>
 	</section>
 
-	<section class="main" style="margin-bottom: 30px;">
+	<section class="main" style="margin-bottom: 45px;">
 		{{ range .BirthdayItems }}
 		{{ template "item" . }}
 		{{ end }}
 	</section>
 
 	<section class="footer" style="margin-bottom: 30px;">
-		<a href="{{.UnsubURL}}">Unsubscribe</a>
+		<div><a href="{{.UnsubURL}}">Unsubscribe</a></div>
+		<div class="support" style="margin-top: 15px;"><a href="mailto:{{.SupportEmail}}">Email support</a></div>
 	</section>
 </body>
 </html>
@@ -58,7 +64,7 @@
 	{{ else }}
 	<img class="art" src="{{.ArtworkURL}}" style="max-width: 180px;">
 	{{ end }}
-	<div class="info" style="margin-top: 5px;line-height: 1.4rem;">
+	<div class="info" style="margin-top: 5px;">
 		<div>
 			{{ if .Link }}
 			<a href="{{.Link}}">

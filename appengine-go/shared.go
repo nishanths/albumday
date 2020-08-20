@@ -33,6 +33,8 @@ func mustMarshalJSON(v interface{}) []byte {
 
 const ProjectID = "albumday"
 
+const SupportEmail = "littlerootorg@gmail.com"
+
 const (
 	AppName   = "album birthdays"
 	AppDomain = "birthdays.casa"

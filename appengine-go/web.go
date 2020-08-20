@@ -137,7 +137,7 @@ func (s *Server) UnsubHandler(w http.ResponseWriter, r *http.Request, _ httprout
 		return
 	}
 
-	fmt.Fprint(w, "succesfully unsubscribed %s\n", email)
+	fmt.Fprintf(w, "succesfully unsubscribed %s\n", email)
 }
 
 func (s *Server) PreviewEmailHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -181,6 +181,7 @@ func (s *Server) PreviewEmailHandler(w http.ResponseWriter, r *http.Request, _ h
 		AppVisitURL:   "https://" + AppDomain + "/feed",
 		BirthdayItems: items,
 		UnsubURL:      "",
+		SupportEmail:  SupportEmail,
 	})
 	if err != nil {
 		log.Printf("execute email template: %s", err)
