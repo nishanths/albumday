@@ -254,9 +254,25 @@ export class Settings extends React.Component<SettingsProps> {
 			<strong>Account</strong>: Logged in as {this.props.email} — <a href="/logout">log out</a>, <a href="" role="button" onClick={e => { e.preventDefault(); this.onDeleteAccount() }}> delete account.</a>
 		</li>
 
+		const previewEmail = <>&nbsp;<a className="preview-email" href="/email-preview" target="_blank">(see example email)</a>.</>
+
 		const emailNotifications = this.props.account.settings.emailsEnabled ?
-			<li><strong>Birthday email notifications</strong>: Enabled. Emails will be sent on release date anniversaries of titles in your library — <a href="" role="button" onClick={e => { e.preventDefault(); this.setEmailNotifications(false) }}>turn off.</a></li> :
-			<li><strong>Birthday email notifications</strong>: Disabled — <a href="" role="button" onClick={e => { e.preventDefault(); this.setEmailNotifications(true) }}>turn on.</a></li>
+			<li>
+				<strong>Birthday email notifications</strong>:
+				Enabled. Emails will be sent on release date anniversaries of titles in your library —&nbsp;
+				<a href="" role="button" onClick={e => { e.preventDefault(); this.setEmailNotifications(false) }}>
+					turn off
+				</a>
+				{previewEmail}
+			</li> :
+			<li>
+				<strong>Birthday email notifications</strong>:
+				Disabled —&nbsp;
+				<a href="" role="button" onClick={e => { e.preventDefault(); this.setEmailNotifications(true) }}>
+					turn on
+				</a>
+				{previewEmail}
+			</li>
 
 		const musicService = connectionComplete(this.props.account) ?
 			<li><strong>Music service</strong>: {this.linkedWithText()} — <a href="" role="button" onClick={e => { e.preventDefault(); this.onConnectionUnlink() }}>unlink.</a></li> :

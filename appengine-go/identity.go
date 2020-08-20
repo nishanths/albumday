@@ -44,7 +44,6 @@ func (s *Server) setIdentityCookie(w http.ResponseWriter, r *http.Request, email
 func (s *Server) currentIdentity(r *http.Request) string {
 	cookie, err := r.Cookie(cookieNameIdentity)
 	if err != nil {
-		log.Printf("get identity cookie: %s", err)
 		return ""
 	}
 

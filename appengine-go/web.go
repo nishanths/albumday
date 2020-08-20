@@ -43,7 +43,7 @@ func (s *Server) IndexHandler(w http.ResponseWriter, r *http.Request, _ httprout
 	}
 
 	if err := indexTmpl.Execute(w, IndexTmplArgs{
-		"album birthdays",
+		AppName,
 		b,
 	}); err != nil {
 		log.Printf("execute index template: %s", err)
@@ -63,7 +63,7 @@ func (s *Server) StartHandler(w http.ResponseWriter, r *http.Request, _ httprout
 	}
 
 	if err := indexTmpl.Execute(w, IndexTmplArgs{
-		"album birthdays",
+		AppName,
 		b,
 	}); err != nil {
 		log.Printf("execute index template: %s", err)
@@ -83,7 +83,7 @@ func (s *Server) FeedHandler(w http.ResponseWriter, r *http.Request, _ httproute
 	}
 
 	if err := indexTmpl.Execute(w, IndexTmplArgs{
-		"album birthdays",
+		AppName,
 		b,
 	}); err != nil {
 		log.Printf("execute index template: %s", err)

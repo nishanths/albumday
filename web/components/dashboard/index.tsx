@@ -9,7 +9,7 @@ import { assertExhaustive } from "../../shared"
 import { Account, connectionComplete } from "../../api"
 import { NProgressType } from "../../types"
 import Toastify, { ToastHandle } from "toastify-js"
-import { defaultToastOptions, colors, cookieBorkedNavPath } from "../../util"
+import { defaultToastOptions, colors, cookieBorkedNavPath, AppName } from "../../util"
 
 export type DashboardProps = RouteComponentProps & {
 	nProgress: NProgressType
@@ -129,7 +129,7 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 	render() {
 		const helmet = <Helmet>
 			<html className="DashboardHTML" />
-			<title>album birthdays / {paneToTitle(this.pane())}</title>
+			<title>{AppName} / {paneToTitle(this.pane())}</title>
 			<body className="DashboardBody" />
 		</Helmet>
 

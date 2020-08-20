@@ -29,7 +29,7 @@ class Mount extends React.Component<MountProps, { bootstrap: Bootstrap }> {
 		return <BrowserRouter>
 			<Switch>
 				<Route exact path="/">
-					<Root />
+					<Root nProgress={NProgress} />
 				</Route>
 
 				<Route exact path="/start">

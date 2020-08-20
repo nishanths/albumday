@@ -7,7 +7,7 @@ import { NProgressType } from "../../types"
 import { CSSTransition } from "react-transition-group"
 import { Temporal } from "proposal-temporal"
 import Toastify, { ToastHandle, ToastOptions } from "toastify-js"
-import { defaultToastOptions, colors } from "../../util"
+import { defaultToastOptions, colors, AppName } from "../../util"
 
 type State = {
 	submitting: boolean // submitting in progress for email or for passphrase
@@ -204,7 +204,7 @@ class StartComponent extends React.Component<StartProps, State> {
 		return <div className="Start">
 			<Helmet>
 				<html className="StartHTML" />
-				<title>album birthdays / log in or register</title>
+				<title>{AppName} / log in or register</title>
 				<body className="StartBody" />
 			</Helmet>
 
@@ -242,7 +242,7 @@ class StartComponent extends React.Component<StartProps, State> {
 								<input
 									value={passphrase} onChange={e => { this.setState({ passphrase: e.target.value, error: undefined }) }}
 									type="password"
-									placeholder="*****"
+									placeholder="**********"
 									disabled={submitting}
 									autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false"
 									ref={r => { this.passphraseRef = r }}

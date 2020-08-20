@@ -38,3 +38,6 @@ export const connectSuccessMessage = "You're all set up to receive birthday emai
 export const connectSuccessDuration = 4000
 
 export const cookieBorkedNavPath = "/"
+
+export const AppName = "album birthdays!"
+export const AppDomain = "birthdays.casa"

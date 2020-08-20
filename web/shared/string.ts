@@ -8,3 +8,7 @@ export function trimPrefix(s: string, prefix: string): string {
 	}
 	return s
 }
+
+export function reverse(s: string): string {
+	return [...s].reverse().join("")
+}

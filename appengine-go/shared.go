@@ -36,7 +36,7 @@ const ProjectID = "albumday"
 const SupportEmail = "littlerootorg@gmail.com"
 
 const (
-	AppName   = "album birthdays"
+	AppName   = "album birthdays!"
 	AppDomain = "birthdays.casa"
 )
 
