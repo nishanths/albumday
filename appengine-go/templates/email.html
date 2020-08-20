@@ -5,11 +5,17 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 	<title>{{.Day}} {{.Month.String}}</title>
+	<link rel="stylesheet" href="/static/font/font.css">
 </head>
-<body style="font-family: helvetica, arial, sans-serif;margin-left:10px;max-width: 400px;line-height: 1.2;">
+<body style="font-family: proxima-nova, helvetica, arial, sans-serif;margin-left:10px;max-width: 400px;line-height: 1.2;">
 	<style type="text/css">
+		{{ if .Browser }}
+		html {
+			padding: 12px 18px;
+		}
+		{{ end }}
 		body {
-			font-family: helvetica, arial, sans-serif;
+			font-family: proxima-nova, helvetica, arial, sans-serif;
 			margin-left: 10px;
 			max-width: 400px;
 			line-height: 1.2;

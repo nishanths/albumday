@@ -177,6 +177,7 @@ func (s *Server) PreviewEmailHandler(w http.ResponseWriter, r *http.Request, _ h
 		BirthdayItems: items,
 		UnsubURL:      "",
 		SupportEmail:  SupportEmail,
+		Browser:       true,
 	})
 	if err != nil {
 		log.Printf("execute email template: %s", err)

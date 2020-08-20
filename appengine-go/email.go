@@ -29,4 +29,5 @@ type EmailTmplArgs struct {
 	BirthdayItems []BirthdayItem
 	UnsubURL      string
 	SupportEmail  string
+	Browser       bool
 }
