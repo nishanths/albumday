@@ -113,6 +113,12 @@ func (s *Server) DailyEmailTaskHandler(w http.ResponseWriter, r *http.Request, _
 	t := time.Now()
 	items := computeBirthdays(t.Unix(), calcuttaLoc, songs)
 
+	if len(items) == 0 {
+		log.Printf("no items for %s: skipping sending email", email)
+		w.WriteHeader(http.StatusCreated)
+		return
+	}
+
 	// make unsub link
 	unsubToken, err := s.redis.Get(unsubTokenKey(email)).Result()
 	if err != nil {

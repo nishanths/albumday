@@ -40,9 +40,9 @@ export class RootComponent extends React.Component<RootProps> {
 				</div>
 			</div>
 			<div className="faq">
-				<div className="q">How do others use <span className="emph">{"album birthdays?"}</span></div>
-				<div className="a">“To rediscover forgotten albums periodically… ”</div>
-				<div className="a">“ …To celebrate by listening to a song on its birthday”</div>
+				<div className="q">How others are using <span className="emph">{AppName}</span></div>
+				<div className="a">“Rediscover forgotten albums periodically… ”</div>
+				<div className="a">“ …Celebrate by listening to a song on its birthday”</div>
 			</div>
 			<div className="footer-links">
 				<a href="/email-preview" target="_blank">Preview notification email</a>

@@ -136,10 +136,10 @@ func generatePassphrase() string {
 const (
 	passphraseExpiry = 2 * 24 * time.Hour
 
-	passphraseEmailSubject = "Login code for " + AppName
+	passphraseEmailSubject = "Login code"
 	passphraseEmailText    = `Hi,
 
-Someone has requested a login code for {{.Email}} to log in to the {{.AppName}} app (https://{{.AppDomain}}).
+Someone has requested a login code for {{.Email}} to log in to the “{{.AppName}}” app (https://{{.AppDomain}}).
 
 The code is below:
 
