@@ -117,15 +117,6 @@ func computeBirthdays(unix int64, loc *time.Location, songs []Song) []BirthdayIt
 		}
 	}
 
-	// consolidate for shared artists
-	// TODO: implement
-	//
-	// var consolidated ArtistsConsolidated
-	// for a, songs := range matchingAlbums {
-	// 	consolidated.Add(a, songs)
-	// }
-	//
-
 	var consolidated []*AlbumAndSongs
 	for hash, songs := range matchingAlbums {
 		consolidated = append(consolidated, &AlbumAndSongs{hashToAlbums[hash], songs, 0, 0})
@@ -155,6 +146,27 @@ func computeBirthdays(unix int64, loc *time.Location, songs []Song) []BirthdayIt
 		}
 	}
 	return ret
+}
+
+type AlbumAndSongs struct {
+	Album Album
+	Songs []Song
+
+	PlayCount int
+	Loved     int
+}
+
+func (a *AlbumAndSongs) FillCounts() {
+	var p, l int
+	for _, s := range a.Songs {
+		p += s.PlayCount
+		if s.Loved != nil && *s.Loved {
+			l++
+		}
+	}
+
+	a.PlayCount = p
+	a.Loved = l
 }
 
 func compareAlbums(a, b *AlbumAndSongs) bool {
@@ -220,39 +232,13 @@ func compareSongs(a, b Song) bool {
 	return a.Title < b.Title
 }
 
-type AlbumAndSongs struct {
-	Album Album
-	Songs []Song
-
-	PlayCount int
-	Loved     int
-}
-
-func (a *AlbumAndSongs) FillCounts() {
-	var p, l int
-	for _, s := range a.Songs {
-		p += s.PlayCount
-		if s.Loved != nil && *s.Loved {
-			l++
-		}
-	}
-
-	a.PlayCount = p
-	a.Loved = l
-}
-
-type ArtistsConsolidated []*AlbumAndSongs
-
-func (a *ArtistsConsolidated) Add(newAlbum Album, newSongs []Song) {
-	// TODO
-	panic("not implemented")
-}
-
 // Returns whether the songs are the same, but for the artists, where there are
 // multiple artists with a shared primary artist. Returns the album with the
 // smaller artist name.
 //
 // For an example, see block comment at end of file.
+//
+// XXX: unused
 func equalButMultipleArtists(a, b Album) (Album, bool) {
 	hasSmaller := false
 	var result Album

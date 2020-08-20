@@ -2,6 +2,7 @@ package main
 
 import (
 	"html/template"
+	"strings"
 	"time"
 )
 
@@ -9,6 +10,7 @@ var templateFuncs = template.FuncMap{
 	"add": func(x, y int) int {
 		return x + y
 	},
+	"lower": strings.ToLower,
 }
 
 var (

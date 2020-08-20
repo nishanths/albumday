@@ -37,6 +37,11 @@ func (s *Server) LogoutHandler(w http.ResponseWriter, r *http.Request, _ httprou
 func (s *Server) IndexHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	email := s.currentIdentity(r)
 
+	if email != "" {
+		http.Redirect(w, r, "/feed", http.StatusFound)
+		return
+	}
+
 	b := Bootstrap{
 		LoggedIn: email != "",
 		Email:    email,
