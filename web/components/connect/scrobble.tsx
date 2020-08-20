@@ -1,7 +1,7 @@
 import React from "react"
 import { Connection } from "../../api"
 import Toastify, { ToastHandle, ToastOptions } from "toastify-js"
-import { defaultToastOptions, colors, connectSuccessMessage, connectSuccessDuration, scrobbleBaseURL } from "../../util"
+import { defaultToastOptions, colors, connectSuccessMessage, connectSuccessDuration, scrobbleBaseURL, cookieBorkedNavPath } from "../../util"
 import { NProgressType } from "../../types"
 
 type State = {
@@ -78,7 +78,7 @@ export class Scrobble extends React.Component<ScrobbleProps, State> {
 						backgroundColor: colors.brightRed,
 						duration: -1,
 						onClick: () => {
-							window.location.assign("/start")
+							window.location.assign(cookieBorkedNavPath)
 						},
 					})
 					break

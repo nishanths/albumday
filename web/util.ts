@@ -36,3 +36,5 @@ export function musicServiceDisplay(s: Service): string {
 
 export const connectSuccessMessage = "You're all set up to receive birthday email notifications!"
 export const connectSuccessDuration = 4000
+
+export const cookieBorkedNavPath = "/"

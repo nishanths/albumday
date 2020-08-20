@@ -4,7 +4,7 @@ import { Connect } from "../connect"
 import { NProgressType } from "../../types"
 import { RouteComponentProps } from "react-router"
 import Toastify, { ToastHandle, ToastOptions } from "toastify-js"
-import { defaultToastOptions, colors, musicServiceDisplay, connectSuccessMessage, connectSuccessDuration } from "../../util"
+import { defaultToastOptions, colors, musicServiceDisplay, connectSuccessMessage, connectSuccessDuration, cookieBorkedNavPath } from "../../util"
 import { assertExhaustive, shortMonth } from "../../shared"
 import { Temporal } from "proposal-temporal"
 import { CSSTransition } from "react-transition-group"
@@ -137,7 +137,7 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 						backgroundColor: colors.brightRed,
 						duration: -1,
 						onClick: () => {
-							window.location.assign("/start")
+							window.location.assign(cookieBorkedNavPath)
 						},
 					})
 					this.setState({ birthdays: { status: "error" } })

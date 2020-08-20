@@ -31,16 +31,11 @@ func (s *Server) LogoutHandler(w http.ResponseWriter, r *http.Request, _ httprou
 		Name:   cookieNameIdentity,
 		MaxAge: -1,
 	})
-	http.Redirect(w, r, "/start", http.StatusFound)
+	http.Redirect(w, r, "/", http.StatusFound)
 }
 
 func (s *Server) IndexHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	email := s.currentIdentity(r)
-
-	if email != "" {
-		http.Redirect(w, r, "/feed", http.StatusFound)
-		return
-	}
 
 	b := Bootstrap{
 		LoggedIn: email != "",
@@ -78,7 +73,7 @@ func (s *Server) StartHandler(w http.ResponseWriter, r *http.Request, _ httprout
 func (s *Server) FeedHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	email := s.currentIdentity(r)
 	if email == "" {
-		http.Redirect(w, r, "/start", http.StatusFound)
+		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
 

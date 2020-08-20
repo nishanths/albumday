@@ -9,7 +9,7 @@ import { assertExhaustive } from "../../shared"
 import { Account, connectionComplete } from "../../api"
 import { NProgressType } from "../../types"
 import Toastify, { ToastHandle } from "toastify-js"
-import { defaultToastOptions, colors } from "../../util"
+import { defaultToastOptions, colors, cookieBorkedNavPath } from "../../util"
 
 export type DashboardProps = RouteComponentProps & {
 	nProgress: NProgressType
@@ -88,7 +88,7 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 						backgroundColor: colors.brightRed,
 						duration: -1,
 						onClick: () => {
-							window.location.assign("/start")
+							window.location.assign(cookieBorkedNavPath)
 						},
 					}).showToast()
 					break

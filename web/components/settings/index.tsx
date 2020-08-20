@@ -1,6 +1,6 @@
 import React from "react"
 import { Account, Service, connectionComplete, Connection } from "../../api"
-import { colors, defaultToastOptions, scrobbleBaseURL, supportEmail } from "../../util"
+import { colors, defaultToastOptions, scrobbleBaseURL, supportEmail, cookieBorkedNavPath } from "../../util"
 import { assertExhaustive } from "../../shared"
 import { NProgressType } from "../../types"
 import { Link } from "react-router-dom"
@@ -90,7 +90,7 @@ export class Settings extends React.Component<SettingsProps> {
 						backgroundColor: colors.brightRed,
 						duration: -1,
 						onClick: () => {
-							window.location.assign("/start")
+							window.location.assign(cookieBorkedNavPath)
 						},
 					}).showToast()
 					break
@@ -144,7 +144,7 @@ export class Settings extends React.Component<SettingsProps> {
 						backgroundColor: colors.brightRed,
 						duration: -1,
 						onClick: () => {
-							window.location.assign("/start")
+							window.location.assign(cookieBorkedNavPath)
 						},
 					}).showToast()
 					break
@@ -194,7 +194,7 @@ export class Settings extends React.Component<SettingsProps> {
 						backgroundColor: colors.brightRed,
 						duration: -1,
 						onClick: () => {
-							window.location.assign("/start")
+							window.location.assign(cookieBorkedNavPath)
 						},
 					}).showToast()
 					break
