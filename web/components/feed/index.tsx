@@ -14,7 +14,7 @@ function firstFetchDurationDisplay(s: Service): string {
 		case "scrobble":
 			return "a few seconds"
 		case "spotify":
-			return "about half a minute"
+			return "a few seconds"
 		default:
 			assertExhaustive(s)
 	}

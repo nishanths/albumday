@@ -129,7 +129,7 @@ class DashboardComponent extends React.Component<DashboardProps, State> {
 	render() {
 		const helmet = <Helmet>
 			<html className="DashboardHTML" />
-			<title>{AppName} / {paneToTitle(this.pane())}</title>
+			<title>{paneToTitle(this.pane())} / {AppName}</title>
 			<body className="DashboardBody" />
 		</Helmet>
 
