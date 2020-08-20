@@ -20,7 +20,7 @@ export class RootComponent extends React.Component<RootProps> {
 
 		return <div className="Root">
 			{helmet}
-			<Link to="/"><div className="logo" role="img" alt="App logo"></div></Link>
+			<Link to="/"><div title="[Icon: Birthday by Flatart from the Noun Project]" className="logo" role="img" alt="App logo"></div></Link>
 			<div className="app-name">
 				album birthdays<span className="emph">!</span>
 			</div>
