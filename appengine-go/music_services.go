@@ -214,8 +214,9 @@ func fetchSpotifyAccessToken(ctx context.Context, c *http.Client, refreshToken, 
 		return nil, err
 	}
 	req = req.WithContext(ctx)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	cred := base64.StdEncoding.EncodeToString([]byte(clientID + ":" + clientSecret))
-	req.Header.Set("authorization", fmt.Sprintf("Basic %s", cred))
+	req.Header.Set("Authorization", "Basic "+cred)
 
 	rsp, err := c.Do(req)
 	if err != nil {
@@ -269,7 +270,7 @@ func fetchSpotifyOnePage(ctx context.Context, client *http.Client, url string, a
 		return nil, "", err
 	}
 	req = req.WithContext(ctx)
-	req.Header.Set("authorization", accessToken)
+	req.Header.Set("Authorization", "Bearer "+accessToken)
 
 	rsp, err := client.Do(req)
 	if err != nil {
@@ -440,7 +441,7 @@ func parseSpotifyReleaseDate(date, precision string) (ReleaseDate, bool) {
 func FetchSongs(ctx context.Context, c *http.Client, conn Connection, config Config) ([]Song, error) {
 	switch conn.Service {
 	case Spotify:
-		return nil, fmt.Errorf("not implemented")
+		return fetchSpotify(ctx, c, conn.RefreshToken, config.SpotifyClientID, config.SpotifyClientSecret)
 	case Scrobble:
 		return fetchScrobble(ctx, c, conn.Username)
 	default:
