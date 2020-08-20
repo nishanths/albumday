@@ -11,21 +11,6 @@ export type RootProps = RouteComponentProps & {
 }
 
 export class RootComponent extends React.Component<RootProps> {
-	componentDidMount() {
-		this.requestStart()
-		setTimeout(() => {
-			this.requestEnd()
-		}, 250)
-	}
-
-	private requestStart() {
-		this.props.nProgress.start()
-	}
-
-	private requestEnd() {
-		this.props.nProgress.done()
-	}
-
 	render() {
 		const helmet = <Helmet>
 			<html className="RootHTML" />
@@ -46,12 +31,26 @@ export class RootComponent extends React.Component<RootProps> {
 			<div className="get-started">
 				<button onClick={() => this.props.history.push("/start")}>Sign In</button>
 			</div>
+			<div className="works-with">
+				Works with
+				<div className="services">
+					<span title="Spotify" role="img" alt="Spotify logo" className="service-img spotify"></span>
+					<span className="sep">/</span>
+					<span title="Apple Music" role="img" alt="Apple Music logo" className="service-img scrobble"></span>
+				</div>
+			</div>
+			<div className="faq">
+				<div className="q">How do others use <span className="emph">{"album birthdays?"}</span></div>
+				<div className="a">“To rediscover forgotten albums periodically… ”</div>
+				<div className="a">“ …To celebrate by listening to a song on its birthday”</div>
+			</div>
+			<div className="footer-links">
+				<a href="/email-preview" target="_blank">Preview notification email</a>
+				<span className="sep">&nbsp;&nbsp;/&nbsp;</span>
+				<a className="terms" href="/privacy-policy">Terms</a>
+			</div>
 		</div>
 	}
 }
-
-// FAQ
-// Works with
-// Privacy
 
 export const Root = withRouter(RootComponent)

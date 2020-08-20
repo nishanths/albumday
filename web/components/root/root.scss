@@ -1,15 +1,20 @@
 html.RootHTML {
 	height: 100%;
+	border-top: 5px solid $http-pink;
 }
 
 body.RootBody {
+	border-top: 5px solid $purple;
 	font-family: $font-family;
 	color: $color-default;
-	max-width: 600px;
-	margin: 0 auto;
+	display: flex;
+	margin: 0;
+	margin-bottom: 30px;
+	justify-content: center;
 }
 
 .Root {
+	max-width: 600px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -42,13 +47,14 @@ body.RootBody {
 		font-weight: bold;
 		.emph {
 			font-style: italic;
+			color: $http-pink;
 		}
 	}
 
 	.app-desc {
 		text-align: center;
 		font-size: 20px;
-		max-width: 400px;
+		max-width: 350px;
 		line-height: 1.2;
 		color: #444;
 	}
@@ -78,7 +84,70 @@ body.RootBody {
 			text-align: center;
 			font-family: $font-family;
 			cursor: pointer;
-			background-color: #007aff;
+			background-color: $http-pink;
+		}
+	}
+
+	.works-with {
+		margin-top: 60px;
+		color: $color-default;
+		text-align: center;
+
+		.services {
+			margin-top: 15px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			.service-img.spotify {
+				margin-right: 5px;
+				background-image: url(/static/img/spotify.svg);
+				height: 40px;
+				width: 40px;
+				background-size: 40px;
+			}
+			.sep {
+				margin-left: 7px;
+				user-select: none;
+			}
+			.service-img.scrobble {
+				margin-left: 5px;
+				background-image: url(/static/img/apple_music.svg);
+				height: 48px;
+				width: 48px;
+				background-size: 48px;
+			}
+		}
+	}
+
+	.faq {
+		text-align: center;
+		margin-top: 60px;
+		color: $color-default;
+		.emph {
+			font-style: italic;
+		}
+		.a {
+			color: $color-instruction;
+			margin-top: 15px;
+		}
+	}
+
+	.footer-links {
+		text-align: center;
+		margin-top: 60px;
+		color: $color-instruction;
+		a {
+			color: $color-default;
+		}
+		.terms, .sep {
+			display: none;
+		}
+	}
+
+	@media (min-width: 600px) {
+		.app-desc {
+			max-width: 400px;
 		}
 	}
 }

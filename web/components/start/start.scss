@@ -1,8 +1,10 @@
 html.StartHTML {
 	height: 100%;
+	border-top: 5px solid $http-pink;
 }
 
 body.StartBody {
+	border-top: 5px solid $purple;
 	min-height: 100%;
 	display: flex;
 	align-items: center;
