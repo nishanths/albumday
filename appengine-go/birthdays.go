@@ -12,8 +12,8 @@ type Album struct {
 	Artist       string       `json:"artist"`
 	Album        string       `json:"album"`
 	Release      ReleaseDate  `json:"release"`
-	Link         string       `json:"link"` // or ""
-	ArtworkURL   string       `json:"artworkURL"`
+	Link         string       `json:"link"`       // or ""
+	ArtworkURL   string       `json:"artworkURL"` // or ""
 	ReleaseMatch ReleaseMatch `json:"releaseMatch"`
 }
 

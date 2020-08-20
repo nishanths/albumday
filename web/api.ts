@@ -65,7 +65,7 @@ export type BirthdayItem = {
 	album: string
 	release: ReleaseDate
 	link: string // or ""
-	artworkURL: string
+	artworkURL: string // or ""
 	releaseMatch: SuccessReleaseMatch
 
 	songs: {

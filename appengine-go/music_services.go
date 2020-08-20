@@ -87,10 +87,6 @@ func determineReleaseDate(unix int64) ReleaseDate {
 	}
 }
 
-func ptrInt(i int) *int {
-	return &i
-}
-
 func ptrBool(b bool) *bool {
 	return &b
 }
@@ -168,11 +164,18 @@ func transformScrobbleSong(s ScrobbleSong) (Song, bool) {
 		Release:     determineReleaseDate(s.ReleaseDate),
 		Link:        s.TrackViewURL,
 		AlbumLink:   trackToAlbumLink(s.TrackViewURL),
-		ArtworkURL:  fmt.Sprintf(`%s/artwork?hash=%s`, scrobbleAPIBaseURL, url.QueryEscape(s.ArtworkHash)),
+		ArtworkURL:  artworkURL(s.ArtworkHash),
 		PlayCount:   s.PlayCount,
 		Loved:       ptrBool(s.Loved),
 		TrackNumber: -1,
 	}, true
+}
+
+func artworkURL(artworkHash string) string {
+	if artworkHash == "" {
+		return ""
+	}
+	return fmt.Sprintf(`%s/artwork?hash=%s`, scrobbleAPIBaseURL, url.QueryEscape(artworkHash))
 }
 
 func trackToAlbumLink(trackViewURL string) string {

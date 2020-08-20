@@ -336,7 +336,9 @@ export class BirthdayItemComponent extends React.Component<BirthdayItem> {
 
 	render() {
 		const item = this.props
-		const art = <div role="img" alt={"Artwork for album + '" + item.album + "'"} className="art" style={{ backgroundImage: "url(" + item.artworkURL + ")" }}></div>
+		const artStyle = item.artworkURL ? { backgroundImage: "url(" + item.artworkURL + ")" } : { backgroundColor: "#e5e5e5" }
+		const artDesc = item.artworkURL ? "Artwork" : "Missing artwork"
+		const art = <div role="img" alt={artDesc + " for album + '" + item.album + "'"} className="art" style={artStyle}></div>
 		const album = <span className="album">{item.album}</span>
 
 		return <div className="BirthdayItem">
