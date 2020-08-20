@@ -346,7 +346,7 @@ export class BirthdayItemComponent extends React.Component<BirthdayItem> {
 					{item.releaseMatch == "month" && <span className="release-match">&nbsp;— this month</span>}
 				</div>
 				<div className="r2">
-					<span className="songs"><span className="emph">Songs: {this.songList(item)}</span></span>
+					<span className="songs"><span className="emph">Songs:&nbsp;&nbsp;{this.songList(item)}</span></span>
 				</div>
 			</div>
 

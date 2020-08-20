@@ -141,7 +141,7 @@ func (s *Server) UnsubHandler(w http.ResponseWriter, r *http.Request, _ httprout
 }
 
 func (s *Server) PreviewEmailHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	const timestamp = 1603039105
+	const timestamp = 1599644061
 	t := time.Unix(timestamp, 0)
 
 	email := s.config.PreviewEmail
