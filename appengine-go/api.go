@@ -6,6 +6,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -407,7 +408,8 @@ func (s *Server) BirthdaysHandler(w http.ResponseWriter, r *http.Request, _ http
 	if songs == nil { // need to do a live fetch?
 		var err error
 		songs, err = FetchSongs(ctx, s.http, conn, s.config)
-		if connErr, ok := err.(*ConnectionError); ok {
+		var connErr *ConnectionError
+		if errors.As(err, &connErr) {
 			log.Printf("fetch songs connection error: %s", err)
 			switch connErr.Reason {
 			case ConnectionErrPermission, ConnectionErrNotFound:

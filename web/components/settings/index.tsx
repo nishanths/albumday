@@ -254,7 +254,7 @@ export class Settings extends React.Component<SettingsProps> {
 			<strong>Account</strong>: Logged in as {this.props.email} — <a href="/logout">log out</a>, <a href="" role="button" onClick={e => { e.preventDefault(); this.onDeleteAccount() }}> delete account.</a>
 		</li>
 
-		const previewEmail = <>&nbsp;&nbsp;<a className="preview-email" href="/email-preview" target="_blank">(see example email)</a>.</>
+		const previewEmail = <>&nbsp;&nbsp;<a className="preview-email" href="/email-preview" target="_blank">(see sample)</a>.</>
 
 		const emailNotifications = this.props.account.settings.emailsEnabled ?
 			<li>

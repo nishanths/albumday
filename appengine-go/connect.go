@@ -171,7 +171,7 @@ func (s *Server) AuthSpotifyHandler(w http.ResponseWriter, r *http.Request, _ ht
 		return
 	}
 	defer drainAndClose(rsp.Body)
-	if !successStatus(rsp.StatusCode) {
+	if !is2xxStatus(rsp.StatusCode) {
 		log.Printf("bad status: %s", rsp.StatusCode)
 		errorResponse()
 		return
@@ -248,7 +248,7 @@ func (s *Server) ConnectScrobbleHandler(w http.ResponseWriter, r *http.Request, 
 	}
 	defer drainAndClose(rsp.Body)
 
-	if !successStatus(rsp.StatusCode) {
+	if !is2xxStatus(rsp.StatusCode) {
 		log.Printf("bad status: %d", rsp.StatusCode)
 		switch rsp.StatusCode {
 		case 403:

@@ -3,13 +3,22 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"regexp"
 )
 
-func successStatus(code int) bool {
+func is2xxStatus(code int) bool {
 	return code >= 200 && code < 300
+}
+
+func is4xxStatus(code int) bool {
+	return code >= 400 && code < 500
+}
+
+func isRetryableStatus(code int) bool {
+	return !is4xxStatus(code)
 }
 
 func drainAndClose(r io.ReadCloser) {
@@ -53,3 +62,11 @@ func validateEmail(email string) error {
 const (
 	scrobbleAPIBaseURL = "https://selective-scrobble.appspot.com/api/v1"
 )
+
+type StatusError struct {
+	Code int
+}
+
+func (s StatusError) Error() string {
+	return fmt.Sprintf("status code: %d", s.Code)
+}

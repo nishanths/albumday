@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"sort"
 	"strings"
 	"time"
@@ -259,7 +258,6 @@ func equalButMultipleArtists(a, b Album) (Album, bool) {
 	a.Artist = "" // clear for comparison
 	b.Artist = ""
 
-	log.Printf("%+v %+v %v", a, b, a.Equal(b))
 	if !a.Equal(b) {
 		return result, false
 	}

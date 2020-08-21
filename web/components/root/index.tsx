@@ -2,7 +2,7 @@ import React from "react"
 import { Helmet } from "react-helmet"
 import { Link, withRouter } from "react-router-dom"
 import { RouteComponentProps } from "react-router"
-import { AppName } from "../../util"
+import { AppName, supportEmail } from "../../util"
 import { reverse } from "../../shared"
 import { NProgressType } from "../../types"
 
@@ -44,10 +44,13 @@ export class RootComponent extends React.Component<RootProps> {
 				<div className="a">“Rediscover forgotten albums periodically… ”</div>
 				<div className="a">“ …Celebrate by listening to a song on its birthday”</div>
 			</div>
+			<div className="preview">
+				<a href="/email-preview" target="_blank">See sample email</a>
+			</div>
 			<div className="footer-links">
-				<a href="/email-preview" target="_blank">Preview notification email</a>
-				<span className="sep">&nbsp;&nbsp;/&nbsp;</span>
-				<a className="terms" href="/privacy-policy">Terms</a>
+				<a className="terms" href={"mailto:" + supportEmail}>Support</a>
+				<span className="sep">&nbsp;&nbsp;&middot;&nbsp;&nbsp;</span>
+				<a className="terms" href="/terms">Terms</a>
 			</div>
 		</div>
 	}

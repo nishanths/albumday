@@ -124,13 +124,13 @@ func fetchScrobble(ctx context.Context, c *http.Client, username string) ([]Song
 
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
-		return nil, fmt.Errorf("new request: %s", err)
+		return nil, fmt.Errorf("new scrobble request: %s", err)
 	}
 	req = req.WithContext(ctx)
 
 	rsp, err := c.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("do scrobble request: %s", err)
 	}
 	defer drainAndClose(rsp.Body)
 
@@ -220,12 +220,12 @@ func fetchSpotifyAccessToken(ctx context.Context, c *http.Client, refreshToken, 
 
 	rsp, err := c.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("do spotify request: %s", err)
 	}
 	defer drainAndClose(rsp.Body)
 
 	if rsp.StatusCode != 200 {
-		return nil, fmt.Errorf("bad status code: %d", rsp.StatusCode)
+		return nil, StatusError{rsp.StatusCode}
 	}
 
 	var a AccessTokenResponse
@@ -246,7 +246,7 @@ func fetchSpotifyAccessToken(ctx context.Context, c *http.Client, refreshToken, 
 func fetchSpotify(ctx context.Context, c *http.Client, refreshToken, clientID, clientSecret string) ([]Song, error) {
 	tok, err := fetchSpotifyAccessToken(ctx, c, refreshToken, clientID, clientSecret)
 	if err != nil {
-		return nil, fmt.Errorf("fetch access token: %s", err)
+		return nil, fmt.Errorf("fetch access token: %w", err)
 	}
 
 	var allSongs []Song
@@ -255,7 +255,7 @@ func fetchSpotify(ctx context.Context, c *http.Client, refreshToken, clientID, c
 	for fetchURL != "" {
 		songs, nextURL, err := fetchSpotifyOnePage(ctx, c, fetchURL, tok.AccessToken)
 		if err != nil {
-			return nil, fmt.Errorf("fetch spotify one page: %s", err)
+			return nil, fmt.Errorf("fetch spotify one page: %w", err)
 		}
 		allSongs = append(allSongs, songs...)
 		fetchURL = nextURL
@@ -279,7 +279,8 @@ func fetchSpotifyOnePage(ctx context.Context, client *http.Client, url string, a
 	defer drainAndClose(rsp.Body)
 
 	if rsp.StatusCode != 200 {
-		return nil, "", fmt.Errorf("bad status code: %d", rsp.StatusCode)
+		// TODO: return connection errors
+		return nil, "", StatusError{rsp.StatusCode}
 	}
 
 	var s SpotifyResponse

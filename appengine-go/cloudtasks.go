@@ -82,8 +82,8 @@ func (c *DevTasksClient) PostJSONTask(ctx context.Context, path string, payload 
 	if err != nil {
 		return fmt.Errorf("POST task: %s", err)
 	}
-	if !successStatus(rsp.StatusCode) {
-		return fmt.Errorf("bad status: %d", rsp.StatusCode)
+	if !is2xxStatus(rsp.StatusCode) {
+		return StatusError{rsp.StatusCode}
 	}
 	return nil
 }

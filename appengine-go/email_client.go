@@ -43,7 +43,7 @@ func (s *SendgridClient) Send(to []string, subject string, bodyText string, body
 	}
 	// https://sendgrid.com/docs/API_Reference/Web_API_v3/Mail/errors.html
 	if rsp.StatusCode != 200 && rsp.StatusCode != 202 {
-		return fmt.Errorf("send email: bad status code %d; body: %s", rsp.StatusCode, rsp.Body)
+		return fmt.Errorf("send email: %w; body: %s", StatusError{rsp.StatusCode}, rsp.Body)
 	}
 	return nil
 }

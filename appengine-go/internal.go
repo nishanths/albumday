@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -88,7 +89,8 @@ func (s *Server) DailyEmailTaskHandler(w http.ResponseWriter, r *http.Request, _
 	if songs == nil {
 		var err error
 		songs, err = FetchSongs(ctx, s.http, conn, s.config)
-		if connErr, ok := err.(*ConnectionError); ok {
+		var connErr *ConnectionError
+		if errors.As(err, &connErr) {
 			log.Printf("fetch songs connection error: %s", err)
 			switch connErr.Reason {
 			case ConnectionErrPermission, ConnectionErrNotFound:
@@ -154,8 +156,14 @@ func (s *Server) DailyEmailTaskHandler(w http.ResponseWriter, r *http.Request, _
 		"",
 		buf.String(),
 	); err != nil {
-		// TODO: handle non-retryable errors better
 		log.Printf("send email: %s", err)
+		var serr StatusError
+		if errors.As(err, &serr) {
+			if !isRetryableStatus(serr.Code) {
+				w.WriteHeader(http.StatusNoContent)
+				return
+			}
+		}
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

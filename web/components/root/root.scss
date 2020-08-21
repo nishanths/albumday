@@ -134,16 +134,22 @@ body.RootBody {
 		}
 	}
 
-	.footer-links {
-		text-align: center;
+	.preview {
 		margin-top: 60px;
-		margin-bottom: 30px;
-		color: $color-instruction;
 		a {
 			color: $color-default;
 		}
-		.terms, .sep {
-			display: none;
+	}
+
+	.footer-links {
+		text-align: center;
+		margin-top: 40px;
+		margin-bottom: 30px;
+		.sep {
+			color: $color-instruction;
+		}
+		a {
+			color: $color-instruction;
 		}
 	}
 
