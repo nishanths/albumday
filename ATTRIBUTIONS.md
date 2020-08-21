@@ -1,3 +1,3 @@
 ## Icons
 
-* Birthday by Flatart from thenounproject.com
+* Birthday by Flatart from <thenounproject.com>
