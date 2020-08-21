@@ -13,10 +13,10 @@ export type Service = Connection["service"]
 export type KnownConnection = SpotifyConnection | ScrobbleConnection
 
 export type Connection = KnownConnection & {
-	error: ConnectionError | null
+	error: ConnectionErr | null
 }
 
-export type ConnectionError = {
+export type ConnectionErr = {
 	reason: ConnectionErrReason
 	timestamp: number
 }
