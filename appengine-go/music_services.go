@@ -170,14 +170,14 @@ func transformScrobbleSong(s ScrobbleSong) (Song, bool) {
 		Release:     determineReleaseDate(s.ReleaseDate),
 		Link:        s.TrackViewURL,
 		AlbumLink:   scrobbleAlbumURL(s.TrackViewURL),
-		ArtworkURL:  scrobblertworkURL(s.ArtworkHash),
+		ArtworkURL:  scrobbleArtworkURL(s.ArtworkHash),
 		PlayCount:   s.PlayCount,
 		Loved:       ptrBool(s.Loved),
 		TrackNumber: -1,
 	}, true
 }
 
-func scrobblertworkURL(artworkHash string) string {
+func scrobbleArtworkURL(artworkHash string) string {
 	if artworkHash == "" {
 		return ""
 	}
