@@ -5,7 +5,6 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 	<title>{{.Day}} {{.Month.String}}</title>
-	<link rel="stylesheet" href="/static/font/font.css">
 </head>
 <body style="font-family: proxima-nova, helvetica, arial, sans-serif;margin-left:10px;max-width: 400px;line-height: 1.2;">
 	<style type="text/css">
@@ -60,6 +59,13 @@
 		<div><a href="{{.UnsubURL}}">Unsubscribe</a></div>
 		<div class="support" style="margin-top: 15px;"><a href="mailto:{{.SupportEmail}}">Email support</a></div>
 	</section>
+
+	{{ if .Browser }}
+	<link rel="stylesheet" href="/static/font/font.css">
+	{{ if not .IsDev }}
+	<link rel="stylesheet" href="//hello.myfonts.net/count/2f00b2">
+	{{ end }}
+	{{ end }}
 </body>
 </html>
 {{ end }}

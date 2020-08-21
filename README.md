@@ -1,6 +1,6 @@
 ## album birthdays<i>!</i>
 
-__album birthdays<i>!</i>__ is an app that can notify you on the release date anniversaries of titles in your music library. It works with Spotify and with Apple Music, via [scrobble](https://scrobbl.es).
+__album birthdays<i>!</i>__ is an app that can notify you on the release date anniversaries of titles in your music library. It works with Spotify and with Apple Music, via [Scrobble](https://scrobbl.es).
 
 Check it out at [https://birthdays.casa](https://birthdays.casa).
 

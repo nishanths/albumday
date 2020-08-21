@@ -151,11 +151,11 @@ func fetchScrobble(ctx context.Context, c *http.Client, username string) ([]Song
 		return ret, nil
 
 	case 403:
-		return nil, &ConnectionError{ConnectionErrPermission, time.Now().Unix()}
+		return nil, ConnectionErrPermission
 	case 404:
-		return nil, &ConnectionError{ConnectionErrNotFound, time.Now().Unix()}
+		return nil, ConnectionErrNotFound
 	default:
-		return nil, &ConnectionError{ConnectionErrGeneric, time.Now().Unix()}
+		return nil, ConnectionErrGeneric
 	}
 }
 

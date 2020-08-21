@@ -30,4 +30,5 @@ type EmailTmplArgs struct {
 	UnsubURL      string
 	SupportEmail  string
 	Browser       bool
+	IsDev         bool
 }

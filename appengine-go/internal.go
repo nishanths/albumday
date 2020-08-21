@@ -89,10 +89,10 @@ func (s *Server) DailyEmailTaskHandler(w http.ResponseWriter, r *http.Request, _
 	if songs == nil {
 		var err error
 		songs, err = FetchSongs(ctx, s.http, conn, s.config)
-		var connErr *ConnectionError
-		if errors.As(err, &connErr) {
+		var cerr ConnectionErrReason
+		if errors.As(err, &cerr) {
 			log.Printf("fetch songs connection error: %s", err)
-			switch connErr.Reason {
+			switch cerr {
 			case ConnectionErrPermission, ConnectionErrNotFound:
 				w.WriteHeader(http.StatusNoContent)
 			case ConnectionErrGeneric:
@@ -143,6 +143,7 @@ func (s *Server) DailyEmailTaskHandler(w http.ResponseWriter, r *http.Request, _
 		UnsubURL:      "https://" + AppDomain + "/unsub?" + v.Encode(),
 		SupportEmail:  SupportEmail,
 		Browser:       false,
+		IsDev:         env() == Dev,
 	}); err != nil {
 		log.Printf("execute email template: %s", err)
 		w.WriteHeader(http.StatusNoContent)

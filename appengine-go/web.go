@@ -20,6 +20,7 @@ type Bootstrap struct {
 type IndexTmplArgs struct {
 	Title     string
 	Bootstrap Bootstrap
+	IsDev     bool
 }
 
 var (
@@ -45,6 +46,7 @@ func (s *Server) IndexHandler(w http.ResponseWriter, r *http.Request, _ httprout
 	if err := indexTmpl.Execute(w, IndexTmplArgs{
 		AppName,
 		b,
+		env() == Dev,
 	}); err != nil {
 		log.Printf("execute index template: %s", err)
 	}
@@ -65,6 +67,7 @@ func (s *Server) StartHandler(w http.ResponseWriter, r *http.Request, _ httprout
 	if err := indexTmpl.Execute(w, IndexTmplArgs{
 		AppName,
 		b,
+		env() == Dev,
 	}); err != nil {
 		log.Printf("execute index template: %s", err)
 	}
@@ -85,6 +88,7 @@ func (s *Server) FeedHandler(w http.ResponseWriter, r *http.Request, _ httproute
 	if err := indexTmpl.Execute(w, IndexTmplArgs{
 		AppName,
 		b,
+		env() == Dev,
 	}); err != nil {
 		log.Printf("execute index template: %s", err)
 	}
@@ -178,6 +182,7 @@ func (s *Server) PreviewEmailHandler(w http.ResponseWriter, r *http.Request, _ h
 		UnsubURL:      "",
 		SupportEmail:  SupportEmail,
 		Browser:       true,
+		IsDev:         env() == Dev,
 	})
 	if err != nil {
 		log.Printf("execute email template: %s", err)

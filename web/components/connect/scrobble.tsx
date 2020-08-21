@@ -156,13 +156,13 @@ export class Scrobble extends React.Component<ScrobbleProps, State> {
 							this.toast?.hideToast()
 						}}
 						type="text"
-						placeholder={"scrobble username"}
+						placeholder={"Scrobble username"}
 						disabled={this.state.submitting}
 						autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false"
 						ref={r => { this.usernameRef = r }}
 					/>
 					<div className="instruction">
-						Connecting to Apple Music uses a <a className="gray" href={scrobbleBaseURL} target="_blank">scrobble</a> profile. Enter your scrobble username.
+						Connecting to Apple Music uses a <a className="gray" href={scrobbleBaseURL} target="_blank">Scrobble</a> profile. Enter your Scrobble username.
 					</div>
 				</form>
 				<div className="buttons">

@@ -218,7 +218,7 @@ export class Settings extends React.Component<SettingsProps> {
 			case "spotify":
 				return <>Linked with Spotify</>
 			case "scrobble":
-				return <>Linked with Apple Music, using scrobble profile <a className="connection-external-link" href={scrobbleBaseURL + "/u/" + conn.username} target="_blank">{conn.username}</a></>
+				return <>Linked with Apple Music, using Scrobble profile <a className="connection-external-link" href={scrobbleBaseURL + "/u/" + conn.username} target="_blank">{conn.username}</a></>
 			default:
 				assertExhaustive(conn)
 		}

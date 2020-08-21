@@ -75,19 +75,19 @@ const (
 	ConnectionErrNotFound   ConnectionErrReason = "not found"  // no such profile
 )
 
-type ConnectionError struct {
-	Reason    ConnectionErrReason `json:"reason"`
-	Timestamp int64               `json:"timestamp"`
+func (c ConnectionErrReason) Error() string {
+	return string(c)
 }
 
-func (c *ConnectionError) Error() string {
-	return fmt.Sprintf("%s at %s", c.Reason, time.Unix(c.Timestamp, 0))
+type ConnectionErr struct {
+	Reason    ConnectionErrReason `json:"reason"`
+	Timestamp int64               `json:"timestamp"`
 }
 
 type Connection struct {
 	Service Service `json:"service"`
 	Conn
-	Error *ConnectionError `json:"error"`
+	Error *ConnectionErr `json:"error"`
 }
 
 type Conn struct {
@@ -408,10 +408,10 @@ func (s *Server) BirthdaysHandler(w http.ResponseWriter, r *http.Request, _ http
 	if songs == nil { // need to do a live fetch?
 		var err error
 		songs, err = FetchSongs(ctx, s.http, conn, s.config)
-		var connErr *ConnectionError
-		if errors.As(err, &connErr) {
+		var cerr ConnectionErrReason
+		if errors.As(err, &cerr) {
 			log.Printf("fetch songs connection error: %s", err)
-			switch connErr.Reason {
+			switch cerr {
 			case ConnectionErrPermission, ConnectionErrNotFound:
 				w.WriteHeader(422)
 			case ConnectionErrGeneric:

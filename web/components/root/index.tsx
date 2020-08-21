@@ -20,7 +20,7 @@ export class RootComponent extends React.Component<RootProps> {
 
 		return <div className="Root">
 			{helmet}
-			<Link to="/"><div title="[Icon: Birthday by Flatart from the Noun Project]" className="logo" role="img" alt="App logo"></div></Link>
+			<Link to="/"><div title="[Icon: Birthday by Flatart from thenounproject.com]" className="logo" role="img" alt="App logo"></div></Link>
 			<div className="app-name">
 				album birthdays<span className="emph">!</span>
 			</div>
@@ -45,7 +45,7 @@ export class RootComponent extends React.Component<RootProps> {
 				<div className="a">“ …Celebrate by listening to a song on its birthday”</div>
 			</div>
 			<div className="preview">
-				<a href="/email-preview" target="_blank">See sample email</a>
+				<a href="/email-preview" target="_blank">Preview sample email</a>
 			</div>
 			<div className="footer-links">
 				<a className="terms" href={"mailto:" + supportEmail}>Support</a>
