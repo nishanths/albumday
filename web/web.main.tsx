@@ -35,7 +35,7 @@ class Mount extends React.Component<MountProps, { bootstrap: Bootstrap }> {
 		return <BrowserRouter>
 			<Switch>
 				<Route exact path="/">
-					<Root nProgress={NProgress} />
+					<Root nProgress={NProgress} loggedIn={this.state.bootstrap.loggedIn} />
 				</Route>
 
 				<Route exact path="/start">

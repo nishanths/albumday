@@ -8,6 +8,7 @@ import { NProgressType } from "../../types"
 
 export type RootProps = RouteComponentProps & {
 	nProgress: NProgressType
+	loggedIn: boolean
 }
 
 export class RootComponent extends React.Component<RootProps> {
@@ -29,7 +30,7 @@ export class RootComponent extends React.Component<RootProps> {
 				music library.
 			</div>
 			<div className="get-started">
-				<button onClick={() => this.props.history.push("/start")}>Sign In</button>
+				<button onClick={() => this.props.history.push(!this.props.loggedIn ? "/start" : "/feed")}>{!this.props.loggedIn ? "Sign In" : "See your feed"}</button>
 			</div>
 			<div className="works-with">
 				Works with
