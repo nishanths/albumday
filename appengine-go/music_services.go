@@ -169,22 +169,22 @@ func transformScrobbleSong(s ScrobbleSong) (Song, bool) {
 		Title:       s.Title,
 		Release:     determineReleaseDate(s.ReleaseDate),
 		Link:        s.TrackViewURL,
-		AlbumLink:   trackToAlbumLink(s.TrackViewURL),
-		ArtworkURL:  artworkURL(s.ArtworkHash),
+		AlbumLink:   scrobbleAlbumURL(s.TrackViewURL),
+		ArtworkURL:  scrobblertworkURL(s.ArtworkHash),
 		PlayCount:   s.PlayCount,
 		Loved:       ptrBool(s.Loved),
 		TrackNumber: -1,
 	}, true
 }
 
-func artworkURL(artworkHash string) string {
+func scrobblertworkURL(artworkHash string) string {
 	if artworkHash == "" {
 		return ""
 	}
 	return fmt.Sprintf(`%s/artwork?hash=%s`, scrobbleAPIBaseURL, url.QueryEscape(artworkHash))
 }
 
-func trackToAlbumLink(trackViewURL string) string {
+func scrobbleAlbumURL(trackViewURL string) string {
 	if trackViewURL == "" {
 		return ""
 	}
@@ -278,9 +278,15 @@ func fetchSpotifyOnePage(ctx context.Context, client *http.Client, url string, a
 	}
 	defer drainAndClose(rsp.Body)
 
-	if rsp.StatusCode != 200 {
-		// TODO: return connection errors
-		return nil, "", StatusError{rsp.StatusCode}
+	switch rsp.StatusCode {
+	case 200:
+		// continue below
+	case 401, 403:
+		return nil, "", ConnectionErrPermission
+	case 404:
+		return nil, "", ConnectionErrNotFound
+	default:
+		return nil, "", ConnectionErrGeneric
 	}
 
 	var s SpotifyResponse
