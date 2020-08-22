@@ -277,36 +277,42 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 
 		return <div className="Feed">
 			<section className="day-container">
-				<div className="today date-head">
+				<div role="heading" aria-level={1} className="today date-head">
 					<span>Today,&nbsp;</span>
 					<span className="secondary">{data.todayTime.day} {shortMonth(data.todayTime)}</span>
 				</div>
 				{this.noItems(data.todayItems) && <div className="no-items">No birthdays in your library today.</div>}
-				{data.todayItems.map(item => {
-					return <div key={item.link} className="item"><BirthdayItemComponent {...item} /></div>
-				})}
+				{!this.noItems(data.todayItems) && <div role="list">
+					{data.todayItems.map(item => {
+						return <div role="listitem" key={item.link} className="item"><BirthdayItemComponent {...item} /></div>
+					})}
+				</div>}
 			</section>
 
 			<section className="day-container">
-				<div className="tomorrow date-head">
+				<div role="heading" aria-level={1} className="tomorrow date-head">
 					<span>Tomorrow,&nbsp;</span>
 					<span className="secondary">{data.tomorrowTime.day} {shortMonth(data.tomorrowTime)}</span>
 				</div>
 				{this.noItems(data.tomorrowItems) && <div className="no-items">No birthdays in your library tomorrow.</div>}
-				{data.tomorrowItems.map(item => {
-					return <div key={item.link} className="item"><BirthdayItemComponent {...item} /></div>
-				})}
+				{!this.noItems(data.tomorrowItems) && <div role="list">
+					{data.tomorrowItems.map(item => {
+						return <div role="listitem" key={item.link} className="item"><BirthdayItemComponent {...item} /></div>
+					})}
+				</div>}
 			</section>
 
 			<section className="day-container">
-				<div className="overmorrow date-head">
+				<div role="heading" aria-level={1} className="overmorrow date-head">
 					<span>Day after tomorrow,&nbsp;</span>
 					<span className="secondary">{data.overmorrowTime.day} {shortMonth(data.overmorrowTime)}</span>
 				</div>
 				{this.noItems(data.overmorrowItems) && <div className="no-items">No birthdays in your library overmorrow.</div>}
-				{data.overmorrowItems.map(item => {
-					return <div key={item.link} className="item"><BirthdayItemComponent {...item} /></div>
-				})}
+				{!this.noItems(data.overmorrowItems) && <div role="list">
+					{data.overmorrowItems.map(item => {
+						return <div role="listitem" key={item.link} className="item"><BirthdayItemComponent {...item} /></div>
+					})}
+				</div>}
 			</section>
 		</div>
 	}
