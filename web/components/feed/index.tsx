@@ -89,7 +89,8 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 	}
 
 	private shouldFetchBirthdays(): boolean {
-		return connectionComplete(this.props.account) && this.props.birthdayData === null
+		return (connectionComplete(this.props.account) && this.props.birthdayData === null) ||
+			(this.props.birthdayData?.todayTime.day !== Temporal.now.date().day)
 	}
 
 	private async fetchBirthdays() {
