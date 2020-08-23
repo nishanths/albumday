@@ -111,8 +111,9 @@ func (s *Server) DailyEmailTaskHandler(w http.ResponseWriter, r *http.Request, _
 
 	s.putSongsToCache(conn.Service, email, songs)
 
+	t := time.Now().In(calcuttaLoc)
+
 	// compute birthdays
-	t := time.Now()
 	items := computeBirthdays(t.Unix(), calcuttaLoc, songs)
 
 	if len(items) == 0 {
