@@ -26,7 +26,7 @@ export class RootComponent extends React.Component<RootProps> {
 				album birthdays<span className="emph">!</span>
 			</section>
 			<section className="app-desc">
-				Be notified on release date anniversaries for titles in your
+				Be reminded on the release date anniversaries for titles in your
 				music library.
 			</section>
 			<section className="get-started">
