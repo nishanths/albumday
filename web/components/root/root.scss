@@ -112,11 +112,11 @@ body.RootBody {
 			justify-content: center;
 
 			.service-img {
-				filter: grayscale(100%);
-				transition: 250ms $transition-exit-func transform;
+				// filter: grayscale(100%);
+				transition: 100ms ease-out filter;
 				&:hover {
-					transition: 500ms $transition-enter-func transform;
-					filter: grayscale(0%);
+					transition: 250ms ease-in filter;
+					// filter: grayscale(0%);
 				}
 			}
 
