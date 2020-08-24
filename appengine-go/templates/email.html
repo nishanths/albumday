@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
-	<title>{{.Day}} {{.Month.String}}</title>
+	<title>{{.Today.Day}} {{.Today.Month.String}} ({{ len .BirthdayItems }} {{ pluralize (len .BirthdayItems) "birthday" }})</title>
 </head>
 <body style="font-family: proxima-nova, helvetica, arial, sans-serif;margin-left:10px;max-width: 400px;line-height: 1.2;">
 	<style type="text/css">
@@ -45,13 +45,55 @@
 	</style>
 
 	<section class="header" style="margin-bottom: 30px;">
-		<h2>Album Birthdays — {{.Day}} {{.Month.String}}</h2>
+		<h2>Album Birthdays — {{.Today.Day}} {{.Today.Month.String}}</h2>
 		<a href="{{.AppVisitURL}}">{{.AppVisitURL}}</a>
 	</section>
 
 	<section class="main" style="margin-bottom: 45px;">
-		{{ range .BirthdayItems }}
-		{{ template "item" . }}
+		{{ $outer := . }}
+		{{ range $item := .BirthdayItems }}
+		<div class="item" style="margin-bottom: 30px;">
+			{{ if .Link }}<a href="{{.Link}}">{{ end }}
+				{{ if .ArtworkURL }}
+				<img alt="Artwork for album '{{.Album.Album}}'" class="art" src="{{.ArtworkURL}}"
+					style="max-width: 180px;box-shadow: 2px 2px 10px 1px rgba(0,0,0,.1),-2px 2px 10px 1px rgba(0,0,0,.1);"
+				>
+				{{ else }}
+				<div class="art" role="img" alt="Missing artwork for album '{{.Album.Album}}'"
+					style="max-width: 180px;width: 180px;height: 180px;box-shadow: 2px 2px 10px 1px rgba(0,0,0,.1),-2px 2px 10px 1px rgba(0,0,0,.1);background-color: #e5e5e5;">
+				</div>
+				{{ end }}
+			{{ if .Link }}</a>{{ end }}
+			<div class="info" style="margin-top: 5px;">
+				<div>
+					{{ if .Link }}<a href="{{.Link}}">{{ end }}
+						<span class="album">{{.Album.Album}}</span>
+					{{ if .Link }}</a>{{ end }}
+				</div>
+				<div>
+					<span class="artist">{{.Artist}}, </span>
+					{{ $ya := yearsAgo $outer.Today.Year .Release.Year }}
+					<span class="year" title="{{ $ya }}">{{.Release.Year}}</span>
+					<span class="years-ago">({{ $ya }})</span>
+					{{ if releaseMatchMonth .ReleaseMatch }}<span class="relese-match" style="font-style: italic;">— this month</span>{{ end }}
+				</div>
+				<div>
+					<span>Songs:&nbsp;</span>
+					{{ $songs := .Songs }}
+					{{ if gt (len .Songs) 5 }}
+					{{ $songs = slice .Songs 0 5 }}
+					{{ end }}
+
+					{{ range $i, $song := $songs }}
+					{{ if $song.Link }}
+					<a href="{{$song.Link}}"><span class="song">{{$song.Title}}</span></a>{{ if ne $i (add (len $songs) -1) }}<span>, </span>{{ end }}
+					{{ else }}
+					<span class="song">{{$song.Title}}</span>{{ if ne $i (add (len $songs) -1) }}<span>, </span>{{ end }}
+					{{ end }}
+					{{ end }}
+				</div>
+			</div>
+		</div>
 		{{ end }}
 	</section>
 
@@ -68,48 +110,4 @@
 	{{ end }}
 </body>
 </html>
-{{ end }}
-
-
-{{ define "item" }}
-<div class="item" style="margin-bottom: 30px;">
-	{{ if .Link }}<a href="{{.Link}}">{{ end }}
-		{{ if .ArtworkURL }}
-		<img alt="Artwork for album '{{.Album.Album}}'" class="art" src="{{.ArtworkURL}}"
-			style="max-width: 180px;box-shadow: 2px 2px 10px 1px rgba(0,0,0,.1),-2px 2px 10px 1px rgba(0,0,0,.1);"
-		>
-		{{ else }}
-		<div class="art" role="img" alt="Missing artwork for album '{{.Album.Album}}'"
-			style="max-width: 180px;width: 180px;height: 180px;box-shadow: 2px 2px 10px 1px rgba(0,0,0,.1),-2px 2px 10px 1px rgba(0,0,0,.1);background-color: #e5e5e5;">
-		</div>
-		{{ end }}
-	{{ if .Link }}</a>{{ end }}
-	<div class="info" style="margin-top: 5px;">
-		<div>
-			{{ if .Link }}<a href="{{.Link}}">{{ end }}
-				<span class="album">{{.Album.Album}}</span>
-			{{ if .Link }}</a>{{ end }}
-		</div>
-		<div>
-			<span class="artist">{{.Artist}}, </span>
-			<span class="year">{{.Release.Year}}</span>
-			{{ if releaseMatchMonth .ReleaseMatch }}<span class="relese-match" style="font-style: italic;">— this month</span>{{ end }}
-		</div>
-		<div>
-			<span>Songs:&nbsp;</span>
-			{{ $songs := .Songs }}
-			{{ if gt (len .Songs) 5 }}
-			{{ $songs = slice .Songs 0 5 }}
-			{{ end }}
-
-			{{ range $i, $song := $songs }}
-			{{ if $song.Link }}
-			<a href="{{$song.Link}}"><span class="song">{{$song.Title}}</span></a>{{ if ne $i (add (len $songs) -1) }}<span>, </span>{{ end }}
-			{{ else }}
-			<span class="song">{{$song.Title}}</span>{{ if ne $i (add (len $songs) -1) }}<span>, </span>{{ end }}
-			{{ end }}
-			{{ end }}
-		</div>
-	</div>
-</div>
 {{ end }}

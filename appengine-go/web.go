@@ -175,8 +175,7 @@ func (s *Server) PreviewEmailHandler(w http.ResponseWriter, r *http.Request, _ h
 	items := computeBirthdays(timestamp, time.UTC, songs)
 
 	err = emailTmpl.ExecuteTemplate(w, "base", EmailTmplArgs{
-		Day:           t.Day(),
-		Month:         t.Month(),
+		Today:         t,
 		AppVisitURL:   "https://" + AppDomain + "/feed",
 		BirthdayItems: items,
 		UnsubURL:      "",

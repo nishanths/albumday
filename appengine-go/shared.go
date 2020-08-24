@@ -70,3 +70,10 @@ type StatusError struct {
 func (s StatusError) Error() string {
 	return fmt.Sprintf("status code: %d", s.Code)
 }
+
+func pluralize(n int, s string) string {
+	if n == 1 {
+		return s
+	}
+	return s + "s"
+}

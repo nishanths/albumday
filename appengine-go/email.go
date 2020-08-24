@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"strings"
 	"time"
@@ -14,6 +15,10 @@ var templateFuncs = template.FuncMap{
 	"releaseMatchMonth": func(r ReleaseMatch) bool {
 		return r == MatchMonth
 	},
+	"pluralize": pluralize,
+	"yearsAgo": func(todayYear int, year int) string {
+		return fmt.Sprintf("%dy ago", todayYear-year)
+	},
 }
 
 var (
@@ -23,8 +28,7 @@ var (
 )
 
 type EmailTmplArgs struct {
-	Day           int
-	Month         time.Month
+	Today         time.Time
 	AppVisitURL   string
 	BirthdayItems []BirthdayItem
 	UnsubURL      string

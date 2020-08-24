@@ -137,8 +137,7 @@ func (s *Server) DailyEmailTaskHandler(w http.ResponseWriter, r *http.Request, _
 	// prepare email
 	var buf bytes.Buffer
 	if err := emailTmpl.ExecuteTemplate(&buf, "base", &EmailTmplArgs{
-		Day:           t.Day(),
-		Month:         t.Month(),
+		Today:         t,
 		AppVisitURL:   "https://" + AppDomain + "/feed",
 		BirthdayItems: items,
 		UnsubURL:      "https://" + AppDomain + "/unsub?" + v.Encode(),
@@ -154,7 +153,7 @@ func (s *Server) DailyEmailTaskHandler(w http.ResponseWriter, r *http.Request, _
 	// send email
 	if err := s.email.Send(
 		[]string{email},
-		fmt.Sprintf("%d %s", t.Day(), t.Month()),
+		fmt.Sprintf("%d %s (%d %s)", t.Day(), t.Month(), len(items), pluralize(len(items), "birthday")),
 		"",
 		buf.String(),
 	); err != nil {
