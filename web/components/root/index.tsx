@@ -33,7 +33,7 @@ export class RootComponent extends React.Component<RootProps> {
 				<button onClick={() => this.props.history.push(!this.props.loggedIn ? "/start" : "/feed")}>{!this.props.loggedIn ? "Get Started" : "See your feed"}</button>
 			</section>
 			<section className="hero">
-				<img src="/static/img/birthdays-hero.png" />
+				<img alt="App screenshot displaying two albums with release date anniversaries" src="/static/img/birthdays-hero.png" />
 			</section>
 			<section className="preview">
 				<a href="/email-preview" target="_blank">Preview sample email</a>
@@ -53,6 +53,9 @@ export class RootComponent extends React.Component<RootProps> {
 				<div className="a">“Rediscover forgotten songs periodically… ”</div>
 				<div className="a">“ …Celebrate by listening to an album on its birthday”</div>
 			</section>
+			{!this.props.loggedIn && <section className="get-started">
+				<button onClick={() => this.props.history.push(!this.props.loggedIn ? "/start" : "/feed")}>{!this.props.loggedIn ? "Get Started" : "See your feed"}</button>
+			</section>}
 			<section className="footer-links">
 				<a className="terms" href={"mailto:" + supportEmail}>Email support</a>
 				<span className="sep">&nbsp;&nbsp;&middot;&nbsp;&nbsp;</span>

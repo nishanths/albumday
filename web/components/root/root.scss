@@ -89,7 +89,6 @@ body.RootBody {
 			border: 0;
 			border-radius: 4px;
 			min-width: 125px;
-			box-shadow: 0 0 20px rgba(0,0,0,.06);
 			color: #fff;
 			font-size: 16px;
 			line-height: 1.30772;
@@ -97,6 +96,7 @@ body.RootBody {
 			font-family: $font-family;
 			cursor: pointer;
 			background-color: $green;
+			box-shadow: 0px 0px 4px 0px #179c27 inset;
 		}
 	}
 
