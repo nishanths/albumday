@@ -163,7 +163,7 @@ func (s *Server) PassphraseHandler(w http.ResponseWriter, r *http.Request, _ htt
 	}
 
 	pass := generatePassphrase()
-	if err := s.redis.Set(passphraseKey(email), pass, passphraseExpiry).Err(); err != nil {
+	if err := s.redis.SAdd(passphraseKey(email), pass).Err(); err != nil {
 		log.Printf("SET passhrase: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -202,16 +202,13 @@ func (s *Server) LoginHandler(w http.ResponseWriter, r *http.Request, _ httprout
 		return
 	}
 
-	want, err := s.redis.Get(passphraseKey(email)).Result()
-	if err == redis.Nil {
-		w.WriteHeader(http.StatusForbidden) // passphrase expired
-		return
-	} else if err != nil {
-		log.Printf("GET passphrase: %s", err)
+	passphraseSuccess, err := s.redis.SIsMember(passphraseKey(email), passphrase).Result()
+	if err != nil {
+		log.Printf("SISMEMBER passphrase: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	if env() != Dev && want != passphrase {
+	if !passphraseSuccess {
 		w.WriteHeader(http.StatusForbidden) // bad passphrase
 		return
 	}
