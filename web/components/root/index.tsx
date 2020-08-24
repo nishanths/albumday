@@ -32,6 +32,11 @@ export class RootComponent extends React.Component<RootProps> {
 			<section className="get-started">
 				<button onClick={() => this.props.history.push(!this.props.loggedIn ? "/start" : "/feed")}>{!this.props.loggedIn ? "Get Started" : "See your feed"}</button>
 			</section>
+			<section className="preview">
+				<a href="/email-preview" target="_blank">Preview sample email</a>
+				<span className="sep">&nbsp;&nbsp;&middot;&nbsp;&nbsp;</span>
+				<a href="/static/img/web-app-screenshot.png" target="_blank">App screenshots</a>
+			</section>
 			<section className="works-with">
 				Works with
 				<div className="services" role="list">
@@ -42,13 +47,8 @@ export class RootComponent extends React.Component<RootProps> {
 			</section>
 			<section className="faq">
 				<div className="q">How others are using <span className="emph">{AppName}</span></div>
-				<div className="a">“Rediscover forgotten albums periodically… ”</div>
-				<div className="a">“ …Celebrate by listening to a song on its birthday”</div>
-			</section>
-			<section className="preview">
-				<a href="/email-preview" target="_blank">Preview sample email</a>
-				<span className="sep">&nbsp;&nbsp;&middot;&nbsp;&nbsp;</span>
-				<a href="/static/img/web-app-screenshot.png" target="_blank">App screenshots</a>
+				<div className="a">“Rediscover forgotten songs periodically… ”</div>
+				<div className="a">“ …Celebrate by listening to an album on its birthday”</div>
 			</section>
 			<section className="footer-links">
 				<a className="terms" href={"mailto:" + supportEmail}>Support</a>
