@@ -47,6 +47,8 @@ export class RootComponent extends React.Component<RootProps> {
 			</section>
 			<section className="preview">
 				<a href="/email-preview" target="_blank">Preview sample email</a>
+				<span className="sep">&nbsp;&nbsp;&middot;&nbsp;&nbsp;</span>
+				<a href="/static/img/web-app-screenshot.png" target="_blank">App screenshots</a>
 			</section>
 			<section className="footer-links">
 				<a className="terms" href={"mailto:" + supportEmail}>Support</a>

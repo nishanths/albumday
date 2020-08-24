@@ -137,6 +137,9 @@ body.RootBody {
 
 	.preview {
 		margin-top: 60px;
+		.sep {
+			color: $color-instruction;
+		}
 		a {
 			color: $http-pink;
 		}
