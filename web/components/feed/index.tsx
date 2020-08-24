@@ -285,7 +285,7 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 				{this.noItems(data.todayItems) && <div className="no-items">No birthdays in your library today.</div>}
 				{!this.noItems(data.todayItems) && <div role="list">
 					{data.todayItems.map(item => {
-						return <div role="listitem" key={item.link} className="item"><BirthdayItemComponent {...item} /></div>
+						return <div role="listitem" key={item.link} className="item"><BirthdayItemComponent item={item} nowYear={data.todayTime.year} /></div>
 					})}
 				</div>}
 			</section>
@@ -298,7 +298,7 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 				{this.noItems(data.tomorrowItems) && <div className="no-items">No birthdays in your library tomorrow.</div>}
 				{!this.noItems(data.tomorrowItems) && <div role="list">
 					{data.tomorrowItems.map(item => {
-						return <div role="listitem" key={item.link} className="item"><BirthdayItemComponent {...item} /></div>
+						return <div role="listitem" key={item.link} className="item"><BirthdayItemComponent item={item} nowYear={data.todayTime.year} /></div>
 					})}
 				</div>}
 			</section>
@@ -311,7 +311,7 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 				{this.noItems(data.overmorrowItems) && <div className="no-items">No birthdays in your library overmorrow.</div>}
 				{!this.noItems(data.overmorrowItems) && <div role="list">
 					{data.overmorrowItems.map(item => {
-						return <div role="listitem" key={item.link} className="item"><BirthdayItemComponent {...item} /></div>
+						return <div role="listitem" key={item.link} className="item"><BirthdayItemComponent item={item} nowYear={data.todayTime.year} /></div>
 					})}
 				</div>}
 			</section>
@@ -341,8 +341,16 @@ const loader = <div className="loader" role="img" alt="Loading animation">
 	</svg>
 </div>
 
-export class BirthdayItemComponent extends React.Component<BirthdayItem> {
-	private songList(item: BirthdayItem) {
+const specialYears: Map<number, string> = new Map([
+	[5, "#0074d9"],
+	[10, "rgb(45 187 63 / 82%)"],
+	[25, "rgb(212 197 90)"],
+	[50, "rgba(33,40,47,1)"],
+])
+
+export class BirthdayItemComponent extends React.Component<{ item: BirthdayItem, nowYear: number }> {
+	private songList() {
+		const { item } = this.props
 		const songs = item.songs.slice(0, 5)
 		return songs.map((s, i) => {
 			const punct = i === songs.length - 1 ? "" : <>,&nbsp;</>
@@ -353,12 +361,31 @@ export class BirthdayItemComponent extends React.Component<BirthdayItem> {
 		})
 	}
 
+	private yearsAgo(): number {
+		return this.props.nowYear - this.props.item.release.year
+	}
+
+	private yearsAgoDisplay(): string {
+		if (this.yearsAgo() === 0) {
+			return "" + this.props.nowYear
+		}
+		if (this.yearsAgo() === 1) {
+			return this.yearsAgo() + " year ago"
+		}
+		return this.yearsAgo() + " years ago"
+	}
+
 	render() {
-		const item = this.props
+		const { item } = this.props
 		const artStyle = item.artworkURL ? { backgroundImage: "url(" + item.artworkURL + ")" } : { backgroundColor: "#e5e5e5" }
 		const artDesc = item.artworkURL ? "Artwork" : "Missing artwork"
 		const art = <div role="img" alt={artDesc + " for album + '" + item.album + "'"} className="art" style={artStyle}></div>
 		const album = <span className="album">{item.album}</span>
+
+		const specialYear = specialYears.get(this.yearsAgo())
+		const yearsBadgeStyles = specialYear === undefined ?
+			{} :
+			{ backgroundColor: specialYear }
 
 		return <div className="BirthdayItem">
 			{item.link ? <a href={item.link} target="_blank" className="pointer">{art}</a> : art}
@@ -368,11 +395,14 @@ export class BirthdayItemComponent extends React.Component<BirthdayItem> {
 				</div>
 				<div className="r1">
 					<span className="artist">{item.artist}</span>
-					<span className="year">, {item.release.year}</span>
+					<span className="year" title={this.yearsAgoDisplay()}>, {item.release.year}</span>
+					{<span className="years-badge" style={yearsBadgeStyles}>
+						{this.yearsAgoDisplay()}
+					</span>}
 					{item.releaseMatch == "month" && <span className="release-match">&nbsp;— this month</span>}
 				</div>
 				<div className="r2">
-					<span className="songs"><span className="emph">Songs:&nbsp;&nbsp;{this.songList(item)}</span></span>
+					<span className="songs"><span className="emph">Songs:&nbsp;&nbsp;{this.songList()}</span></span>
 				</div>
 			</div>
 
