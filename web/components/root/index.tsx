@@ -51,7 +51,7 @@ export class RootComponent extends React.Component<RootProps> {
 				<div className="a">“ …Celebrate by listening to an album on its birthday”</div>
 			</section>
 			<section className="footer-links">
-				<a className="terms" href={"mailto:" + supportEmail}>Support</a>
+				<a className="terms" href={"mailto:" + supportEmail}>Email support</a>
 				<span className="sep">&nbsp;&nbsp;&middot;&nbsp;&nbsp;</span>
 				<a className="terms" href="/terms">Terms</a>
 			</section>
