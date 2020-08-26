@@ -136,7 +136,7 @@ func (s *Server) UnsubHandler(w http.ResponseWriter, r *http.Request, _ httprout
 		return
 	}
 
-	fmt.Fprintf(w, "succesfully unsubscribed %s\n", email)
+	fmt.Fprintf(w, "successfully unsubscribed %s\n", email)
 }
 
 func (s *Server) PreviewEmailHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
