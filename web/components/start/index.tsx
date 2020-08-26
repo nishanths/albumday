@@ -231,6 +231,7 @@ class StartComponent extends React.Component<StartProps, State> {
 							<div className={"instruction"}>
 								{<>
 									<p>Enter your email address.</p>
+									<p><button onClick={e => { e.preventDefault(); this.onEmailSubmit() }}>Continue</button></p>
 									{/* <p><a href="" onClick={e => { e.preventDefault(); this.onEmailSubmit() }}>Continue</a></p> */}
 									{/*<p><Link to="/">Return to home page</Link></p> */}
 								</>}
@@ -251,7 +252,7 @@ class StartComponent extends React.Component<StartProps, State> {
 							<div className={"instruction"}>
 								{<>
 									<p>A login code was sent to <span className="submitted-email">{submittedEmail}</span>. Enter the code to continue.</p>
-									<p><a href="" onClick={e => { e.preventDefault(); this.onPassphraseSubmit() }}>Submit</a></p>
+									<p><button onClick={e => { e.preventDefault(); this.onPassphraseSubmit() }}>Submit</button></p>
 									<p><a href="" onClick={e => { e.preventDefault(); this.onDifferentEmail() }}>Start over</a></p>
 								</>}
 							</div>

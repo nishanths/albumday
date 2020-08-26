@@ -107,6 +107,9 @@ body.StartBody {
 				color: $color-instruction;
 				text-decoration: underline;
 			}
+			button {
+				@include button();
+			}
 		}
 
 		.step {

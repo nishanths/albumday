@@ -168,6 +168,11 @@ func (s *Server) PassphraseHandler(w http.ResponseWriter, r *http.Request, _ htt
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	if err := s.redis.Expire(passphraseKey(email), passphraseExpiry).Err(); err != nil {
+		log.Printf("EXPIRE passhrase: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	var buf bytes.Buffer
 	err := passphraseEmailTmpl.Execute(&buf, map[string]interface{}{
@@ -208,9 +213,12 @@ func (s *Server) LoginHandler(w http.ResponseWriter, r *http.Request, _ httprout
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	if !passphraseSuccess {
-		w.WriteHeader(http.StatusForbidden) // bad passphrase
-		return
+	// check passphrase only in non-dev
+	if !isDev() {
+		if !passphraseSuccess {
+			w.WriteHeader(http.StatusForbidden) // bad passphrase
+			return
+		}
 	}
 
 	// ensure Account
