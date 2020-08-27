@@ -258,6 +258,7 @@ func (s *Server) ConnectScrobbleHandler(w http.ResponseWriter, r *http.Request, 
 		default:
 			w.WriteHeader(http.StatusInternalServerError)
 		}
+		return
 	}
 
 	if err := UpdateEntity(s.redis, accountKey(email), &Account{}, func(v interface{}) interface{} {
