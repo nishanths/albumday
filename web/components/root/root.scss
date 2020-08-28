@@ -14,7 +14,7 @@ body.RootBody {
 }
 
 .Root {
-	max-width: 600px;
+	max-width: 700px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -22,14 +22,25 @@ body.RootBody {
 
 	padding: 10px 20px;
 
+	.hero {
+		padding-top: 25px;
+	    padding-bottom: 15px;
+	    margin-top: 60px;
+	    box-shadow: -2px 2px 20px 0px rgba(0, 0, 0, 0.08);
+
+		img {
+			max-width: 100%;
+		}
+	}
+
 	.logo {
 		margin-top: 60px;
 
 		background-image: url(/static/img/noun_birthday.svg);
-		height: 145px;
-		width: 145px;
+		height: 110px;
+		width: 110px;
 		background-repeat: no-repeat;
-		background-size: 145px;
+		background-size: 110px;
 		transition: 250ms $transition-exit-func transform;
 		cursor: pointer;
 
@@ -85,7 +96,7 @@ body.RootBody {
 			text-align: center;
 			font-family: $font-family;
 			cursor: pointer;
-			background-color: #007aff;
+			background-color: $green;
 		}
 	}
 
@@ -99,6 +110,15 @@ body.RootBody {
 			display: flex;
 			align-items: center;
 			justify-content: center;
+
+			.service-img {
+				filter: grayscale(100%);
+				transition: 250ms $transition-exit-func transform;
+				&:hover {
+					transition: 500ms $transition-enter-func transform;
+					filter: grayscale(0%);
+				}
+			}
 
 			.service-img.spotify {
 				margin-right: 5px;

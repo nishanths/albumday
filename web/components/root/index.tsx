@@ -32,6 +32,9 @@ export class RootComponent extends React.Component<RootProps> {
 			<section className="get-started">
 				<button onClick={() => this.props.history.push(!this.props.loggedIn ? "/start" : "/feed")}>{!this.props.loggedIn ? "Get Started" : "See your feed"}</button>
 			</section>
+			<section className="hero">
+				<img src="/static/img/birthdays-hero.png" />
+			</section>
 			<section className="preview">
 				<a href="/email-preview" target="_blank">Preview sample email</a>
 				<span className="sep">&nbsp;&nbsp;&middot;&nbsp;&nbsp;</span>
