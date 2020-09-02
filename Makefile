@@ -8,7 +8,18 @@ all:
 .PHONY: deploy
 deploy:
 	(cd appengine-go && gcloud --quiet --project $(PROJECT_ID) app deploy --version v1)
-	echo $(shell git rev-list HEAD | head -n 1) $(shell [[ -z $(git status --short) ]] || echo '(dirty)') >> deployed-hash.txt
+	make deployed-hash
+
+GIT_STATUS := $(shell git status --short)
+COMMIT_HASH := $(shell git rev-list HEAD | head -n 1)
+DIRTY := \(dirty\)
+ifeq ($(GIT_STATUS),)
+DIRTY := ""
+endif
+
+.PHONY: deployed-hash
+deployed-hash:
+	echo $(COMMIT_HASH) $(DIRTY) >> deployed-hash.txt
 
 .PHONY: fmt
 fmt:
