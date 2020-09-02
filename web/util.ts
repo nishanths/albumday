@@ -39,5 +39,5 @@ export const connectSuccessDuration = 4000
 
 export const cookieBorkedNavPath = "/"
 
-export const AppName = "album birthdays!"
+export const AppName = "Album Birthdays!"
 export const AppDomain = "birthdays.casa"

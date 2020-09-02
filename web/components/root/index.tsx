@@ -23,7 +23,7 @@ export class RootComponent extends React.Component<RootProps> {
 			{helmet}
 			<Link to="/"><div title="[Icon: Birthday by Flatart from thenounproject.com]" className="logo" role="img" alt="App logo"></div></Link>
 			<section className="app-name">
-				album birthdays<span className="emph">!</span>
+				Album Birthdays<span className="emph">!</span>
 			</section>
 			<section className="app-desc">
 				Be reminded on the release date anniversaries for titles in your
