@@ -35,11 +35,6 @@ export class RootComponent extends React.Component<RootProps> {
 			<section className="hero">
 				<img alt="App screenshot displaying two albums with release date anniversaries" src="/static/img/birthdays-hero.png" />
 			</section>
-			<section className="preview">
-				<a href="/email-preview" target="_blank">Preview sample email</a>
-				<span className="sep">&nbsp;&nbsp;&middot;&nbsp;&nbsp;</span>
-				<a href="/static/img/web-app-screenshot.png" target="_blank">App screenshots</a>
-			</section>
 			<section className="works-with">
 				Works with
 				<div className="services" role="list">
@@ -57,9 +52,11 @@ export class RootComponent extends React.Component<RootProps> {
 				<button onClick={() => this.props.history.push(!this.props.loggedIn ? "/start" : "/feed")}>{!this.props.loggedIn ? "Get Started" : "See your feed"}</button>
 			</section>}
 			<section className="footer-links">
-				<a className="terms" href={"mailto:" + supportEmail}>Email support</a>
+				<a href="/email-preview" target="_blank">Preview sample email</a>
 				<span className="sep">&nbsp;&nbsp;&middot;&nbsp;&nbsp;</span>
-				<a className="terms" href="/terms">Terms</a>
+				<a href={"mailto:" + supportEmail}>Email support</a>
+				<span className="sep">&nbsp;&nbsp;&middot;&nbsp;&nbsp;</span>
+				<a href="/terms">Terms</a>
 			</section>
 		</div>
 	}
