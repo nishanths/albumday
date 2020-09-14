@@ -4,3 +4,6 @@
 dump.rdb
 
 deployed-hash.txt
+
+tags
+*.swp
