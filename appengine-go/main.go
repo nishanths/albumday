@@ -78,8 +78,6 @@ func run(ctx context.Context) error {
 
 	router.GET("/internal/cron/daily-email", RequireCronHeader(s.DailyEmailCronHandler))
 	router.POST("/internal/task/daily-email", RequireTasksSecret(config.TasksSecret, s.DailyEmailTaskHandler))
-	// router.GET("/internal/cron/refresh-library", RequireCronHeader(s.RefreshLibraryCronHandler))
-	// router.POST("/internal/task/refresh-library", RequireTasksSecret(config.TasksSecret, s.RefreshLibraryTaskHandler))
 
 	router.GET("/connect/spotify", s.ConnectSpotifyHandler)
 	router.GET("/auth/spotify", s.AuthSpotifyHandler)
@@ -104,7 +102,7 @@ func run(ctx context.Context) error {
 		PORT = devPort
 	}
 	log.Printf("listening on port %s", PORT)
-	return http.ListenAndServe(":"+PORT, router)
+	return http.ListenAndServe(":"+PORT, OldHostsRedirect(router))
 }
 
 func RequireCronHeader(h httprouter.Handle) httprouter.Handle {
@@ -124,5 +122,17 @@ func RequireTasksSecret(wantSecret string, h httprouter.Handle) httprouter.Handl
 			return
 		}
 		w.WriteHeader(http.StatusUnauthorized)
+	})
+}
+
+func OldHostsRedirect(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Host == "birthdays.casa" {
+			u := *r.URL
+			u.Host = AppHost
+			http.Redirect(w, r, u.String(), http.StatusFound)
+			return
+		}
+		h.ServeHTTP(w, r)
 	})
 }

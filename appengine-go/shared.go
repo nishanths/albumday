@@ -46,7 +46,8 @@ const SupportEmail = "littlerootorg@gmail.com"
 
 const (
 	AppName   = "Album Birthdays!"
-	AppDomain = "birthdays.casa"
+	AppDomain = "albumday.casa"
+	AppHost   = "birthdays.casa"
 )
 
 // From github.com/badoux/checkmail, and HTML5 spec doc.
