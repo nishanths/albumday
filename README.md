@@ -2,9 +2,9 @@
 
 __Album Birthdays<i>!</i>__ is an app that can notify you on the release date anniversaries of titles in your music library. It works with Spotify and with Apple Music, via [Scrobble](https://scrobbl.es).
 
-Check it out at [https://birthdays.casa](https://birthdays.casa).
+Check it out at [https://albumday.cc](https://albumday.cc).
 
-For a preview of an email notification, check out [an example email](https://birthdays.casa/email-preview).
+For a preview of an email notification, check out [an example email](https://albumday.cc/email-preview).
 
 The website also displays titles that have an upcoming release date anniversary.
 
