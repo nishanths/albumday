@@ -27,9 +27,9 @@ type State = {
 const paneToTitle = (p: Pane): string => {
 	switch (p) {
 		case "feed":
-			return "birthday feed"
+			return "Birthday Feed"
 		case "settings":
-			return "settings"
+			return "Settings"
 		default:
 			assertExhaustive(p)
 	}

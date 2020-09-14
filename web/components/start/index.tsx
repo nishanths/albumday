@@ -204,7 +204,7 @@ class StartComponent extends React.Component<StartProps, State> {
 		return <div className="Start">
 			<Helmet>
 				<html className="StartHTML" />
-				<title>log in or register / {AppName}</title>
+				<title>Log in or register / {AppName}</title>
 				<body className="StartBody" />
 			</Helmet>
 
