@@ -134,13 +134,15 @@ func (s *Server) DailyEmailTaskHandler(w http.ResponseWriter, r *http.Request, _
 	v.Set("email", email)
 	v.Set("token", unsubToken)
 
+	unsubURL := "https://" + AppDomain + "/unsub?" + v.Encode()
+
 	// prepare email
 	var buf bytes.Buffer
 	if err := emailTmpl.ExecuteTemplate(&buf, "base", &EmailTmplArgs{
 		Today:         t,
 		AppVisitURL:   "https://" + AppDomain + "/feed",
 		BirthdayItems: items,
-		UnsubURL:      "https://" + AppDomain + "/unsub?" + v.Encode(),
+		UnsubURL:      unsubURL,
 		SupportEmail:  SupportEmail,
 		Browser:       false,
 		IsDev:         env() == Dev,
@@ -156,6 +158,9 @@ func (s *Server) DailyEmailTaskHandler(w http.ResponseWriter, r *http.Request, _
 		fmt.Sprintf("%d %s (%d %s)", t.Day(), t.Month(), len(items), pluralize(len(items), "birthday")),
 		"",
 		buf.String(),
+		map[string]string{
+			"List-Unsubscribe": fmt.Sprintf("<%s>", unsubURL),
+		},
 	); err != nil {
 		log.Printf("send email: %s", err)
 		var serr StatusError

@@ -187,7 +187,7 @@ func (s *Server) PassphraseHandler(w http.ResponseWriter, r *http.Request, _ htt
 		return
 	}
 
-	if err := s.email.Send([]string{email}, passphraseEmailSubject, buf.String(), ""); err != nil {
+	if err := s.email.Send([]string{email}, passphraseEmailSubject, buf.String(), "", nil); err != nil {
 		log.Printf("send passphrase email: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
