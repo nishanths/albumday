@@ -11,6 +11,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"sort"
 	"strconv"
 	"strings"
 	"text/template"
@@ -361,6 +362,9 @@ func (s *Server) BirthdaysHandler(w http.ResponseWriter, r *http.Request, _ http
 		}
 		timestamps = append(timestamps, i)
 	}
+	sort.Slice(timestamps, func(i, j int) bool {
+		return timestamps[i] < timestamps[j]
+	})
 
 	timeZoneName := r.FormValue("timeZone")
 	loc := defaultLocation
@@ -436,12 +440,37 @@ func (s *Server) BirthdaysHandler(w http.ResponseWriter, r *http.Request, _ http
 	s.putSongsToCache(conn.Service, email, songs)
 
 	result := computeBirthdaysForTimestamps(timestamps, loc, songs)
+
+	if !result.HasItems() {
+		// have to fast-forward until we find a day with birthday item
+		latestTimestamp := timestamps[len(timestamps)-1]
+		latestTime := time.Unix(latestTimestamp, 0).In(loc)
+
+		for addDay := 1; addDay < 360; addDay++ {
+			t := latestTime.AddDate(0, 0, addDay)
+			items := computeBirthdays(t.Unix(), loc, songs)
+			if len(items) != 0 {
+				result[t.Unix()] = items
+				break
+			}
+		}
+	}
+
 	if err := json.NewEncoder(w).Encode(result); err != nil {
 		log.Printf("write response: %s", err)
 	}
 }
 
 type BirthdayResponse map[int64][]BirthdayItem
+
+func (b BirthdayResponse) HasItems() bool {
+	for _, v := range b {
+		if len(v) != 0 {
+			return true
+		}
+	}
+	return false
+}
 
 func computeBirthdaysForTimestamps(timestamps []int64, loc *time.Location, songs []Song) BirthdayResponse {
 	m := make(BirthdayResponse)

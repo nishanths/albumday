@@ -35,10 +35,12 @@ export type BirthdayData = {
 	todayItems: BirthdayItem[]
 	tomorrowItems: BirthdayItem[]
 	overmorrowItems: BirthdayItem[]
+	extraItems?: BirthdayItem[]
 
 	todayTime: Temporal.DateTime
 	tomorrowTime: Temporal.DateTime
 	overmorrowTime: Temporal.DateTime
+	extraTime?: Temporal.DateTime
 }
 
 type FeedState = {
@@ -135,6 +137,22 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 						tomorrowTime: tomorrow.toDateTime(tzName),
 						overmorrowTime: overmorrow.toDateTime(tzName),
 					}
+
+					// hacky: find extra time time, if any.
+					const known = new Set([
+						today.getEpochSeconds(),
+						tomorrow.getEpochSeconds(),
+						overmorrow.getEpochSeconds(),
+					])
+					for (const t in result) {
+						const timestamp = parseInt(t, 10)
+						if (known.has(timestamp)) {
+							continue
+						}
+						data.extraItems = result[t]!
+						data.extraTime = Temporal.Absolute.fromEpochSeconds(timestamp).toDateTime(tzName)
+					}
+
 					this.props.onBirthdayData(data) // also propagate up
 					this.setState({ birthdays: { status: "success", data } })
 					break
@@ -315,6 +333,18 @@ export class Feed extends React.Component<FeedProps, FeedState> {
 					})}
 				</div>}
 			</section>
+
+			{data.extraTime && data.extraItems && <section className="day-container">
+				<div role="heading" aria-level={1} className="extra date-head">
+					<span>Later,&nbsp;</span>
+					<span className="secondary">{data.extraTime.day} {shortMonth(data.extraTime)}</span>
+				</div>
+				{<div role="list">
+					{data.extraItems.map(item => {
+						return <div role="listitem" key={item.link} className="item"><BirthdayItemComponent item={item} nowYear={data.todayTime.year} /></div>
+					})}
+				</div>}
+			</section>}
 		</div>
 	}
 }
