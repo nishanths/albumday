@@ -259,7 +259,7 @@ export class Settings extends React.Component<SettingsProps> {
 		const emailNotifications = this.props.account.settings.emailsEnabled ?
 			<li>
 				<strong>Birthday email notifications</strong>:
-				Enabled. Emails will be sent on the release date anniversaries of titles in your library —&nbsp;
+				Enabled. Emails will be sent on the release date anniversaries of songs you've added to your library —&nbsp;
 				<a href="" role="button" onClick={e => { e.preventDefault(); this.setEmailNotifications(false) }}>
 					turn off
 				</a>
